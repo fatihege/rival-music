@@ -1,0 +1,23 @@
+{
+  "name": "rival-music-server",
+  "version": "0.0.1",
+  "description": "Server-side of Rival music streaming platform.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon -L index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatihege/rival-music.git"
+  },
+  "author": "Fatih EGE",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fatihege/rival-music/issues"
+  },
+  "homepage": "https://github.com/fatihege/rival-music#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
