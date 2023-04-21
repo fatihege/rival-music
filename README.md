@@ -17,6 +17,7 @@ To run this application on your local machine, follow the below steps:
 2. Navigate to the project directory: `cd rival-music/server` for server-side, `cd rival-music/client` for client-side
 3. Install the required dependencies: `npm install`
 4. To start the development server: `npm run dev`
+
 The application will be running at `localhost:3000`.
 
 ## Features
