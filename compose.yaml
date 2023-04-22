@@ -1,0 +1,14 @@
+services:
+  server:
+    image: rival-music-server
+    build: 
+      context: ./server
+    ports: 
+      - "8000:8000"
+  app:
+    image: rival-music-client
+    build: 
+      context: ./client
+    ports:
+      - "3000:3000"
+

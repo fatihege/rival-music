@@ -1,0 +1,8 @@
+FROM node:18
+LABEL authors="Fatih EGE"
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD [ "npm", "run", "dev" ]
