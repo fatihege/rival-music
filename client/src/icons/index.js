@@ -15,10 +15,10 @@ import VolumeMuteIcon from '@/icons/volume-mute'
 import VolumeLowIcon from '@/icons/volume-low'
 import VolumeMidIcon from '@/icons/volume-mid'
 import VolumeHighIcon from '@/icons/volume-high'
+import AddIcon from '@/icons/add'
 
 /* TODO: Add more icons
 import CloseIcon from '@/icons/close'
-import AddIcon from '@/icons/add'
 import DownloadIcon from '@/icons/download'
 import DownloadingIcon from '@/icons/downloading'
 import DownloadedIcon from '@/icons/downloaded'
@@ -43,4 +43,5 @@ export {
     VolumeLowIcon,
     VolumeMidIcon,
     VolumeHighIcon,
+    AddIcon,
 }

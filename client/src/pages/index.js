@@ -1,13 +1,15 @@
 import Head from 'next/head'
+import styles from '@/styles/home.module.sass'
 
-export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Rival Music</title>
-        <meta name="description" content="Rival is a modern and up-to-date music streaming platform." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-    </>
-  )
+export default function HomePage() {
+    return (
+        <>
+            <Head>
+                <title>Rival Music</title>
+            </Head>
+            <div className={styles.container}>
+                <h1>HOME PAGE</h1>
+            </div>
+        </>
+    )
 }

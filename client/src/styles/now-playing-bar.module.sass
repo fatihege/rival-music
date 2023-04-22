@@ -1,0 +1,66 @@
+@import "variables.sass"
+
+.nowPlayingBar
+  position: relative
+  width: 100vw
+  height: 100px
+  background: #151515
+  z-index: 5
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 0 1rem
+  border-top: 1px solid #232323
+
+  .track
+    display: flex
+    align-items: center
+    column-gap: 1rem
+
+    .trackImage
+      width: calc(100px - 2rem)
+      height: calc(100px - 2rem)
+      overflow: hidden
+      border-radius: 8px
+
+      img
+        width: 100%
+        height: auto
+        object-fit: cover
+
+    .trackInfo
+      display: flex
+      flex-direction: column
+      justify-content: center
+
+      .trackName,
+      .trackArtist
+        font-weight: 400
+
+        a
+          cursor: pointer
+          color: #fff
+          font-family: $quaternaryFont
+
+          &:hover
+            text-decoration: underline
+            opacity: 1
+
+      .trackName
+        font-size: 1rem
+
+      .trackArtist
+        font-size: .9rem
+
+        a
+          opacity: .7
+
+    .trackLike
+      cursor: pointer
+
+      &:hover
+        transform: scale(1.1)
+
+      svg
+        width: 1.25rem
+        height: 1.25rem

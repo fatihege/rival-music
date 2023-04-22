@@ -1,4 +1,103 @@
-.sidePanel
-  .logo
+@import "variables.sass"
 
-  .links
+.sidePanel
+  position: relative
+  width: 300px
+  height: 100%
+  background-color: #070707
+  padding: 1rem .5rem
+  z-index: 5
+
+  .logo
+    width: 100%
+
+    .link
+      display: block
+      width: 100%
+      height: 4rem
+      padding: .5rem 1rem
+
+      svg
+        height: 100%
+        width: auto
+
+  .links,
+  .libraryLinks
+    display: flex
+    flex-direction: column
+    margin: 1rem 0
+
+    .link
+      display: flex
+      align-items: center
+      column-gap: .75rem
+      min-width: max-content
+      padding: .25rem 1rem
+      cursor: pointer
+      opacity: .8
+
+      .label
+        font-size: 1rem
+        line-height: 1
+        color: #fff
+        font-weight: 500
+        font-family: $tertiaryFont
+        user-select: none
+
+      &:hover,
+      &:focus,
+      &.active
+        opacity: 1
+
+      &:active .label
+        transform: scale(.95)
+
+  .links .link .icon svg
+    width: 1.75rem
+    height: auto
+
+  .libraryLinks
+    .link
+      .icon
+        display: flex
+        justify-content: center
+        align-items: center
+        width: 1.75rem
+        height: 1.75rem
+        border-radius: 8px
+
+        svg
+          width: 1em
+          height: auto
+
+      &.createPlaylist
+        .icon
+          background-color: #fff
+
+      &.likedSongs
+        .icon
+          background-image: radial-gradient(circle at 0 0, $purple 0, transparentize($purple, 1) 100%), radial-gradient(circle at 100% 100%, $blue 0, transparentize($blue, 1) 100%)
+
+  .layoutResizer
+    position: absolute
+    right: -4px
+    top: 0
+    height: 100vh
+    width: 8px
+    cursor: col-resize
+
+    &::after
+      content: ""
+      position: absolute
+      top: 0
+      right: 3px
+      width: 2px
+      height: 100%
+      background-color: $accentColor
+      opacity: 0
+      transition: opacity .15s ease-out
+
+    &:hover,
+    &:active
+      &::after
+        opacity: 1
