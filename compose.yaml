@@ -3,12 +3,18 @@ services:
     image: rival-music-server
     build: 
       context: ./server
+    restart: always
     ports: 
       - "8000:8000"
   app:
     image: rival-music-client
     build: 
       context: ./client
+    restart: always
     ports:
       - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      - /app/.next
 
