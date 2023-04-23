@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Slider from '@/components/slider'
 import styles from '@/styles/home.module.sass'
 
 export default function HomePage() {
@@ -8,7 +9,16 @@ export default function HomePage() {
                 <title>Rival Music</title>
             </Head>
             <div className={styles.container}>
-                <h1>HOME PAGE</h1>
+                <div className={styles.blurryBackground}>
+                    <div className={styles.color}></div>
+                    <div className={styles.color}></div>
+                    <div className={styles.color}></div>
+                </div>
+                <div className={styles.content}>
+                    <div className={styles.forYouSection}>
+                        <Slider title="For you"/>
+                    </div>
+                </div>
             </div>
         </>
     )

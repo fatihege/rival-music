@@ -8,13 +8,13 @@ export default function NowPlayingBar() {
             <div className={styles.track}>
                 <div className={styles.trackImage}>
                     <Link href="/">
-                        <img src="/album_cover.jpg" alt="Album Cover"/>
+                        <img src="/album_cover_1.jpg" alt="Album Cover"/>
                     </Link>
                 </div>
                 <div className={styles.trackInfo}>
                     <div className={styles.trackName}>
                         <Link href="/">
-                            Harvester Of Sorrow
+                            Seek & Destroy - Remaster
                         </Link>
                     </div>
                     <div className={styles.trackArtist}>
@@ -23,9 +23,9 @@ export default function NowPlayingBar() {
                         </Link>
                     </div>
                 </div>
-                <div className={styles.trackLike}>
+                <button className={styles.trackLike}>
                     <LikeIcon strokeWidth={12}/>
-                </div>
+                </button>
             </div>
         </div>
     )

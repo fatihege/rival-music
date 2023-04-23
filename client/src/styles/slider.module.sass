@@ -1,0 +1,99 @@
+@import "variables"
+
+.container
+  width: 100%
+  padding: 1rem 2rem
+
+  .header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 1rem
+
+    .title
+      font-size: 2rem
+      font-family: $tertiaryFont
+      font-weight: 700
+
+    .controls
+      display: flex
+      align-items: center
+      column-gap: .25rem
+
+      .control
+        display: block
+        height: 2.5rem
+        font-size: .8rem
+        color: #b4b4b4
+        font-weight: 400
+        font-family: $tertiaryFont
+        border: none
+        cursor: pointer
+        background-color: transparent
+        transition: background-color .15s ease-out
+        display: flex
+        justify-content: center
+        align-items: center
+
+        &:hover,
+        &:focus-visible
+          background-color: rgba(255, 255, 255, .1)
+
+        &:active,
+        &:focus-visible
+          transform: scale(.9)
+
+      button.control
+        width: 2.5rem
+        background: transparent
+        border: 1px solid rgba(255, 255, 255, .4)
+        border-radius: 50%
+
+        svg
+          width: 1.25rem
+          height: 1.25rem
+
+      a.control
+        padding: .25rem .5rem 0 .5rem
+        border-radius: 8px
+        line-height: 1
+        text-align: center
+
+  .wrapper
+    display: flex
+    gap: 1.5rem
+
+    .item
+
+      .itemImage
+        width: 225px
+        height: 225px
+        border-radius: 8px
+        overflow: hidden
+        background-color: #111111
+
+        img
+          width: 100%
+          height: auto
+          object-fit: contain
+
+      .itemInfo
+        margin-top: .5rem
+
+        .itemName
+          font-family: $tertiaryFont
+          font-size: 1rem
+          font-weight: 500
+          max-width: 200px
+          text-overflow: ellipsis
+          line-height: 1
+
+        .itemArtist
+          font-family: $secondaryFont
+          font-size: .8rem
+          font-weight: 300
+          opacity: .8
+          margin-top: .25rem
+
+          &:hover
+            text-decoration: underline

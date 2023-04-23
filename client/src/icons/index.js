@@ -16,6 +16,8 @@ import VolumeLowIcon from '@/icons/volume-low'
 import VolumeMidIcon from '@/icons/volume-mid'
 import VolumeHighIcon from '@/icons/volume-high'
 import AddIcon from '@/icons/add'
+import NextIcon from '@/icons/next'
+import PrevIcon from '@/icons/prev'
 
 /* TODO: Add more icons
 import CloseIcon from '@/icons/close'
@@ -44,4 +46,6 @@ export {
     VolumeMidIcon,
     VolumeHighIcon,
     AddIcon,
+    NextIcon,
+    PrevIcon,
 }

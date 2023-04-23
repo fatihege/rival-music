@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router'
 import {useContext, useEffect, useRef, useState} from 'react'
-import Link from 'next/link'
+import SpanLink from '@/components/span-link'
 import {SidePanelResizingContext} from '@/pages/_app'
 import {AddIcon, HomeIcon, LibraryIcon, LikeIcon, LogoWhite, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
@@ -55,20 +55,20 @@ export default function SidePanel() {
         <>
             <div className={styles.sidePanel} style={{width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`}}>
                 <div className={styles.logo}>
-                    <Link href="/" className={styles.link}>
+                    <SpanLink href="/" className={styles.link}>
                         <LogoWhite/>
-                    </Link>
+                    </SpanLink>
                 </div>
                 <div className={styles.links}>
                     {links.map(({href, icon, activeIcon, label}, index) => (
-                            <Link href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`} key={index}>
+                            <SpanLink href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`} key={index}>
                                 <div className={styles.icon}>
                                     {activeLink === href ? activeIcon : icon}
                                 </div>
                                 <div className={styles.label}>
                                     {label}
                                 </div>
-                            </Link>
+                            </SpanLink>
                         )
                     )}
                 </div>
@@ -81,14 +81,14 @@ export default function SidePanel() {
                             Create Playlist
                         </div>
                     </div>
-                    <Link href="/library/liked" className={`${styles.link} ${styles.likedSongs}`}>
+                    <SpanLink href="/library/liked" className={`${styles.link} ${styles.likedSongs}`}>
                         <div className={styles.icon}>
                             <LikeIcon fill="#fff"/>
                         </div>
                         <div className={styles.label}>
                             Liked Songs
                         </div>
-                    </Link>
+                    </SpanLink>
                 </div>
                 <div className={styles.layoutResizer} ref={resizerRef} onMouseDown={handleResize}></div>
             </div>

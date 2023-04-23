@@ -1,10 +1,10 @@
-@import "variables.sass"
+@import "variables"
 
 .sidePanel
   position: relative
   width: 300px
   height: 100%
-  background-color: #070707
+  background-color: #050505
   padding: 1rem .5rem
   z-index: 5
 
@@ -28,6 +28,7 @@
     margin: 1rem 0
 
     .link
+      position: relative
       display: flex
       align-items: center
       column-gap: .75rem
@@ -39,10 +40,10 @@
       .label
         font-size: 1rem
         line-height: 1
-        color: #fff
         font-weight: 500
         font-family: $tertiaryFont
         user-select: none
+        color: #fff
 
       &:hover,
       &:focus,
@@ -90,14 +91,13 @@
       content: ""
       position: absolute
       top: 0
-      right: 3px
-      width: 2px
+      right: 4px
+      width: 1px
       height: 100%
-      background-color: $accentColor
-      opacity: 0
-      transition: opacity .15s ease-out
+      background-color: #151515
+      transition: background-color .15s ease-out
 
     &:hover,
     &:active
       &::after
-        opacity: 1
+        background-color: $accentColor
