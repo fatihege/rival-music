@@ -4,6 +4,7 @@ import SidePanel from '@/components/side-panel'
 import NowPlayingBar from '@/components/now-playing-bar'
 import '@/styles/globals.sass'
 import styles from '@/styles/general.module.sass'
+import {SkeletonTheme} from "react-loading-skeleton";
 
 export const SidePanelResizingContext = createContext(false)
 
@@ -38,17 +39,19 @@ export default function App({Component, pageProps}) {
 
     return (
         <>
-            <Wrapper>
-                <SidePanelResizingContext.Provider value={[isResizing, setIsResizing]}>
-                    <div className={styles.main}>
-                        <SidePanel/>
-                        <div className={styles.content}>
-                            <Component {...pageProps}/>
+            <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
+                <Wrapper>
+                    <SidePanelResizingContext.Provider value={[isResizing, setIsResizing]}>
+                        <div className={styles.main}>
+                            <SidePanel/>
+                            <div className={styles.content}>
+                                <Component {...pageProps}/>
+                            </div>
                         </div>
-                    </div>
-                </SidePanelResizingContext.Provider>
-                <NowPlayingBar/>
-            </Wrapper>
+                    </SidePanelResizingContext.Provider>
+                    <NowPlayingBar/>
+                </Wrapper>
+            </SkeletonTheme>
         </>
     )
 }
