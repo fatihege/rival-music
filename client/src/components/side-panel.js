@@ -2,9 +2,9 @@ import {useRouter} from 'next/router'
 import {useContext, useEffect, useRef, useState} from 'react'
 import SpanLink from '@/components/span-link'
 import {SidePanelResizingContext} from '@/pages/_app'
-import {AddIcon, HomeIcon, LibraryIcon, LikeIcon, LogoWhite, NextIcon, SearchIcon} from '@/icons'
+import {AddIcon, HomeIcon, LibraryIcon, LogoWhite, NextIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
-import Link from "next/link";
+import Link from 'next/link'
 
 const MIN_WIDTH = 296,
     DEFAULT_WIDTH = 320,
