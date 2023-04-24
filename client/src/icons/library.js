@@ -13,42 +13,31 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
             viewBox="0 0 256 256"
         >
             <path
-                d="M172.792 136.186c0-3.527-1.046-6.908-2.908-9.402-1.862-2.493-4.388-3.894-7.021-3.894H76.739c-2.634 0-5.159 1.401-7.021 3.894-1.862 2.494-2.908 5.875-2.908 9.402v79.39c0 3.526 1.046 6.908 2.908 9.402 1.862 2.493 4.387 3.894 7.021 3.894h86.124c2.633 0 5.159-1.401 7.021-3.894 1.862-2.494 2.908-5.876 2.908-9.402v-79.39Z"
+                d="M206.446 42.903c0-11.045-8.955-20-20-20H148c-11.046 0-20 8.955-20 20v170.194c0 11.045 8.954 20 20 20h38.446c11.045 0 20-8.955 20-20V42.903Z"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "8.2px",
+                    strokeWidth: "14.58px",
                 }}
-                transform="matrix(2.0143 0 0 1.50423 -113.314 -95.938)"
+                transform="translate(10.777)"
             />
             <path
-                d="M52.416 90.804h151.168"
+                d="M89.308 22.903v210.194"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.27px",
+                    strokeWidth: "14.58px",
                 }}
-                transform="translate(-12.68 -51.763) scale(1.09906)"
+                transform="translate(-.531)"
             />
             <path
-                d="M52.416 90.804h151.168"
+                d="M89.308 22.903v210.194"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "16.64px",
+                    strokeWidth: "14.58px",
                 }}
-                transform="matrix(.92714 0 0 .82276 9.326 -67.049)"
-            />
-            <circle
-                cx={128}
-                cy={176.197}
-                r={18.338}
-                style={{
-                    fill: "none",
-                    stroke,
-                    strokeWidth: "7.49px",
-                }}
-                transform="matrix(1.94604 0 0 1.94604 -121.093 -174.258)"
+                transform="translate(-50.531)"
             />
         </svg>
     ) : (
@@ -65,30 +54,31 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
             viewBox="0 0 256 256"
         >
             <path
-                d="M52.416 90.804h151.168"
-                style={{
-                    fill: "none",
-                    stroke,
-                    strokeWidth: "13.27px",
-                }}
-                transform="translate(-12.68 -51.763) scale(1.09906)"
-            />
-            <path
-                d="M52.416 90.804h151.168"
-                style={{
-                    fill: "none",
-                    stroke,
-                    strokeWidth: "16.64px",
-                }}
-                transform="matrix(.92714 0 0 .82276 9.326 -67.049)"
-            />
-            <path
-                d="M234.74 108.917a20 20 0 0 0-20-20H41.26a20.004 20.004 0 0 0-20 20V228.34a20 20 0 0 0 20 20h173.48a20.004 20.004 0 0 0 20-20V108.917ZM128 125.651c-23.72 0-42.977 19.258-42.977 42.978 0 23.719 19.257 42.977 42.977 42.977 23.72 0 42.977-19.258 42.977-42.977 0-23.72-19.257-42.978-42.977-42.978Z"
+                d="M206.446 42.903c0-11.045-8.955-20-20-20H148c-11.046 0-20 8.955-20 20v170.194c0 11.045 8.954 20 20 20h38.446c11.045 0 20-8.955 20-20V42.903Z"
                 style={{
                     fill,
                     stroke,
                     strokeWidth: "14.58px",
                 }}
+                transform="translate(10.777)"
+            />
+            <path
+                d="M89.308 22.903v210.194"
+                style={{
+                    fill: "none",
+                    stroke,
+                    strokeWidth: "14.58px",
+                }}
+                transform="translate(-.531)"
+            />
+            <path
+                d="M89.308 22.903v210.194"
+                style={{
+                    fill: "none",
+                    stroke,
+                    strokeWidth: "14.58px",
+                }}
+                transform="translate(-50.531)"
             />
         </svg>
     )

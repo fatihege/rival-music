@@ -6,6 +6,7 @@ export default function SpanLink(props) {
     const getProps = () => {
         let newProps = {}
         Object.keys(props).map(k => k === 'className' ? newProps[k] = `${props[k]} cursor_pointer` : k !== 'href' ? newProps[k] = props[k] : false)
+        if (!newProps.className) newProps.className = 'cursor_pointer'
         return newProps
     }
 

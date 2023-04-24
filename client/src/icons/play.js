@@ -1,4 +1,4 @@
-export default function PlayIcon({fill = '#1c1c1c'}) {
+export default function PlayIcon({fill = '#fff'}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +16,7 @@ export default function PlayIcon({fill = '#1c1c1c'}) {
                 style={{
                     fill,
                 }}
-                transform="translate(18.38 -19.355) scale(1.15121)"
+                transform="translate(35.761 -19.355) scale(1.15121)"
             />
         </svg>
     )

@@ -2,12 +2,13 @@ import {useRouter} from 'next/router'
 import {useContext, useEffect, useRef, useState} from 'react'
 import SpanLink from '@/components/span-link'
 import {SidePanelResizingContext} from '@/pages/_app'
-import {AddIcon, HomeIcon, LibraryIcon, LikeIcon, LogoWhite, SearchIcon} from '@/icons'
+import {AddIcon, HomeIcon, LibraryIcon, LikeIcon, LogoWhite, NextIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
+import Link from "next/link";
 
-const MIN_WIDTH = 200,
-    DEFAULT_WIDTH = 300,
-    MAX_WIDTH = 400
+const MIN_WIDTH = 296,
+    DEFAULT_WIDTH = 320,
+    MAX_WIDTH = 600
 
 export default function SidePanel() {
     const resizerRef = useRef()
@@ -29,12 +30,6 @@ export default function SidePanel() {
             activeIcon: <SearchIcon filled={true}/>,
             label: 'Explore',
         },
-        {
-            href: '/library',
-            icon: <LibraryIcon/>,
-            activeIcon: <LibraryIcon filled={true}/>,
-            label: 'Your Library',
-        },
     ]
 
     const setWidth = value => {
@@ -46,20 +41,23 @@ export default function SidePanel() {
         setActiveLink(router.pathname)
     }, [router.pathname])
 
-    const handleResize = () => setIsResizing({
+    const handleResize = e => setIsResizing({
         active: true,
+        MAX_WIDTH,
+        MIN_WIDTH,
+        offset: widthRef.current - e.clientX,
         setWidth,
     })
 
     return (
         <>
             <div className={styles.sidePanel} style={{width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`}}>
-                <div className={styles.logo}>
-                    <SpanLink href="/" className={styles.link}>
-                        <LogoWhite/>
-                    </SpanLink>
-                </div>
-                <div className={styles.links}>
+                <div className={`${styles.section} ${styles.linksSection}`}>
+                    <div className={styles.logo}>
+                        <SpanLink href="/" className={styles.logoLink}>
+                            <LogoWhite/>
+                        </SpanLink>
+                    </div>
                     {links.map(({href, icon, activeIcon, label}, index) => (
                             <SpanLink href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`} key={index}>
                                 <div className={styles.icon}>
@@ -72,23 +70,72 @@ export default function SidePanel() {
                         )
                     )}
                 </div>
-                <div className={styles.libraryLinks}>
-                    <div className={`${styles.link} ${styles.createPlaylist}`}>
-                        <div className={styles.icon}>
-                            <AddIcon stroke="#1c1c1c" strokeWidth={34}/>
-                        </div>
-                        <div className={styles.label}>
-                            Create Playlist
+                <div className={`${styles.section} ${styles.librarySection}`}>
+                    <div className={styles.header}>
+                        <SpanLink href="/library" className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`}>
+                            <div className={styles.icon}>
+                                <LibraryIcon filled={activeLink === '/library'}/>
+                            </div>
+                            <div className={styles.label}>
+                                Your Library
+                            </div>
+                        </SpanLink>
+                        <div className={styles.operations}>
+                            <button>
+                                <AddIcon strokeWidth={24} stroke="#aeaeae"/>
+                            </button>
+                            <button>
+                                <NextIcon strokeWidth={24} stroke="#aeaeae"/>
+                            </button>
                         </div>
                     </div>
-                    <SpanLink href="/library/liked" className={`${styles.link} ${styles.likedSongs}`}>
-                        <div className={styles.icon}>
-                            <LikeIcon fill="#fff"/>
-                        </div>
-                        <div className={styles.label}>
-                            Liked Songs
-                        </div>
-                    </SpanLink>
+                    <div className={styles.libraryList}>
+                        <SpanLink href="/">
+                            <div className={styles.listItem}>
+                                <div className={styles.image}>
+                                    <img src="/album_cover_1.jpg"/>
+                                </div>
+                                <div className={styles.info}>
+                                    <div className={styles.name}>
+                                        <Link href="/">Seek & Destroy - Remaster</Link>
+                                    </div>
+                                    <div className={styles.creator}>
+                                        <Link href="/">Metallica</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </SpanLink>
+                        <SpanLink href="/">
+                            <div className={styles.listItem}>
+                                <div className={styles.image}>
+                                    <img src="/album_cover_2.jpg"/>
+                                </div>
+                                <div className={styles.info}>
+                                    <div className={styles.name}>
+                                        <Link href="/">Heaven and Hell - 2009 Remaster</Link>
+                                    </div>
+                                    <div className={styles.creator}>
+                                        <Link href="/">Black Sabbath</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </SpanLink>
+                        <SpanLink href="/">
+                            <div className={styles.listItem}>
+                                <div className={styles.image}>
+                                    <img src="/album_cover_3.jpg"/>
+                                </div>
+                                <div className={styles.info}>
+                                    <div className={styles.name}>
+                                        <Link href="/">The Devil in I</Link>
+                                    </div>
+                                    <div className={styles.creator}>
+                                        <Link href="/">Slipknot</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </SpanLink>
+                    </div>
                 </div>
                 <div className={styles.layoutResizer} ref={resizerRef} onMouseDown={handleResize}></div>
             </div>

@@ -28,7 +28,10 @@ export default function App({Component, pageProps}) {
 
         window.addEventListener('mousemove', e => {
             if (!isResizingRef.current.active) return
-            isResizingRef.current.setWidth(e.clientX)
+            const MIN_WIDTH = isResizingRef.current.MIN_WIDTH
+            const MAX_WIDTH = isResizingRef.current.MAX_WIDTH
+            const newWidth = e.clientX + isResizingRef.current.offset
+            isResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH))
         })
 
         window.addEventListener('mouseup', () => {
