@@ -7,17 +7,37 @@ import styles from '@/styles/general.module.sass'
 import {SkeletonTheme} from "react-loading-skeleton";
 
 export const SidePanelResizingContext = createContext(false)
+export const NPBarResizingContext = createContext(false)
 
 export default function App({Component, pageProps}) {
-    const [isResizing, _setIsResizing] = useState({
+    const [isSidePanelResizing, _setIsSidePanelResizing] = useState({
         active: false,
-        setWidth: () => {},
+        MAX_WIDTH: 0,
+        MIN_WIDTH: 0,
+        offset: 0,
+        setWidth: () => {
+        },
     })
-    const isResizingRef = useRef(isResizing)
+    const [isNPBarResizing, _setIsNPBarResizing] = useState({
+        active: false,
+        side: 0,
+        MAX_WIDTH: 0,
+        MIN_WIDTH: 0,
+        offset: 0,
+        setWidth: () => {
+        },
+    })
+    const isSidePanelResizingRef = useRef(isSidePanelResizing)
+    const isNPBarResizingRef = useRef(isNPBarResizing)
 
-    const setIsResizing = value => {
-        isResizingRef.current = value
-        _setIsResizing(value)
+    const setIsSidePanelResizing = value => {
+        isSidePanelResizingRef.current = value
+        _setIsSidePanelResizing(value)
+    }
+
+    const setIsNPBarResizing = value => {
+        isNPBarResizingRef.current = value
+        _setIsNPBarResizing(value)
     }
 
     // TODO: Remove this
@@ -27,16 +47,23 @@ export default function App({Component, pageProps}) {
         ran = true
 
         window.addEventListener('mousemove', e => {
-            if (!isResizingRef.current.active) return
-            const MIN_WIDTH = isResizingRef.current.MIN_WIDTH
-            const MAX_WIDTH = isResizingRef.current.MAX_WIDTH
-            const newWidth = e.clientX + isResizingRef.current.offset
-            isResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH))
+            if (isSidePanelResizingRef.current.active) {
+                const MIN_WIDTH = isSidePanelResizingRef.current.MIN_WIDTH
+                const MAX_WIDTH = isSidePanelResizingRef.current.MAX_WIDTH
+                const newWidth = e.clientX + isSidePanelResizingRef.current.offset
+                isSidePanelResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH))
+            } else if (isNPBarResizingRef.current.active) {
+                const side = isNPBarResizingRef.current.side
+                const MIN_WIDTH = isNPBarResizingRef.current.MIN_WIDTH
+                const MAX_WIDTH = isNPBarResizingRef.current.MAX_WIDTH
+                const newWidth = side === 1 ? window.innerWidth - e.clientX * 2 : window.innerWidth - (window.innerWidth - e.clientX) * 2
+                isNPBarResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH))
+            }
         })
 
         window.addEventListener('mouseup', () => {
-            if (!isResizingRef.current.active) return
-            setIsResizing(false)
+            if (isSidePanelResizingRef.current.active) setIsSidePanelResizing(false)
+            else if (isNPBarResizingRef.current.active) setIsNPBarResizing(false)
         })
     })
 
@@ -44,7 +71,7 @@ export default function App({Component, pageProps}) {
         <>
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
                 <Wrapper>
-                    <SidePanelResizingContext.Provider value={[isResizing, setIsResizing]}>
+                    <SidePanelResizingContext.Provider value={[isSidePanelResizing, setIsSidePanelResizing]}>
                         <div className={styles.main}>
                             <SidePanel/>
                             <div className={styles.content}>
@@ -52,7 +79,9 @@ export default function App({Component, pageProps}) {
                             </div>
                         </div>
                     </SidePanelResizingContext.Provider>
-                    <NowPlayingBar/>
+                    <NPBarResizingContext.Provider value={[isNPBarResizing, setIsNPBarResizing]}>
+                        <NowPlayingBar/>
+                    </NPBarResizingContext.Provider>
                 </Wrapper>
             </SkeletonTheme>
         </>
