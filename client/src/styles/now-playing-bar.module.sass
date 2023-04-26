@@ -74,6 +74,10 @@
             background: none
             border: none
             cursor: pointer
+            display: flex
+            justify-content: center
+            align-items: center
+            border-radius: 50%
 
             &:hover
               transform: scale(1.1)
@@ -319,6 +323,6 @@
         background-color: transparent
         transition: background-color .15s ease-out
 
-
-      &:hover::after
+      &:hover::after,
+      &:active::after
         background-color: $accentColor
