@@ -11,6 +11,7 @@ import {
     ShuffleIcon,
     VolumeHighIcon
 } from '@/icons'
+import getTabindex from '@/utils/get-tabindex'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
@@ -51,20 +52,20 @@ export default function NowPlayingBar() {
             <div className={styles.nowPlayingBarWrapper}>
                 <div className={`${styles.layoutResizer} ${styles.left}`} onMouseDown={e => handleResize(e, 1)}></div>
                 <div className={styles.track}>
-                    <div className={styles.trackImage}>
+                    <div className={styles.trackImage} tabIndex={getTabindex()}>
                         <img src="/album_cover_1.jpg" alt="Album Cover"/>
                     </div>
                     <div className={styles.trackInfo}>
                         <div className={styles.trackName}>
-                            <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
+                            <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''} tabIndex={getTabindex()}>
                                 Seek & Destroy - Remaster
                             </Link>
-                            <button className={styles.trackLike}>
+                            <button className={styles.trackLike} tabIndex={getTabindex()}>
                                 <LikeIcon strokeWidth={12}/>
                             </button>
                         </div>
                         <div className={`${styles.trackArtist} ${width < HIDING_BREAKPOINT ? 'hide' : ''}`}>
-                            <Link href="/">
+                            <Link href="/" tabIndex={getTabindex()}>
                                 Metallica
                             </Link>
                         </div>
@@ -72,19 +73,19 @@ export default function NowPlayingBar() {
                 </div>
                 <div className={styles.trackControls}>
                     <div className={styles.buttons}>
-                        <button className={styles.repeat}>
+                        <button className={styles.repeat} tabIndex={getTabindex()}>
                             <RepeatIcon/>
                         </button>
-                        <button className={styles.prevTrack}>
+                        <button className={styles.prevTrack} tabIndex={getTabindex()}>
                             <PrevTrackIcon/>
                         </button>
-                        <button className={styles.play}>
+                        <button className={styles.play} tabIndex={getTabindex()}>
                             <PlayIcon/>
                         </button>
-                        <button className={styles.nextTrack}>
+                        <button className={styles.nextTrack} tabIndex={getTabindex()}>
                             <NextTrackIcon/>
                         </button>
-                        <button className={styles.shuffle}>
+                        <button className={styles.shuffle} tabIndex={getTabindex()}>
                             <ShuffleIcon/>
                         </button>
                     </div>
@@ -102,14 +103,14 @@ export default function NowPlayingBar() {
                 </div>
                 <div className={styles.otherControls}>
                     <div className={styles.buttons}>
-                        <button className={styles.button}>
+                        <button className={styles.button} tabIndex={getTabindex()}>
                             <VolumeHighIcon/>
                         </button>
-                        <button className={styles.button}>
+                        <button className={styles.button} tabIndex={getTabindex()}>
                             <CustomizationIcon/>
                         </button>
                         {width < HIDING_BREAKPOINT ? (
-                            <button className={styles.button}>
+                            <button className={styles.button} tabIndex={getTabindex()}>
                                 <QueueIcon/>
                             </button>
                         ) : ''}
@@ -117,7 +118,7 @@ export default function NowPlayingBar() {
                     {width >= HIDING_BREAKPOINT ? (
                         <>
                             <div className={styles.separator}></div>
-                            <div className={styles.queue}>
+                            <div className={styles.queue} tabIndex={getTabindex()}>
                                 <div className={styles.queueImage}>
                                     <img src="/album_cover_2.jpg" alt=""/>
                                 </div>
