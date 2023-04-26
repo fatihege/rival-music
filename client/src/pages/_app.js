@@ -4,7 +4,7 @@ import SidePanel from '@/components/side-panel'
 import NowPlayingBar from '@/components/now-playing-bar'
 import '@/styles/globals.sass'
 import styles from '@/styles/general.module.sass'
-import {SkeletonTheme} from "react-loading-skeleton";
+import {SkeletonTheme} from 'react-loading-skeleton'
 
 export const SidePanelResizingContext = createContext(false)
 export const NPBarResizingContext = createContext(false)

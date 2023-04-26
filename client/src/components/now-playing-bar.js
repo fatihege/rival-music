@@ -1,7 +1,16 @@
 import Link from 'next/link'
 import {useContext, useEffect, useState} from 'react'
 import {NPBarResizingContext} from '@/pages/_app'
-import {LikeIcon, NextTrackIcon, PlayIcon, PrevTrackIcon, RepeatIcon, ShuffleIcon, VolumeHighIcon} from '@/icons'
+import {
+    CustomizationIcon,
+    LikeIcon,
+    NextTrackIcon,
+    PlayIcon,
+    PrevTrackIcon, QueueIcon,
+    RepeatIcon,
+    ShuffleIcon,
+    VolumeHighIcon
+} from '@/icons'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
@@ -92,16 +101,30 @@ export default function NowPlayingBar() {
                     </div>
                 </div>
                 <div className={styles.otherControls}>
-                    <button className={styles.volume}>
-                        <VolumeHighIcon/>
-                    </button>
-                    <div className={styles.separator}></div>
-                    <div className={styles.queue}>
-                        <div className={styles.queueImage}>
-                            <img src="/album_cover_2.jpg" alt=""/>
-                        </div>
-                        <div className={styles.queueText}>Queue</div>
+                    <div className={styles.buttons}>
+                        <button className={styles.button}>
+                            <VolumeHighIcon/>
+                        </button>
+                        <button className={styles.button}>
+                            <CustomizationIcon/>
+                        </button>
+                        {width < HIDING_BREAKPOINT ? (
+                            <button className={styles.button}>
+                                <QueueIcon/>
+                            </button>
+                        ) : ''}
                     </div>
+                    {width >= HIDING_BREAKPOINT ? (
+                        <>
+                            <div className={styles.separator}></div>
+                            <div className={styles.queue}>
+                                <div className={styles.queueImage}>
+                                    <img src="/album_cover_2.jpg" alt=""/>
+                                </div>
+                                <div className={styles.queueText}>Queue</div>
+                            </div>
+                        </>
+                    ) : ''}
                 </div>
                 <div className={`${styles.layoutResizer} ${styles.right}`} onMouseDown={e => handleResize(e, 2)}></div>
             </div>

@@ -18,6 +18,8 @@ import VolumeHighIcon from '@/icons/volume-high'
 import AddIcon from '@/icons/add'
 import NextIcon from '@/icons/next'
 import PrevIcon from '@/icons/prev'
+import CustomizationIcon from '@/icons/customization'
+import QueueIcon from '@/icons/queue'
 
 /* TODO: Add more icons
 import CloseIcon from '@/icons/close'
@@ -48,4 +50,6 @@ export {
     AddIcon,
     NextIcon,
     PrevIcon,
+    CustomizationIcon,
+    QueueIcon,
 }
