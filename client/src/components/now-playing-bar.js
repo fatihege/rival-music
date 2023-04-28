@@ -8,7 +8,7 @@ import {
     PlayIcon,
     PrevTrackIcon,
     QueueIcon,
-    RepeatOneIcon,
+    RepeatIcon,
     ShuffleIcon,
     VolumeHighIcon
 } from '@/icons'
@@ -75,7 +75,7 @@ export default function NowPlayingBar() {
                 <div className={styles.trackControls}>
                     <div className={styles.buttons}>
                         <button className={styles.repeat}>
-                            <RepeatOneIcon/>
+                            <RepeatIcon/>
                         </button>
                         <button className={styles.prevTrack}>
                             <PrevTrackIcon/>
