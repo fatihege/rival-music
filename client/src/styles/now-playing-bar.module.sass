@@ -21,11 +21,21 @@
     height: 100px
     padding: 0 1rem
 
+    &.breakpoint
+      .track
+        width: 20% !important
+
+      .trackControls
+        width: 60% !important
+
+      .otherControls
+        width: 20% !important
+
     .track
       display: flex
       align-items: center
       column-gap: 1rem
-      min-width: 180px
+      min-width: 100px
       width: 30%
 
       .trackImage
@@ -174,7 +184,7 @@
       justify-content: flex-end
       align-items: center
       column-gap: .5rem
-      min-width: 180px
+      min-width: 60px
       width: 30%
 
       .buttons

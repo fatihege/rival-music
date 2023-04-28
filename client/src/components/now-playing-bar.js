@@ -50,7 +50,7 @@ export default function NowPlayingBar() {
 
     return (
         <div className={styles.nowPlayingBar} style={{width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`}}>
-            <div className={styles.nowPlayingBarWrapper}>
+            <div className={`${styles.nowPlayingBarWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
                 <div className={`${styles.layoutResizer} ${styles.left}`} onMouseDown={e => handleResize(e, 1)}></div>
                 <div className={styles.track}>
                     <div className={styles.trackImage}>
