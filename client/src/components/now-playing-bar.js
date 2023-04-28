@@ -6,8 +6,9 @@ import {
     LikeIcon,
     NextTrackIcon,
     PlayIcon,
-    PrevTrackIcon, QueueIcon,
-    RepeatIcon, RepeatOneIcon,
+    PrevTrackIcon,
+    QueueIcon,
+    RepeatOneIcon,
     ShuffleIcon,
     VolumeHighIcon
 } from '@/icons'
@@ -15,11 +16,11 @@ import ProgressBar from '@/components/progress-bar'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
-    const [, setIsResizing] = useContext(NPBarResizingContext)
-    const [width, setWidth] = useState(null)
-    const [MAX_WIDTH, setMaxWidth] = useState(null)
-    const MIN_WIDTH = 700
-    const HIDING_BREAKPOINT = 800
+    const [, setIsResizing] = useContext(NPBarResizingContext) // Now playing bar resizing state
+    const [width, setWidth] = useState(null) // Now playing bar width
+    const [MAX_WIDTH, setMaxWidth] = useState(null) // Max width of now playing bar
+    const MIN_WIDTH = 700 // Min width of now playing bar
+    const HIDING_BREAKPOINT = 800 // Hide some elements when width is less than this value
 
     // TODO: Remove this
     let ran = false
@@ -27,24 +28,24 @@ export default function NowPlayingBar() {
         if (ran) return
         ran = true
 
-        setMaxWidth(window.innerWidth - 48)
+        setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
 
-        window.addEventListener('resize', () => {
-            setMaxWidth(window.innerWidth - 48)
+        window.addEventListener('resize', () => { // When window resize
+            setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
         })
     })
 
     useEffect(() => {
-        if (!width) setWidth(MAX_WIDTH)
+        if (!width) setWidth(MAX_WIDTH) // Set width to max width when width is not set
     }, [MAX_WIDTH])
 
-    const handleResize = (e, side) => setIsResizing({
-        active: true,
-        side,
-        MIN_WIDTH,
-        MAX_WIDTH,
-        offset: MAX_WIDTH - e.clientX,
-        setWidth,
+    const handleResize = (e, side) => setIsResizing({ // Handle resizing
+        active: true, // Set resizing state to active
+        side, // Set resizing side
+        MIN_WIDTH, // Set min width
+        MAX_WIDTH, // Set max width
+        offset: MAX_WIDTH - e.clientX, // Set offset
+        setWidth, // Pass setWidth function
     })
 
     return (

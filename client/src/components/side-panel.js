@@ -6,18 +6,18 @@ import {SidePanelResizingContext} from '@/pages/_app'
 import {AddIcon, HomeIcon, LibraryIcon, LogoWhite, NextIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
-const MIN_WIDTH = 296,
-    DEFAULT_WIDTH = 320,
-    MAX_WIDTH = 600
+const MIN_WIDTH = 296, // Minimum width of the side panel
+    DEFAULT_WIDTH = 320, // Default width of the side panel
+    MAX_WIDTH = 600 // Maximum width of the side panel
 
 export default function SidePanel() {
-    const resizerRef = useRef()
-    const router = useRouter()
-    const [activeLink, setActiveLink] = useState(router.pathname || '/')
-    const [, setIsResizing] = useContext(SidePanelResizingContext)
-    const [width, _setWidth] = useState(DEFAULT_WIDTH)
-    const widthRef = useRef(width)
-    const links = [
+    const resizerRef = useRef() // Reference to the resizer element
+    const router = useRouter() // Router instance
+    const [activeLink, setActiveLink] = useState(router.pathname || '/') // Active link
+    const [, setIsResizing] = useContext(SidePanelResizingContext) // Resizing context
+    const [width, _setWidth] = useState(DEFAULT_WIDTH) // Width of the side panel
+    const widthRef = useRef(width) // Reference to the width of the side panel
+    const links = [ // Links
         {
             href: '/',
             icon: <HomeIcon/>,
@@ -32,21 +32,21 @@ export default function SidePanel() {
         },
     ]
 
-    const setWidth = value => {
+    const setWidth = value => { // Set width of the side panel
         widthRef.current = value
         _setWidth(value)
     }
 
     useEffect(() => {
-        setActiveLink(router.pathname)
+        setActiveLink(router.pathname) // Update active link
     }, [router.pathname])
 
-    const handleResize = e => setIsResizing({
-        active: true,
-        MAX_WIDTH,
-        MIN_WIDTH,
-        offset: widthRef.current - e.clientX,
-        setWidth,
+    const handleResize = e => setIsResizing({ // Handle resizing
+        active: true, // Set resizing to active
+        MAX_WIDTH, // Set maximum width
+        MIN_WIDTH, // Set minimum width
+        offset: widthRef.current - e.clientX, // Set offset
+        setWidth, // Pass setWidth function
     })
 
     return (

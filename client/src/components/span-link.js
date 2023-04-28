@@ -4,10 +4,10 @@ export default function SpanLink(props) {
     const router = useRouter()
 
     const getProps = () => {
-        let newProps = {}
-        Object.keys(props).map(k => k === 'className' ? newProps[k] = `${props[k]} cursor_pointer inline` : k !== 'href' ? newProps[k] = props[k] : false)
-        if (!newProps.className) newProps.className = 'cursor_pointer inline'
-        return newProps
+        let newProps = {} // Create new props object
+        Object.keys(props).map(k => k === 'className' ? newProps[k] = `${props[k]} cursor_pointer inline` : k !== 'href' ? newProps[k] = props[k] : false) // Add "cursor_pointer" and "inline" to className
+        if (!newProps.className) newProps.className = 'cursor_pointer inline' // Add "cursor_pointer" and "inline" to className
+        return newProps // Return new props
     }
 
     return (
