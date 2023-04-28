@@ -5,14 +5,14 @@ export default function SpanLink(props) {
 
     const getProps = () => {
         let newProps = {}
-        Object.keys(props).map(k => k === 'className' ? newProps[k] = `${props[k]} cursor_pointer` : k !== 'href' ? newProps[k] = props[k] : false)
-        if (!newProps.className) newProps.className = 'cursor_pointer'
+        Object.keys(props).map(k => k === 'className' ? newProps[k] = `${props[k]} cursor_pointer inline` : k !== 'href' ? newProps[k] = props[k] : false)
+        if (!newProps.className) newProps.className = 'cursor_pointer inline'
         return newProps
     }
 
     return (
-        <span onClick={() => router.push(props.href)} {...getProps()}>
+        <div onClick={() => router.push(props.href)} {...getProps()} suppressHydrationWarning={true}>
             {props.children}
-        </span>
+        </div>
     )
 }

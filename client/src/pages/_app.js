@@ -8,6 +8,7 @@ import {SkeletonTheme} from 'react-loading-skeleton'
 
 export const SidePanelResizingContext = createContext(false)
 export const NPBarResizingContext = createContext(false)
+export const ProgressBarContext = createContext(false)
 
 export default function App({Component, pageProps}) {
     const [isSidePanelResizing, _setIsSidePanelResizing] = useState({
@@ -27,8 +28,14 @@ export default function App({Component, pageProps}) {
         setWidth: () => {
         },
     })
+    const [isProgressBarChanging, _setIsProgressBarChanging] = useState({
+        active: false,
+        setWidth: () => {
+        },
+    })
     const isSidePanelResizingRef = useRef(isSidePanelResizing)
     const isNPBarResizingRef = useRef(isNPBarResizing)
+    const isProgressBarChangingRef = useRef(isProgressBarChanging)
 
     const setIsSidePanelResizing = value => {
         isSidePanelResizingRef.current = value
@@ -38,6 +45,11 @@ export default function App({Component, pageProps}) {
     const setIsNPBarResizing = value => {
         isNPBarResizingRef.current = value
         _setIsNPBarResizing(value)
+    }
+
+    const setIsProgressBarChanging = value => {
+        isProgressBarChangingRef.current = value
+        _setIsProgressBarChanging(value)
     }
 
     // TODO: Remove this
@@ -58,12 +70,15 @@ export default function App({Component, pageProps}) {
                 const MAX_WIDTH = isNPBarResizingRef.current.MAX_WIDTH
                 const newWidth = side === 1 ? window.innerWidth - e.clientX * 2 : window.innerWidth - (window.innerWidth - e.clientX) * 2
                 isNPBarResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH))
+            } else if (isProgressBarChangingRef.current.active) {
+                isProgressBarChangingRef.current.setWidth(e)
             }
         })
 
         window.addEventListener('mouseup', () => {
             if (isSidePanelResizingRef.current.active) setIsSidePanelResizing(false)
             else if (isNPBarResizingRef.current.active) setIsNPBarResizing(false)
+            else if (isProgressBarChangingRef.current.active) setIsProgressBarChanging(false)
         })
     })
 
@@ -80,7 +95,9 @@ export default function App({Component, pageProps}) {
                         </div>
                     </SidePanelResizingContext.Provider>
                     <NPBarResizingContext.Provider value={[isNPBarResizing, setIsNPBarResizing]}>
-                        <NowPlayingBar/>
+                        <ProgressBarContext.Provider value={[isProgressBarChanging, setIsProgressBarChanging]}>
+                            <NowPlayingBar/>
+                        </ProgressBarContext.Provider>
                     </NPBarResizingContext.Provider>
                 </Wrapper>
             </SkeletonTheme>

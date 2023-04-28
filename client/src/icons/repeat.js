@@ -1,4 +1,4 @@
-export default function RepeatIcon({stroke = '#fff'}) {
+export default function RepeatIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,18 +17,18 @@ export default function RepeatIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "10.73px",
+                    strokeWidth: `${13.46 * strokeRate}px`,
                 }}
-                transform="translate(-45.998 -57.482) scale(1.35936)"
+                transform="translate(-10.727 -19.883) scale(1.0838)"
             />
             <path
                 d="m0 0 128 128L0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "81.27px",
+                    strokeWidth: `${101.94 * strokeRate}px`,
                 }}
-                transform="rotate(179.746 75.484 97.998) scale(.17944)"
+                transform="matrix(-.14306 0 0 -.14306 146.312 182.211)"
             />
         </svg>
     )

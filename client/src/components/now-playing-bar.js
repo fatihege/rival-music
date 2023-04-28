@@ -7,11 +7,11 @@ import {
     NextTrackIcon,
     PlayIcon,
     PrevTrackIcon, QueueIcon,
-    RepeatIcon,
+    RepeatIcon, RepeatOneIcon,
     ShuffleIcon,
     VolumeHighIcon
 } from '@/icons'
-import getTabindex from '@/utils/get-tabindex'
+import ProgressBar from '@/components/progress-bar'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
@@ -52,20 +52,20 @@ export default function NowPlayingBar() {
             <div className={styles.nowPlayingBarWrapper}>
                 <div className={`${styles.layoutResizer} ${styles.left}`} onMouseDown={e => handleResize(e, 1)}></div>
                 <div className={styles.track}>
-                    <div className={styles.trackImage} tabIndex={getTabindex()}>
+                    <div className={styles.trackImage}>
                         <img src="/album_cover_1.jpg" alt="Album Cover"/>
                     </div>
                     <div className={styles.trackInfo}>
                         <div className={styles.trackName}>
-                            <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''} tabIndex={getTabindex()}>
+                            <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
                                 Seek & Destroy - Remaster
                             </Link>
-                            <button className={styles.trackLike} tabIndex={getTabindex()}>
+                            <button className={styles.trackLike}>
                                 <LikeIcon strokeWidth={12}/>
                             </button>
                         </div>
                         <div className={`${styles.trackArtist} ${width < HIDING_BREAKPOINT ? 'hide' : ''}`}>
-                            <Link href="/" tabIndex={getTabindex()}>
+                            <Link href="/">
                                 Metallica
                             </Link>
                         </div>
@@ -73,44 +73,34 @@ export default function NowPlayingBar() {
                 </div>
                 <div className={styles.trackControls}>
                     <div className={styles.buttons}>
-                        <button className={styles.repeat} tabIndex={getTabindex()}>
-                            <RepeatIcon/>
+                        <button className={styles.repeat}>
+                            <RepeatOneIcon/>
                         </button>
-                        <button className={styles.prevTrack} tabIndex={getTabindex()}>
+                        <button className={styles.prevTrack}>
                             <PrevTrackIcon/>
                         </button>
-                        <button className={styles.play} tabIndex={getTabindex()}>
+                        <button className={styles.play}>
                             <PlayIcon/>
                         </button>
-                        <button className={styles.nextTrack} tabIndex={getTabindex()}>
+                        <button className={styles.nextTrack}>
                             <NextTrackIcon/>
                         </button>
-                        <button className={styles.shuffle} tabIndex={getTabindex()}>
+                        <button className={styles.shuffle}>
                             <ShuffleIcon/>
                         </button>
                     </div>
-                    <div className={styles.trackTimeline}>
-                        <div className={styles.timeText}>3:28</div>
-                        <div className={styles.progressBarWrapper}>
-                            <div className={styles.progressBar}>
-                                <div className={styles.progress}>
-                                    <div className={styles.button}></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={styles.timeText}>6:55</div>
-                    </div>
+                    <ProgressBar duration={6 * 60 + 55}/>
                 </div>
                 <div className={styles.otherControls}>
                     <div className={styles.buttons}>
-                        <button className={styles.button} tabIndex={getTabindex()}>
+                        <button className={styles.button}>
                             <VolumeHighIcon/>
                         </button>
-                        <button className={styles.button} tabIndex={getTabindex()}>
+                        <button className={styles.button}>
                             <CustomizationIcon/>
                         </button>
                         {width < HIDING_BREAKPOINT ? (
-                            <button className={styles.button} tabIndex={getTabindex()}>
+                            <button className={styles.button}>
                                 <QueueIcon/>
                             </button>
                         ) : ''}
@@ -118,7 +108,7 @@ export default function NowPlayingBar() {
                     {width >= HIDING_BREAKPOINT ? (
                         <>
                             <div className={styles.separator}></div>
-                            <div className={styles.queue} tabIndex={getTabindex()}>
+                            <div className={styles.queue}>
                                 <div className={styles.queueImage}>
                                     <img src="/album_cover_2.jpg" alt=""/>
                                 </div>

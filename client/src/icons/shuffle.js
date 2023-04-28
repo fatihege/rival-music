@@ -1,4 +1,4 @@
-export default function ShuffleIcon({stroke = '#fff'}) {
+export default function ShuffleIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,45 +17,45 @@ export default function ShuffleIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "8.89px",
+                    strokeWidth: `${15.95 * strokeRate}px`,
                 }}
-                transform="matrix(1.64092 0 0 1.64092 -79.883 -79.883)"
+                transform="matrix(.91415 0 0 .91415 -78.49 -78.49)"
             />
             <path
                 d="m199.774 199.774-59.003-59.003"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "8.89px",
+                    strokeWidth: `${15.95 * strokeRate}px`,
                 }}
-                transform="matrix(1.64092 0 0 1.64092 -222.925 -222.925)"
+                transform="matrix(.91415 0 0 .91415 23.18 23.18)"
             />
             <path
                 d="M256 0 0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "15.56px",
+                    strokeWidth: `${23.99 * strokeRate}px`,
                 }}
-                transform="translate(8.069 8.069) scale(.93696)"
+                transform="translate(50.196 50.196) scale(.60784)"
             />
             <path
                 d="m0 0 128 128L0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "66.21px",
+                    strokeWidth: `${70.03 * strokeRate}px`,
                 }}
-                transform="matrix(.15574 -.15574 .15574 .15574 208.06 8.069)"
+                transform="scale(-.20824) rotate(-45 -1403.993 15.336)"
             />
             <path
                 d="m0 0 128 128L0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "66.21px",
+                    strokeWidth: `${70.03 * strokeRate}px`,
                 }}
-                transform="matrix(-.15574 .15574 -.15574 -.15574 47.94 247.93)"
+                transform="scale(.20824) rotate(-45 694.597 -853.927)"
             />
         </svg>
     )

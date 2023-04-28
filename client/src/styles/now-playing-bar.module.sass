@@ -140,6 +140,8 @@
             height: 2rem
 
             svg
+              width: 1.5rem
+              height: 1.5rem
               opacity: .5
 
             &:hover svg
@@ -166,60 +168,6 @@
 
             &:hover
               background-color: rgba(255, 255, 255, .08)
-
-      .trackTimeline
-        width: 100%
-        display: flex
-        align-items: center
-        column-gap: .5rem
-        margin-top: .5rem
-
-        .timeText
-          color: #939393
-          font-size: .8rem
-          font-weight: 400
-          font-family: $primaryFont
-
-          &:first-child
-            text-align: right
-
-          &:last-child
-            text-align: left
-
-        .progressBarWrapper
-          width: 100%
-          height: 12px
-          cursor: pointer
-          display: flex
-          align-items: center
-
-          &:hover
-            .progressBar
-              .progress
-                background-color: $accentColor
-
-          .progressBar
-            width: 100%
-            height: 3px
-            background: rgba(255, 255, 255, .2)
-            border-radius: 2px
-
-            .progress
-              width: 50%
-              height: 100%
-              background-color: #fff
-              border-radius: 2px
-              position: relative
-
-              .button
-                width: 12px
-                height: 12px
-                background-color: #fff
-                border-radius: 50%
-                position: absolute
-                right: 0
-                top: 50%
-                transform: translate(50%, -50%)
 
     .otherControls
       display: flex
