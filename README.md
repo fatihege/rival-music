@@ -1,7 +1,9 @@
 # Rival Music (Development)
+
 This application is a web application that allows users to search, play, and share music of different genres. This application is currently under development.
 
 ## Technologies
+
 This application is built using MERN (MongoDB, Express.js, React.js, Node.js) stack and a Server Side Rendering (SSR) framework such as Next.js.
 
 * **MongoDB** - NoSQL database is used.
@@ -13,6 +15,7 @@ This application is built using MERN (MongoDB, Express.js, React.js, Node.js) st
 ## Installation
 
 ### Manual Installation
+
 To run this application on your local machine, follow the below steps:
 
 1. Clone this repository: `git clone https://github.com/fatihege/rival-music.git`
@@ -23,6 +26,7 @@ To run this application on your local machine, follow the below steps:
 The application will be running at `localhost:3000`.
 
 ### Docker Installation
+
 To run this application on your local machine using Docker, follow the below steps:
 
 1. Clone this repository: `git clone https://github.com/fatihege/rival-music.git`
@@ -32,14 +36,23 @@ To run this application on your local machine using Docker, follow the below ste
 
 The application will be running at `localhost:3000`.
 
-## Features
-This application includes the following features:
+## Possible Endpoints
 
-* Users can search and discover music genres.
-* Users can save and share their favorite music.
-* Users can play music and create playlists.
-* Users can interact with other users and leave comments.
+| Endpoint                  | Description                                       |
+| --------------------------| ------------------------------------------------- |
+| GET /                     | Home page                                         |
+| GET /explore              | Explore music genres                              |
+| GET /search/:query        | Search for music using a query string             |
+| GET /library              | User's library of saved songs and playlists       |
+| GET /library/playlists    | User's saved playlists                            |
+| GET /library/likes        | User's liked songs                                |
+| GET /library/saved        | User's saved songs                                |
+| GET /playlist/:id         | A playlist with the given id                      |
+| GET /lyrics               | Lyrics for the currently playing track            |
+| GET /queue                | Current queue of songs                            |
+| GET /artist/:id           | An artist with the given id                       |
 
 ## License
+
 This project is licensed under the [MIT License](LICENSE).
 
