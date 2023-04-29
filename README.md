@@ -20,8 +20,9 @@ To run this application on your local machine, follow the below steps:
 
 1. Clone this repository: `git clone https://github.com/fatihege/rival-music.git`
 2. Navigate to the project directory: `cd rival-music/server` for server-side, `cd rival-music/client` for client-side
-3. Install the required dependencies: `npm install`
-4. To start the development server: `npm run dev`
+3. Update NPM config: `npm config set legacy-peer-deps true`
+4. Install the required dependencies: `npm install`
+5. To start the development server: `npm run dev`
 
 The application will be running at `localhost:3000`.
 
