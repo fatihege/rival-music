@@ -11,6 +11,7 @@ export const NPBarResizingContext = createContext(false)
 export const ProgressBarContext = createContext(false)
 
 export default function App({Component, pageProps}) {
+    const [load, setLoad] = useState(false) // Load state
     const [isSidePanelResizing, _setIsSidePanelResizing] = useState({ // Side panel resizing state
         active: false, // Is resizing active
         MAX_WIDTH: 0, // Max width of side panel
@@ -55,6 +56,8 @@ export default function App({Component, pageProps}) {
         if (ran) return // Prevents this from running twice
         ran = true
 
+        if (localStorage) setLoad(true) // If local storage is available, set load state to true
+
         window.addEventListener('mousemove', e => {
             if (isSidePanelResizingRef.current.active) { // If resizing side panel
                 const MIN_WIDTH = isSidePanelResizingRef.current.MIN_WIDTH // Get min width of side panel
@@ -82,7 +85,7 @@ export default function App({Component, pageProps}) {
     return (
         <>
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
-                <Wrapper>
+                <Wrapper load={load}>
                     <SidePanelResizingContext.Provider value={[isSidePanelResizing, setIsSidePanelResizing]}>
                         <div className={styles.main}>
                             <SidePanel/>

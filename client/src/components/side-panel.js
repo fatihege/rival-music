@@ -37,6 +37,16 @@ export default function SidePanel() {
         _setWidth(value)
     }
 
+    // TODO: Remove this
+    let ran = false
+    useEffect(() => {
+        if (ran) return
+        ran = true
+
+        const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
+        if (width) setWidth(width) // Set width
+    })
+
     useEffect(() => {
         setActiveLink(router.pathname) // Update active link
     }, [router.pathname])
@@ -46,7 +56,10 @@ export default function SidePanel() {
         MAX_WIDTH, // Set maximum width
         MIN_WIDTH, // Set minimum width
         offset: widthRef.current - e.clientX, // Set offset
-        setWidth, // Pass setWidth function
+        setWidth: value => {
+            setWidth(value) // Set width
+            localStorage.setItem('sidePanelWidth', value) // Save width to local storage
+        }, // Pass setWidth function
     })
 
     return (
