@@ -6,12 +6,33 @@ export default function Document() {
             <Head>
                 <meta name="description" content="Rival is a modern and up-to-date music streaming platform."/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="theme-color" content="#00ff78"/>
+                <meta name="author" content="Fatih EGE"/>
+                <meta name="keywords" content="rival,music,streaming,platform"/>
+                <meta name="robots" content="index,follow"/>
+                <meta name="googlebot" content="index,follow"/>
+                <meta name="google" content="notranslate"/>
+                <meta name="og:title" content="Rival Music — Listen what you want"/>
+                <meta name="og:description" content="Rival is a modern and up-to-date music streaming platform."/>
+                <meta name="og:type" content="website"/>
+                <meta name="og:url" content="https://rival-music.vercel.app/"/>
+                <meta name="og:site_name" content="Rival Music"/>
+                <meta name="og:image" content="https://rival-music.vercel.app/banner.png"/>
+                <meta name="og:image:secure_url" content="https://rival-music.vercel.app/banner.png"/>
+                <meta name="og:image:alt" content="Rival Music"/>
+                <meta name="og:image:type" content="image/png"/>
+                <meta name="og:image:width" content="1920"/>
+                <meta name="og:image:height" content="1080"/>
+                <meta name="twitter:card" content="summary_large_image"/>
+                <meta name="twitter:title" content="Rival Music — Listen what you want"/>
+                <meta name="twitter:description" content="Rival is a modern and up-to-date music streaming platform."/>
+                <meta name="twitter:image" content="https://rival-music.vercel.app/banner.png"/>
+                <meta name="twitter:image:alt" content="Rival Music"/>
+                <meta name="twitter:image:width" content="1920"/>
+                <meta name="twitter:image:height" content="1080"/>
+                <meta name="twitter:creator" content="@ftxege"/>
+                <meta name="twitter:domain" content="rival-music.vercel.app"/>
                 <link rel="icon" href="/favicon.ico"/>
-                <link rel="preconnect" href="https://fonts.googleapis.com"/>
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
-                <link
-                    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter+Tight:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Red+Hat+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-                    rel="stylesheet"/>
             </Head>
             <body>
             <Main/>
