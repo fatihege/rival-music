@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router'
 import Link from 'next/link'
 import {useContext, useEffect, useRef, useState} from 'react'
 import {NPBarResizingContext} from '@/pages/_app'
@@ -17,6 +18,7 @@ import ProgressBar from '@/components/progress-bar'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
+    const router = useRouter() // Router instance
     const [, setIsResizing] = useContext(NPBarResizingContext) // Now playing bar resizing state
     const [showAlbumCover, _setShowAlbumCover] = useState(false) // Is album cover shown
     const [albumCoverRight, _setAlbumCoverRight] = useState(false) // Album cover right position
@@ -163,7 +165,7 @@ export default function NowPlayingBar() {
                         </div>
                         <div className={styles.otherControls}>
                             <div className={styles.buttons}>
-                                <button className={styles.button}>
+                                <button className={styles.button} onClick={() => router.pathname !== '/lyrics' ? router.push('/lyrics') : router.back()}>
                                     <MicrophoneIcon/>
                                 </button>
                                 <button className={styles.button}>

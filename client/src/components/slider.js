@@ -27,7 +27,7 @@ export default function Slider({title, items}) {
                     </div>
                     <div className={styles.itemInfo}>
                         <div className={styles.itemName}>
-                            Seek & Destroy
+                            Seek & Destroy - Remastered
                         </div>
                         <div className={styles.itemArtist}>
                             <SpanLink href="/">

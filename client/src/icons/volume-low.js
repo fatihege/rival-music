@@ -1,4 +1,4 @@
-export default function VolumeLowIcon({stroke = '#fff'}) {
+export default function VolumeLowIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function VolumeLowIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "8.2px",
+                    strokeWidth: `${8.2 * strokeRate}px`,
                 }}
                 transform="matrix(1.7789 0 0 1.7789 -146.118 -11.427)"
             />
@@ -26,7 +26,7 @@ export default function VolumeLowIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.03px",
+                    strokeWidth: `${13.03 * strokeRate}px`,
                 }}
                 transform="matrix(1.11963 0 0 1.11963 1.991 -15.313)"
             />

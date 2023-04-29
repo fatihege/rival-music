@@ -1,4 +1,4 @@
-export default function VolumeHighIcon({stroke = '#fff'}) {
+export default function VolumeHighIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function VolumeHighIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "8.2px",
+                    strokeWidth: `${8.2 * strokeRate}px`,
                 }}
                 transform="matrix(1.7789 0 0 1.7789 -146.118 -11.427)"
             />
@@ -26,7 +26,7 @@ export default function VolumeHighIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "9.2px",
+                    strokeWidth: `${9.2 * strokeRate}px`,
                 }}
                 transform="matrix(1.58446 0 0 1.58446 -72.134 -74.812)"
             />
@@ -35,7 +35,7 @@ export default function VolumeHighIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "4.27px",
+                    strokeWidth: `${4.27 * strokeRate}px`,
                 }}
                 transform="matrix(3.4189 0 0 3.4189 -364.663 -309.62)"
             />

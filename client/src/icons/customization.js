@@ -1,4 +1,4 @@
-export default function CustomizationIcon({stroke = '#fff', filled = false, fill = '#fff'}) {
+export default function CustomizationIcon({filled = false, stroke = '#fff', strokeRate = 1, fill = '#fff'}) {
     return !filled ? (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "11.31px",
+                    strokeWidth: `${11.31 * strokeRate}px`,
                 }}
                 transform="matrix(1.28944 0 0 1.28944 77.404 -8.637)"
             />
@@ -30,7 +30,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "11.31px",
+                    strokeWidth: `${11.31 * strokeRate}px`,
                 }}
                 transform="matrix(1.28944 0 0 1.28944 -4.931 45.794)"
             />
@@ -39,7 +39,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.4px",
+                    strokeWidth: `${13.4 * strokeRate}px`,
                 }}
                 transform="translate(-11.343 4.166) scale(1.08862)"
             />
@@ -50,7 +50,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "11.31px",
+                    strokeWidth: `${11.31 * strokeRate}px`,
                 }}
                 transform="matrix(1.28944 0 0 1.28944 77.404 100.225)"
             />
@@ -59,7 +59,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.4px",
+                    strokeWidth: `${13.4 * strokeRate}px`,
                 }}
                 transform="translate(-11.343 4.166) scale(1.08862)"
             />
@@ -84,7 +84,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill,
                     stroke,
-                    strokeWidth: "11.31px",
+                    strokeWidth: `${11.31 * strokeRate}px`,
                 }}
                 transform="matrix(1.28944 0 0 1.28944 77.404 -8.637)"
             />
@@ -95,7 +95,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill,
                     stroke,
-                    strokeWidth: "11.31px",
+                    strokeWidth: `${11.31 * strokeRate}px`,
                 }}
                 transform="matrix(1.28944 0 0 1.28944 -4.931 45.794)"
             />
@@ -104,7 +104,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.4px",
+                    strokeWidth: `${13.4 * strokeRate}px`,
                 }}
                 transform="translate(-11.343 4.166) scale(1.08862)"
             />
@@ -115,7 +115,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill,
                     stroke,
-                    strokeWidth: "11.31px",
+                    strokeWidth: `${11.31 * strokeRate}px`,
                 }}
                 transform="matrix(1.28944 0 0 1.28944 77.404 100.225)"
             />
@@ -124,7 +124,7 @@ export default function CustomizationIcon({stroke = '#fff', filled = false, fill
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.4px",
+                    strokeWidth: `${13.4 * strokeRate}px`,
                 }}
                 transform="translate(-11.343 4.166) scale(1.08862)"
             />

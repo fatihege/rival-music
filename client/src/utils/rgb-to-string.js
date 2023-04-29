@@ -1,0 +1,1 @@
+export default ([r, g, b]) => `rgb(${r}, ${g}, ${b})` // Function to convert RGB to string

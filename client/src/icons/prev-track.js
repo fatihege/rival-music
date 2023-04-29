@@ -1,4 +1,4 @@
-export default function PrevTrackIcon({stroke = '#fff'}) {
+export default function PrevTrackIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function PrevTrackIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "20.7px",
+                    strokeWidth: `${20.7 * strokeRate}px`,
                 }}
                 transform="matrix(-1.00655 0 0 1.00655 245.429 -.839)"
             />
@@ -26,7 +26,7 @@ export default function PrevTrackIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "18.54px",
+                    strokeWidth: `${18.54 * strokeRate}px`,
                 }}
                 transform="matrix(-1.12346 0 0 1.12346 280.108 -15.803)"
             />

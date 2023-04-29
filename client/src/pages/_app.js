@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router'
 import {createContext, useEffect, useRef, useState} from 'react'
 import Wrapper from '@/components/wrapper'
 import SidePanel from '@/components/side-panel'
@@ -6,11 +7,13 @@ import '@/styles/globals.sass'
 import styles from '@/styles/general.module.sass'
 import {SkeletonTheme} from 'react-loading-skeleton'
 
-export const SidePanelResizingContext = createContext(false)
-export const NPBarResizingContext = createContext(false)
-export const ProgressBarContext = createContext(false)
+export const SidePanelResizingContext = createContext(false) // Context for side panel resizing state
+export const NPBarResizingContext = createContext(false) // Context for now playing bar resizing state
+export const ProgressBarContext = createContext(false) // Context for progress bar changing state
+export const ShowTrackPanel = createContext(false) // Context for showing track panel state
 
 export default function App({Component, pageProps}) {
+    const router = useRouter()
     const [load, setLoad] = useState(false) // Load state
     const [isSidePanelResizing, _setIsSidePanelResizing] = useState({ // Side panel resizing state
         active: false, // Is resizing active
@@ -30,6 +33,10 @@ export default function App({Component, pageProps}) {
     const [isProgressBarChanging, _setIsProgressBarChanging] = useState({ // Progress bar changing state
         active: false, // Is changing active
         setWidth: () => {}, // Function to set width of progress bar
+    })
+    const [showTrackPanel, setShowTrackPanel] = useState({ // Show track panel state
+        active: false, // Is track panel active
+        type: null, // Type of track panel to show
     })
     const isSidePanelResizingRef = useRef(isSidePanelResizing) // Ref for side panel resizing state
     const isNPBarResizingRef = useRef(isNPBarResizing) // Ref for now playing bar resizing state
@@ -60,16 +67,13 @@ export default function App({Component, pageProps}) {
 
         window.addEventListener('mousemove', e => {
             if (isSidePanelResizingRef.current.active) { // If resizing side panel
-                const MIN_WIDTH = isSidePanelResizingRef.current.MIN_WIDTH // Get min width of side panel
-                const MAX_WIDTH = isSidePanelResizingRef.current.MAX_WIDTH // Get max width of side panel
+                const {setWidth, MIN_WIDTH, MAX_WIDTH} = isSidePanelResizingRef.current // Get min width and max width of side panel
                 const newWidth = e.clientX + isSidePanelResizingRef.current.offset // Calculate new width of side panel
-                isSidePanelResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of side panel
+                setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of side panel
             } else if (isNPBarResizingRef.current.active) { // If resizing now playing bar
-                const side = isNPBarResizingRef.current.side // Get side of now playing bar to resize
-                const MIN_WIDTH = isNPBarResizingRef.current.MIN_WIDTH // Get min width of now playing bar
-                const MAX_WIDTH = isNPBarResizingRef.current.MAX_WIDTH // Get max width of now playing bar
+                const {setWidth, side, MIN_WIDTH, MAX_WIDTH} = isNPBarResizingRef.current // Get side, min width, and max width of now playing bar
                 const newWidth = side === 1 ? window.innerWidth - e.clientX * 2 : window.innerWidth - (window.innerWidth - e.clientX) * 2 // Calculate new width of now playing bar
-                isNPBarResizingRef.current.setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of now playing bar
+                setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of now playing bar
             } else if (isProgressBarChangingRef.current.active) { // If changing progress bar
                 isProgressBarChangingRef.current.setWidth(e) // Set width of progress bar
             }
@@ -80,6 +84,8 @@ export default function App({Component, pageProps}) {
             else if (isNPBarResizingRef.current.active) setIsNPBarResizing(false) // If resizing now playing bar, stop resizing
             else if (isProgressBarChangingRef.current.active) setIsProgressBarChanging(false) // If changing progress bar, stop changing
         })
+
+        window.addEventListener('dragstart', e => e.preventDefault())
     })
 
     return (
@@ -87,12 +93,14 @@ export default function App({Component, pageProps}) {
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
                 <Wrapper load={load}>
                     <SidePanelResizingContext.Provider value={[isSidePanelResizing, setIsSidePanelResizing]}>
-                        <div className={styles.main}>
-                            <SidePanel/>
-                            <div className={styles.content}>
-                                <Component {...pageProps}/>
+                        <ShowTrackPanel.Provider value={[showTrackPanel, setShowTrackPanel]}>
+                            <div className={styles.main}>
+                                <SidePanel/>
+                                <div className={styles.content}>
+                                    <Component {...pageProps}/>
+                                </div>
                             </div>
-                        </div>
+                        </ShowTrackPanel.Provider>
                     </SidePanelResizingContext.Provider>
                     <NPBarResizingContext.Provider value={[isNPBarResizing, setIsNPBarResizing]}>
                         <ProgressBarContext.Provider value={[isProgressBarChanging, setIsProgressBarChanging]}>

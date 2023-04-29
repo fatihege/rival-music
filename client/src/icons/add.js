@@ -1,4 +1,4 @@
-export default function AddIcon({stroke = '#fff', strokeWidth = 19, fill = 'none'}) {
+export default function AddIcon({stroke = '#fff', strokeWidth = 22}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,20 +15,20 @@ export default function AddIcon({stroke = '#fff', strokeWidth = 19, fill = 'none
             <path
                 d="M128 18.403V241.54"
                 style={{
-                    fill,
+                    fill: "none",
                     stroke,
                     strokeWidth: `${strokeWidth}px`,
                 }}
-                transform="matrix(.8963 0 0 .8963 12.88 11.113)"
+                transform="matrix(.75492 0 0 .75492 30.977 29.489)"
             />
             <path
                 d="M128 18.403V241.54"
                 style={{
-                    fill,
+                    fill: "none",
                     stroke,
                     strokeWidth: `${strokeWidth}px`,
                 }}
-                transform="matrix(0 -.8963 .8963 0 11.113 242.335)"
+                transform="matrix(0 -.75492 .75492 0 29.489 224.238)"
             />
         </svg>
     )

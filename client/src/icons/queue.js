@@ -1,4 +1,4 @@
-export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff'}) {
+export default function QueueIcon({filled = false, stroke = '#fff', strokeWidth = 14, fill = '#fff'}) {
     return !filled ? (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.14px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(-14.01 4.504) scale(1.10946)"
             />
@@ -26,7 +26,7 @@ export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.63px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="matrix(1.02816 0 0 1.10946 -3.604 58.26)"
             />
@@ -35,7 +35,7 @@ export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.63px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="matrix(1.02816 0 0 1.10946 -3.604 13.881)"
             />
@@ -58,7 +58,7 @@ export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff
                 style={{
                     fill,
                     stroke,
-                    strokeWidth: "13.14px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(-14.01 4.504) scale(1.10946)"
             />
@@ -67,7 +67,7 @@ export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.63px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="matrix(1.02816 0 0 1.10946 -3.604 58.26)"
             />
@@ -76,7 +76,7 @@ export default function QueueIcon({stroke = '#fff', filled = false, fill = '#fff
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "13.63px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="matrix(1.02816 0 0 1.10946 -3.604 13.881)"
             />

@@ -1,4 +1,4 @@
-export default function NextTrackIcon({stroke = '#fff', strokeRate = 1}) {
+export default function CopyIcon({stroke = '#fff', strokeWidth = 15}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -13,22 +13,22 @@ export default function NextTrackIcon({stroke = '#fff', strokeRate = 1}) {
             viewBox="0 0 256 256"
         >
             <path
-                d="M0 47.61a26.161 26.161 0 0 1 40.188-22.083l134.927 85.707a19.86 19.86 0 0 1 0 33.532L40.188 230.473A26.161 26.161 0 0 1 0 208.39V47.61Z"
+                d="M173.241 69.788c0-11.045-8.954-20-20-20h-50.482c-11.046 0-20 8.955-20 20v116.424c0 11.045 8.954 20 20 20h50.482c11.046 0 20-8.955 20-20V69.788Z"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${20.7 * strokeRate}px`,
+                    strokeWidth: `${strokeWidth}px`,
                 }}
-                transform="translate(10.571 -.839) scale(1.00655)"
+                transform="translate(-15.302 -15.302)"
             />
             <path
-                d="M239.917 34.353h-24.588a17.806 17.806 0 0 0-17.802 17.803v151.688a17.806 17.806 0 0 0 17.802 17.803h24.588"
+                d="M173.241 80.392v105.82c0 11.045-8.954 20-20 20h-39.878v.001a30.602 30.602 0 0 0 30.602 30.602h27.748c17.746 0 32.131-14.386 32.131-32.131v-93.69a30.602 30.602 0 0 0-30.602-30.602h-.001Z"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${18.54 * strokeRate}px`,
+                    strokeWidth: `${strokeWidth}px`,
                 }}
-                transform="translate(-24.108 -15.803) scale(1.12346)"
+                transform="translate(-15.302 -15.302)"
             />
         </svg>
     )

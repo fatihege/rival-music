@@ -1,4 +1,4 @@
-export default function SettingsIcon({stroke = '#fff'}) {
+export default function SettingsIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function SettingsIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "7.93px",
+                    strokeWidth: `${7.93 * strokeRate}px`,
                 }}
                 transform="translate(-107.303 -107.303) scale(1.8383)"
             />
@@ -28,7 +28,7 @@ export default function SettingsIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "16.96px",
+                    strokeWidth: `${16.96 * strokeRate}px`,
                 }}
                 transform="matrix(.86006 0 0 .86006 17.912 17.912)"
             />

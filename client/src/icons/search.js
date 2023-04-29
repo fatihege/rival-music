@@ -1,4 +1,4 @@
-export default function SearchIcon({filled = false, stroke = '#fff', fill = '#fff'}) {
+export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth = 6, fill = '#fff'}) {
     return !filled ? (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +20,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', fill = '#ff
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: "5.68px",
+                        strokeWidth: `${strokeWidth}px`,
                     }}
                 />
                 <path
@@ -28,7 +28,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', fill = '#ff
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: "5.68px",
+                        strokeWidth: `${strokeWidth}px`,
                     }}
                     transform="translate(27.44 27.44)"
                 />
@@ -55,7 +55,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', fill = '#ff
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: "5.68px",
+                        strokeWidth: `${strokeWidth}px`,
                     }}
                 />
                 <circle
@@ -72,7 +72,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', fill = '#ff
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: "5.68px",
+                        strokeWidth: `${strokeWidth}px`,
                     }}
                     transform="translate(27.44 27.44)"
                 />

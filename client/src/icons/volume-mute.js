@@ -1,4 +1,4 @@
-export default function VolumeMuteIcon({stroke = '#fff'}) {
+export default function VolumeMuteIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function VolumeMuteIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "8.2px",
+                    strokeWidth: `${8.2 * strokeRate}px`,
                 }}
                 transform="matrix(1.7789 0 0 1.7789 -146.118 -11.427)"
             />
@@ -26,7 +26,7 @@ export default function VolumeMuteIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "11.88px",
+                    strokeWidth: `${11.88 * strokeRate}px`,
                 }}
                 transform="matrix(1.22772 0 0 1.22772 -25.373 -19.465)"
             />
@@ -35,7 +35,7 @@ export default function VolumeMuteIcon({stroke = '#fff'}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "11.88px",
+                    strokeWidth: `${11.88 * strokeRate}px`,
                 }}
                 transform="rotate(-90 204.73 150.418) scale(1.22772)"
             />

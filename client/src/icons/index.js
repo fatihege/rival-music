@@ -24,11 +24,13 @@ import RightArrowIcon from '@/icons/right-arrow'
 import LeftArrowIcon from '@/icons/left-arrow'
 import CloseIcon from '@/icons/close'
 import MicrophoneIcon from '@/icons/microphone'
+import CopyIcon from '@/icons/copy'
+import DownloadIcon from '@/icons/download'
+import FullScreenIcon from '@/icons/full-screen'
+import ExitFullScreenIcon from '@/icons/exit-full-screen'
 
 /* TODO: Add more icons
-import DownloadIcon from '@/icons/download'
 import DownloadingIcon from '@/icons/downloading'
-import DownloadedIcon from '@/icons/downloaded'
 import EditIcon from '@/icons/edit'
 */
 
@@ -59,4 +61,8 @@ export {
     LeftArrowIcon,
     CloseIcon,
     MicrophoneIcon,
+    CopyIcon,
+    DownloadIcon,
+    FullScreenIcon,
+    ExitFullScreenIcon,
 }

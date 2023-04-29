@@ -1,4 +1,4 @@
-export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#fff'}) {
+export default function LibraryIcon({filled = false, stroke = '#fff', strokeWidth = 15, fill = '#fff'}) {
     return !filled ? (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "14.58px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(10.777)"
             />
@@ -26,7 +26,7 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "14.58px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(-.531)"
             />
@@ -35,7 +35,7 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "14.58px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(-50.531)"
             />
@@ -58,7 +58,7 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
                 style={{
                     fill,
                     stroke,
-                    strokeWidth: "14.58px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(10.777)"
             />
@@ -67,7 +67,7 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "14.58px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(-.531)"
             />
@@ -76,7 +76,7 @@ export default function LibraryIcon({filled = false, stroke = '#fff', fill = '#f
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: "14.58px",
+                    strokeWidth: `${strokeWidth}px`,
                 }}
                 transform="translate(-50.531)"
             />
