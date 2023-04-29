@@ -1,5 +1,81 @@
 @import "variables"
 
+.albumCover
+  position: fixed
+  width: 250px
+  height: 250px
+  left: -250px
+  bottom: calc(100px + 2.25rem)
+  border-radius: 1rem
+  overflow: hidden
+  z-index: 3
+  transition: .3s ease-in-out
+  transition-property: left, right, bottom
+
+  &.show
+    left: 1.5rem
+    box-shadow: 0 5px 15px 0 rgba(0, 0, 0, .5)
+
+  &.lower
+    bottom: 1.5rem
+
+  &.right
+    left: 100vw
+    right: -250px
+
+    &.show
+      left: calc(100vw - 250px - 1.5rem)
+      right: 1.5rem
+
+  &:hover
+    .overlay
+      opacity: 1
+      pointer-events: all
+
+  img
+    width: 100%
+    height: auto
+
+  .overlay
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    background-color: rgba(0, 0, 0, .4)
+    backdrop-filter: blur(4px)
+    display: flex
+    justify-content: flex-end
+    align-items: flex-start
+    column-gap: .5rem
+    padding: 1rem
+    opacity: 0
+    pointer-events: none
+    transition: opacity .15s ease-out
+
+    .button
+      width: 2.5rem
+      height: 2.5rem
+      cursor: pointer
+      border: none
+      border-radius: 50%
+      background-color: rgba(0, 0, 0, .2)
+      transition: background-color .15s ease-out
+      display: flex
+      justify-content: center
+      align-items: center
+
+      &:hover
+        background-color: rgba(0, 0, 0, .4)
+
+      &:active
+        transform: scale(.9)
+
+      svg
+        width: 1.5rem
+        height: 1.5rem
+        opacity: .7
+
 .nowPlayingBar
   position: fixed
   bottom: 1.5rem
@@ -23,13 +99,13 @@
 
     &.breakpoint
       .track
-        width: 20% !important
+        width: 23%
 
       .trackControls
-        width: 60% !important
+        width: 54%
 
       .otherControls
-        width: 20% !important
+        width: 23%
 
     .track
       display: flex
@@ -43,12 +119,63 @@
         width: calc(100px - 2rem)
         height: calc(100px - 2rem)
         overflow: hidden
-        border-radius: 4px
+        border-radius: 8px
+        position: relative
+        transition: .2s ease-in-out
+        transition-property: min-width, width, opacity
+
+        &.hide
+          width: 0
+          min-width: 0
+          opacity: 0
+          pointer-events: none
+
+        &:hover
+          .overlay
+            opacity: 1
+            pointer-events: all
 
         img
           width: 100%
-          height: auto
+          height: 100%
           object-fit: cover
+
+        .overlay
+          width: 100%
+          height: 100%
+          position: absolute
+          top: 0
+          background-color: rgba(0, 0, 0, .4)
+          backdrop-filter: blur(4px)
+          display: flex
+          justify-content: center
+          align-items: center
+          opacity: 0
+          pointer-events: none
+          transition: opacity .15s ease-out
+
+          .hideButton
+            width: 2.5rem
+            height: 2.5rem
+            border: none
+            background-color: rgba(0, 0, 0, .07)
+            border-radius: 50%
+            display: flex
+            justify-content: center
+            align-items: center
+            cursor: pointer
+            transition: background-color .15s ease-out
+
+            &:hover
+              background-color: rgba(0, 0, 0, .2)
+
+            &:active
+              transform: scale(.9)
+
+            svg
+              width: 1.25rem
+              height: 1.25rem
+              opacity: .8
 
       .trackInfo
         display: flex
@@ -104,6 +231,7 @@
 
           a
             opacity: .7
+            width: max-content
 
     .trackControls
       display: flex
@@ -184,7 +312,7 @@
       justify-content: flex-end
       align-items: center
       column-gap: .5rem
-      min-width: 60px
+      min-width: 150px
       width: 30%
 
       .buttons
@@ -193,8 +321,8 @@
         column-gap: .25rem
 
         .button
-          width: 2.5rem
-          height: 2.5rem
+          width: 2.25rem
+          height: 2.25rem
           display: flex
           justify-content: center
           align-items: center

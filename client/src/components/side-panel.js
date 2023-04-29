@@ -6,7 +6,7 @@ import {SidePanelResizingContext} from '@/pages/_app'
 import {AddIcon, HomeIcon, LibraryIcon, LogoWhite, NextIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
-const MIN_WIDTH = 296, // Minimum width of the side panel
+const MIN_WIDTH = 298, // Minimum width of the side panel
     DEFAULT_WIDTH = 320, // Default width of the side panel
     MAX_WIDTH = 600 // Maximum width of the side panel
 

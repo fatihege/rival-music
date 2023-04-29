@@ -20,9 +20,12 @@ import NextIcon from '@/icons/next'
 import PrevIcon from '@/icons/prev'
 import CustomizationIcon from '@/icons/customization'
 import QueueIcon from '@/icons/queue'
+import RightArrowIcon from '@/icons/right-arrow'
+import LeftArrowIcon from '@/icons/left-arrow'
+import CloseIcon from '@/icons/close'
+import MicrophoneIcon from '@/icons/microphone'
 
 /* TODO: Add more icons
-import CloseIcon from '@/icons/close'
 import DownloadIcon from '@/icons/download'
 import DownloadingIcon from '@/icons/downloading'
 import DownloadedIcon from '@/icons/downloaded'
@@ -52,4 +55,8 @@ export {
     PrevIcon,
     CustomizationIcon,
     QueueIcon,
+    RightArrowIcon,
+    LeftArrowIcon,
+    CloseIcon,
+    MicrophoneIcon,
 }
