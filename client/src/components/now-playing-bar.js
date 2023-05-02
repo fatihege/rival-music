@@ -20,7 +20,7 @@ import styles from '@/styles/now-playing-bar.module.sass'
 export default function NowPlayingBar() {
     const router = useRouter() // Router instance
     const [, setIsResizing] = useContext(NPBarResizingContext) // Now playing bar resizing state
-    const [sidePanelSpace, dispatchSidePanelSpace] = useContext(SidePanelSpaceContext) // Side panel bottom padding
+    const [, dispatchSidePanelSpace] = useContext(SidePanelSpaceContext) // Side panel bottom padding
     const [showAlbumCover, _setShowAlbumCover] = useState(false) // Is album cover shown
     const [albumCoverRight, _setAlbumCoverRight] = useState(false) // Album cover right position
     const showAlbumCoverRef = useRef(showAlbumCover) // Ref for showAlbumCover
@@ -57,13 +57,15 @@ export default function NowPlayingBar() {
         }
 
         setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
-        updateAlbumCoverSpace()
 
         window.addEventListener('resize', () => { // When window resize
             setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
-            updateAlbumCoverSpace()
         })
     }, [])
+
+    useEffect(() => { // Update side panel space when width changes
+        updateAlbumCoverSpace(width || MAX_WIDTH) // Update side panel space
+    }, [MAX_WIDTH])
 
     const handleResize = (e, side) => setIsResizing({ // Handle resizing
         active: true, // Set resizing state to active
@@ -79,12 +81,12 @@ export default function NowPlayingBar() {
     })
 
     const updateAlbumCoverSpace = (w = width) => {
-        if (showAlbumCoverRef.current && !albumCoverRightRef.current && w >= MAX_WIDTH - 516) dispatchSidePanelSpace(3)
-        else if (showAlbumCoverRef.current && !albumCoverRightRef.current) dispatchSidePanelSpace(2)
-        else if (!showAlbumCoverRef.current) {
+        if (showAlbumCoverRef.current && !albumCoverRightRef.current && MAX_WIDTH > 0 && w >= MAX_WIDTH - 516) dispatchSidePanelSpace(3) // When album cover is shown and not right and now playing bar is on side panel
+        else if (showAlbumCoverRef.current && !albumCoverRightRef.current) dispatchSidePanelSpace(2) // When album cover is shown and not right
+        else if (!showAlbumCoverRef.current) { // When album cover is not shown
             const sidePanelWidth = parseInt(localStorage.getItem('sidePanelWidth')) // Get side panel width from local storage
-            if (!isNaN(sidePanelWidth) && window.innerWidth - w < sidePanelWidth * 2)
-                dispatchSidePanelSpace(1)
+            if (!isNaN(sidePanelWidth) && window.innerWidth - w < sidePanelWidth * 2) // When now playing bar is on side panel
+                dispatchSidePanelSpace(1) // Set side panel bottom padding to 1
             else dispatchSidePanelSpace(0)
         }
         else dispatchSidePanelSpace(0)
