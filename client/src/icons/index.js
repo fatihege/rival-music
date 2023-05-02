@@ -1,4 +1,5 @@
-import LogoWhite from '@/icons/logo-white'
+import Logo from '@/icons/logo'
+import LogoIcon from '@/icons/logo-icon'
 import HomeIcon from '@/icons/home'
 import SearchIcon from '@/icons/search'
 import LibraryIcon from '@/icons/library'
@@ -35,7 +36,8 @@ import EditIcon from '@/icons/edit'
 */
 
 export {
-    LogoWhite,
+    Logo,
+    LogoIcon,
     HomeIcon,
     SearchIcon,
     LibraryIcon,

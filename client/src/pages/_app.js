@@ -67,8 +67,10 @@ export default function App({Component, pageProps}) {
 
         window.addEventListener('mousemove', e => {
             if (isSidePanelResizingRef.current.active) { // If resizing side panel
-                const {setWidth, MIN_WIDTH, MAX_WIDTH} = isSidePanelResizingRef.current // Get min width and max width of side panel
+                const {setWidth, MIN_WIDTH, MAX_WIDTH, isMinimized} = isSidePanelResizingRef.current // Get min width and max width of side panel
                 const newWidth = e.clientX + isSidePanelResizingRef.current.offset // Calculate new width of side panel
+                if (newWidth < MIN_WIDTH / 2 - 10) return setWidth(null, true) // If new width is less than half of min width minus 20, minimize side panel
+                if (isMinimized && newWidth > MIN_WIDTH / 2 + 10) return setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // If new width is greater than half of min width minus 20 and side panel is minimized, maximize side panel
                 setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of side panel
             } else if (isNPBarResizingRef.current.active) { // If resizing now playing bar
                 const {setWidth, side, MIN_WIDTH, MAX_WIDTH} = isNPBarResizingRef.current // Get side, min width, and max width of now playing bar
