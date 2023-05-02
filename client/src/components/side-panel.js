@@ -2,7 +2,7 @@ import Link from 'next/link'
 import {useRouter} from 'next/router'
 import {useContext, useEffect, useRef, useState} from 'react'
 import SpanLink from '@/components/span-link'
-import {SidePanelResizingContext} from '@/pages/_app'
+import {SidePanelResizingContext, SidePanelSpaceContext} from '@/pages/_app'
 import {AddIcon, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
@@ -10,11 +10,18 @@ const MIN_WIDTH = 298, // Minimum width of the side panel
     DEFAULT_WIDTH = 320, // Default width of the side panel
     MAX_WIDTH = 600 // Maximum width of the side panel
 
+const PADDING = {
+    1: styles.nowPlayingBarSpace,
+    2: styles.albumSpace,
+    3: styles.bothSpaces,
+}
+
 export default function SidePanel() {
     const resizerRef = useRef() // Reference to the resizer element
     const router = useRouter() // Router instance
     const [activeLink, setActiveLink] = useState(router.pathname || '/') // Active link
     const [, setIsResizing] = useContext(SidePanelResizingContext) // Resizing context
+    const [sidePanelSpace] = useContext(SidePanelSpaceContext) // Side panel bottom padding
     const [width, _setWidth] = useState(DEFAULT_WIDTH) // Width of the side panel
     const [isMinimized, setIsMinimized] = useState(false) // Is side panel minimized
     const widthRef = useRef(width) // Reference to the width of the side panel
@@ -38,17 +45,12 @@ export default function SidePanel() {
         _setWidth(value)
     }
 
-    // TODO: Remove this
-    let ran = false
     useEffect(() => {
-        if (ran) return
-        ran = true
-
         const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
         if (width && !isNaN(parseInt(width))) // If width is valid
             if (parseInt(width) === -1) setIsMinimized(true) // If width is -1, set is minimized
             else setWidth(parseInt(width)) // Otherwise, set width
-    })
+    }, [])
 
     useEffect(() => {
         setActiveLink(router.pathname) // Update active link
@@ -127,7 +129,7 @@ export default function SidePanel() {
                             </div>
                         )}
                     </div>
-                    <div className={styles.libraryList}>
+                    <div className={`${styles.libraryList} ${PADDING[sidePanelSpace] || ''}`}>
                         <SpanLink href="/">
                             <div className={styles.listItem}>
                                 <div className={styles.image}>

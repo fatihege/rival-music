@@ -1,5 +1,4 @@
-import {useRouter} from 'next/router'
-import {createContext, useEffect, useRef, useState} from 'react'
+import {createContext, useEffect, useReducer, useRef, useState} from 'react'
 import Wrapper from '@/components/wrapper'
 import SidePanel from '@/components/side-panel'
 import NowPlayingBar from '@/components/now-playing-bar'
@@ -8,12 +7,17 @@ import styles from '@/styles/general.module.sass'
 import {SkeletonTheme} from 'react-loading-skeleton'
 
 export const SidePanelResizingContext = createContext(false) // Context for side panel resizing state
+export const SidePanelSpaceContext = createContext(false) // Context for side panel bottom padding
 export const NPBarResizingContext = createContext(false) // Context for now playing bar resizing state
 export const ProgressBarContext = createContext(false) // Context for progress bar changing state
 export const ShowTrackPanel = createContext(false) // Context for showing track panel state
 
+export const sidePanelSpaceReducer = (state, value) => { // Reducer for side panel bottom padding
+    if (state !== value) return value
+    else return state
+}
+
 export default function App({Component, pageProps}) {
-    const router = useRouter()
     const [load, setLoad] = useState(false) // Load state
     const [isSidePanelResizing, _setIsSidePanelResizing] = useState({ // Side panel resizing state
         active: false, // Is resizing active
@@ -38,6 +42,8 @@ export default function App({Component, pageProps}) {
         active: false, // Is track panel active
         type: null, // Type of track panel to show
     })
+    // const [sidePanelSpace, setSidePanelSpace] = useState(0) // Side panel bottom padding
+    const [sidePanelSpace, dispatchSidePanelSpace] = useReducer(sidePanelSpaceReducer, 0) // Side panel bottom padding
     const isSidePanelResizingRef = useRef(isSidePanelResizing) // Ref for side panel resizing state
     const isNPBarResizingRef = useRef(isNPBarResizing) // Ref for now playing bar resizing state
     const isProgressBarChangingRef = useRef(isProgressBarChanging) // Ref for progress bar changing state
@@ -57,12 +63,7 @@ export default function App({Component, pageProps}) {
         _setIsProgressBarChanging(value)
     }
 
-    // TODO: Remove this
-    let ran = false
     useEffect(() => {
-        if (ran) return // Prevents this from running twice
-        ran = true
-
         if (localStorage) setLoad(true) // If local storage is available, set load state to true
 
         window.addEventListener('mousemove', e => {
@@ -94,21 +95,23 @@ export default function App({Component, pageProps}) {
         <>
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
                 <Wrapper load={load}>
-                    <SidePanelResizingContext.Provider value={[isSidePanelResizing, setIsSidePanelResizing]}>
-                        <ShowTrackPanel.Provider value={[showTrackPanel, setShowTrackPanel]}>
-                            <div className={styles.main}>
-                                <SidePanel/>
-                                <div className={styles.content}>
-                                    <Component {...pageProps}/>
+                    <SidePanelSpaceContext.Provider value={[sidePanelSpace, dispatchSidePanelSpace]}>
+                        <SidePanelResizingContext.Provider value={[isSidePanelResizing, setIsSidePanelResizing]}>
+                            <ShowTrackPanel.Provider value={[showTrackPanel, setShowTrackPanel]}>
+                                <div className={styles.main}>
+                                    <SidePanel/>
+                                    <div className={styles.content}>
+                                        <Component {...pageProps}/>
+                                    </div>
                                 </div>
-                            </div>
-                        </ShowTrackPanel.Provider>
-                    </SidePanelResizingContext.Provider>
-                    <NPBarResizingContext.Provider value={[isNPBarResizing, setIsNPBarResizing]}>
-                        <ProgressBarContext.Provider value={[isProgressBarChanging, setIsProgressBarChanging]}>
-                            <NowPlayingBar/>
-                        </ProgressBarContext.Provider>
-                    </NPBarResizingContext.Provider>
+                            </ShowTrackPanel.Provider>
+                        </SidePanelResizingContext.Provider>
+                        <NPBarResizingContext.Provider value={[isNPBarResizing, setIsNPBarResizing]}>
+                            <ProgressBarContext.Provider value={[isProgressBarChanging, setIsProgressBarChanging]}>
+                                <NowPlayingBar/>
+                            </ProgressBarContext.Provider>
+                        </NPBarResizingContext.Provider>
+                    </SidePanelSpaceContext.Provider>
                 </Wrapper>
             </SkeletonTheme>
         </>

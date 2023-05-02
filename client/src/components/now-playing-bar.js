@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router'
 import Link from 'next/link'
 import {useContext, useEffect, useRef, useState} from 'react'
-import {NPBarResizingContext} from '@/pages/_app'
+import {NPBarResizingContext, SidePanelSpaceContext} from '@/pages/_app'
 import {
     CloseIcon,
     CustomizationIcon, LeftArrowIcon,
@@ -20,6 +20,7 @@ import styles from '@/styles/now-playing-bar.module.sass'
 export default function NowPlayingBar() {
     const router = useRouter() // Router instance
     const [, setIsResizing] = useContext(NPBarResizingContext) // Now playing bar resizing state
+    const [sidePanelSpace, dispatchSidePanelSpace] = useContext(SidePanelSpaceContext) // Side panel bottom padding
     const [showAlbumCover, _setShowAlbumCover] = useState(false) // Is album cover shown
     const [albumCoverRight, _setAlbumCoverRight] = useState(false) // Album cover right position
     const showAlbumCoverRef = useRef(showAlbumCover) // Ref for showAlbumCover
@@ -40,12 +41,7 @@ export default function NowPlayingBar() {
         albumCoverRightRef.current = value // Update ref
     }
 
-    // TODO: Remove this
-    let ran = false
     useEffect(() => {
-        if (ran) return
-        ran = true
-
         setTimeout(() => setAnimateAlbumCover(true), 300) // Album cover can be animated after 300ms
 
         const nowPlayingBarWidth = parseInt(localStorage.getItem('nowPlayingBarWidth')) // Get width from local storage
@@ -61,11 +57,13 @@ export default function NowPlayingBar() {
         }
 
         setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
+        updateAlbumCoverSpace()
 
         window.addEventListener('resize', () => { // When window resize
             setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
+            updateAlbumCoverSpace()
         })
-    })
+    }, [])
 
     const handleResize = (e, side) => setIsResizing({ // Handle resizing
         active: true, // Set resizing state to active
@@ -75,15 +73,30 @@ export default function NowPlayingBar() {
         offset: MAX_WIDTH - e.clientX, // Set offset
         setWidth: value => {
             setWidth(value) // Update width
+            updateAlbumCoverSpace(value)
             localStorage.setItem('nowPlayingBarWidth', value) // Save width to local storage
         }, // Pass setWidth function
     })
 
+    const updateAlbumCoverSpace = (w = width) => {
+        if (showAlbumCoverRef.current && !albumCoverRightRef.current && w >= MAX_WIDTH - 516) dispatchSidePanelSpace(3)
+        else if (showAlbumCoverRef.current && !albumCoverRightRef.current) dispatchSidePanelSpace(2)
+        else if (!showAlbumCoverRef.current) {
+            const sidePanelWidth = parseInt(localStorage.getItem('sidePanelWidth')) // Get side panel width from local storage
+            if (!isNaN(sidePanelWidth) && window.innerWidth - w < sidePanelWidth * 2)
+                dispatchSidePanelSpace(1)
+            else dispatchSidePanelSpace(0)
+        }
+        else dispatchSidePanelSpace(0)
+    }
+
     const updateAlbumCoverData = () => {
-        localStorage.setItem('bigAlbumCover', JSON.stringify({
+        updateAlbumCoverSpace()
+
+        localStorage.setItem('bigAlbumCover', JSON.stringify({ // Save showAlbumCover and albumCoverRight to local storage
             showAlbumCover: showAlbumCoverRef.current,
             albumCoverRight: albumCoverRightRef.current,
-        })) // Save showAlbumCover and albumCoverRight to local storage
+        }))
     }
 
     const toggleAlbumCover = () => {

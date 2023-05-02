@@ -141,9 +141,19 @@
 
       .libraryList
         max-height: 100%
+        height: 100%
         overflow: auto
         margin-top: .5rem
         padding: .25rem
+
+        &.nowPlayingBarSpace
+          padding-bottom: calc(100px + .75rem)
+
+        &.albumSpace
+          padding-bottom: calc(250px + .75rem)
+
+        &.bothSpaces
+          padding-bottom: calc(350px + 1.5rem)
 
         .listItem
           display: flex
