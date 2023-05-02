@@ -43,7 +43,7 @@ export default function Slider({title, items}) {
                     </div>
                     <div className={styles.itemInfo}>
                         <div className={styles.itemName}>
-                            Heaven and Hell - 2009 Remaster
+                            Heaven and Hell - 2009 Remastered
                         </div>
                         <div className={styles.itemArtist}>
                             <SpanLink href="/">

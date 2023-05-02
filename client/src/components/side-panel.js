@@ -110,7 +110,7 @@ export default function SidePanel() {
                                 </div>
                                 <div className={styles.info}>
                                     <div className={styles.name}>
-                                        <Link href="/">Seek & Destroy - Remaster</Link>
+                                        <Link href="/">Seek & Destroy - Remastered</Link>
                                     </div>
                                     <div className={styles.creator}>
                                         <Link href="/">Metallica</Link>
@@ -125,7 +125,7 @@ export default function SidePanel() {
                                 </div>
                                 <div className={styles.info}>
                                     <div className={styles.name}>
-                                        <Link href="/">Heaven and Hell - 2009 Remaster</Link>
+                                        <Link href="/">Heaven and Hell - 2009 Remastered</Link>
                                     </div>
                                     <div className={styles.creator}>
                                         <Link href="/">Black Sabbath</Link>

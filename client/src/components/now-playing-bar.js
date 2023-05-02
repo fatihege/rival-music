@@ -130,7 +130,7 @@ export default function NowPlayingBar() {
                             <div className={styles.trackInfo}>
                                 <div className={styles.trackName}>
                                     <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
-                                        Seek & Destroy - Remaster
+                                        Seek & Destroy - Remastered
                                     </Link>
                                     <button className={styles.trackLike}>
                                         <LikeIcon strokeWidth={12}/>
