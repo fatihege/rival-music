@@ -79,6 +79,7 @@ export default function Slider({title, items = []}) {
                 walk > 0 ? Math.ceil(slider.scrollLeft / referenceWidth) * referenceWidth - referenceWidth : null
 
             if (scrollPos !== null) slider.scrollLeft = scrollPos // Scroll to position
+            walk = 0 // Reset walk
         })
 
         slides.addEventListener('mousemove', (e) => {
