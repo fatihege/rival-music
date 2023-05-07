@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import {useEffect, useRef} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {NextIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
@@ -13,6 +13,8 @@ export default function Slider({title, items = []}) {
                 image: id === 6 ? '/album_cover_6.jpg' : id === 5 ? '/album_cover_5.jpg' : id === 4 ? '/album_cover_4.jpg' : id === 3 ? '/album_cover_3.jpg' : id === 2 ? '/album_cover_2.jpg' : '/album_cover_1.jpg',
             })
 
+    const [moving, setMoving] = useState(false) // Is slider moving
+    const [isClickable, setIsClickable] = useState(false) // Is slider item clickable
     const sliderRef = useRef() // Slider wrapper
     const slidesRef = useRef() // Slides container
     const prevButtonRef = useRef() // Previous button
@@ -56,6 +58,7 @@ export default function Slider({title, items = []}) {
         slider.addEventListener('scroll', checkControls) // Check if controls should be disabled on scroll
 
         slides.addEventListener('mousedown', (e) => {
+            setIsClickable(true)
             slider.style.scrollBehavior = 'unset' // Disable smooth scroll
             isDown = true // Mouse is down
             startX = e.pageX - slides.offsetLeft // Mouse start X position
@@ -73,9 +76,9 @@ export default function Slider({title, items = []}) {
             const referenceWidth = referenceSlideRef.current.getBoundingClientRect().width + 16 * 1.5 // Reference slide width + gap
             const scrollPos = walk < 0 ?
                 Math.ceil(slider.scrollLeft / referenceWidth) * referenceWidth :
-                Math.ceil(slider.scrollLeft / referenceWidth) * referenceWidth - referenceWidth // Calculate scroll position
+                walk > 0 ? Math.ceil(slider.scrollLeft / referenceWidth) * referenceWidth - referenceWidth : null
 
-            slider.scrollLeft = scrollPos // Scroll to position
+            if (scrollPos !== null) slider.scrollLeft = scrollPos // Scroll to position
         })
 
         slides.addEventListener('mousemove', (e) => {
@@ -84,11 +87,17 @@ export default function Slider({title, items = []}) {
             const x = e.pageX - slides.offsetLeft // Mouse X position
             walk = x - startX // Calculate walk
             slider.scrollLeft = scrollLeft - walk // Scroll to position
+            setIsClickable(false)
         })
 
         prevButtonRef.current.addEventListener('click', () => handleScroll(true)) // Scroll to previous slide
         nextButtonRef.current.addEventListener('click', () => handleScroll()) // Scroll to next slide
     }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef])
+
+    const handlePlay = (e) => {
+        e.stopPropagation() // Prevent click on parent element
+        // TODO: Play song
+    }
 
     return (
         <div className={styles.container}>
@@ -109,7 +118,7 @@ export default function Slider({title, items = []}) {
             <div className={styles.wrapper} ref={sliderRef}>
                 <div className={styles.slides} ref={slidesRef}>
                     {items.map((item, i) => (
-                        <div className={styles.item} key={item.id} ref={i === 0 ? referenceSlideRef : null}>
+                        <div className={styles.item} key={item.id} ref={i === 0 ? referenceSlideRef : null} onClick={handlePlay}>
                             <div className={styles.itemImage}>
                                 <img src={item.image} alt={item.name}/>
                                 <div className={styles.overlay}>

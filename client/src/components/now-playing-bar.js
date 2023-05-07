@@ -117,10 +117,6 @@ export default function NowPlayingBar() {
         updateAlbumCoverData() // Update album cover data
     }
 
-    useEffect(() => {
-        console.log(width)
-    }, [widthRef])
-
     return (
         <>
             <div
