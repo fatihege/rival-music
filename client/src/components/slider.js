@@ -13,7 +13,6 @@ export default function Slider({title, items = []}) {
                 image: id === 6 ? '/album_cover_6.jpg' : id === 5 ? '/album_cover_5.jpg' : id === 4 ? '/album_cover_4.jpg' : id === 3 ? '/album_cover_3.jpg' : id === 2 ? '/album_cover_2.jpg' : '/album_cover_1.jpg',
             })
 
-    const [moving, setMoving] = useState(false) // Is slider moving
     const [isClickable, setIsClickable] = useState(false) // Is slider item clickable
     const sliderRef = useRef() // Slider wrapper
     const slidesRef = useRef() // Slides container
@@ -35,11 +34,11 @@ export default function Slider({title, items = []}) {
             const scrollLeft = slider.scrollLeft
             const scrollRight = slider.scrollWidth - slider.scrollLeft - slider.clientWidth
 
-            if (scrollLeft <= 0) prevButtonRef.current.classList.add(styles.disabled)
-            else prevButtonRef.current.classList.remove(styles.disabled)
+            if (scrollLeft <= 0) prevButtonRef.current?.classList.add(styles.disabled)
+            else prevButtonRef.current?.classList.remove(styles.disabled)
 
-            if (scrollRight <= 0) nextButtonRef.current.classList.add(styles.disabled)
-            else nextButtonRef.current.classList.remove(styles.disabled)
+            if (scrollRight <= 0) nextButtonRef.current?.classList.add(styles.disabled)
+            else nextButtonRef.current?.classList.remove(styles.disabled)
         }
 
         const handleScroll = (prev = false) => { // Scroll to previous or next slide

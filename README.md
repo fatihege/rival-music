@@ -39,19 +39,19 @@ The application will be running at `localhost:3000`.
 
 ## Possible Endpoints
 
-| Endpoint                  | Description                                       |
-| --------------------------| ------------------------------------------------- |
-| GET /                     | Home page                                         |
-| GET /explore              | Explore music genres                              |
-| GET /search/:query        | Search for music using a query string             |
-| GET /library              | User's library of saved songs and playlists       |
-| GET /library/playlists    | User's saved playlists                            |
-| GET /library/likes        | User's liked songs                                |
-| GET /library/saved        | User's saved songs                                |
-| GET /playlist/:id         | A playlist with the given id                      |
-| GET /lyrics               | Lyrics for the currently playing track            |
-| GET /queue                | Current queue of songs                            |
-| GET /artist/:id           | An artist with the given id                       |
+| Endpoint                  | Description                                       | Exists |
+|---------------------------|---------------------------------------------------|:------:|
+| GET /                     | Home page                                         |   ✅   |
+| GET /explore              | Explore music genres                              |   ✅   |
+| GET /search/:query        | Search for music using a query string             |   ❌   |
+| GET /library              | User's library of saved songs and playlists       |   ✅   |
+| GET /library/playlists    | User's saved playlists                            |   ❌   |
+| GET /library/likes        | User's liked songs                                |   ❌   |
+| GET /library/saved        | User's saved songs                                |   ❌   |
+| GET /playlist/:id         | A playlist with the given id                      |   ❌   |
+| GET /lyrics               | Lyrics for the currently playing track            |   ✅   |
+| GET /queue                | Current queue of songs                            |   ❌   |
+| GET /artist/:id           | An artist with the given id                       |   ❌   |
 
 ## License
 
