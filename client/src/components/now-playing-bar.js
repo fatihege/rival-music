@@ -26,8 +26,9 @@ export default function NowPlayingBar() {
     const showAlbumCoverRef = useRef(showAlbumCover) // Ref for showAlbumCover
     const albumCoverRightRef = useRef(albumCoverRight) // Ref for albumCoverRight
     const [animateAlbumCover, setAnimateAlbumCover] = useState(false) // Animate album cover
-    const [width, setWidth] = useState(null) // Now playing bar width
     const [MAX_WIDTH, setMaxWidth] = useState(null) // Max width of now playing bar
+    const [width, _setWidth] = useState(null) // Now playing bar width
+    const widthRef = useRef(width) // Ref for now playing bar width
     const MIN_WIDTH = 700 // Min width of now playing bar
     const HIDING_BREAKPOINT = 800 // Hide some elements when width is less than this value
 
@@ -41,12 +42,13 @@ export default function NowPlayingBar() {
         albumCoverRightRef.current = value // Update ref
     }
 
+    const setWidth = (value) => {
+        _setWidth(value) // Set width
+        widthRef.current = value // Update ref
+    }
+
     useEffect(() => {
         setTimeout(() => setAnimateAlbumCover(true), 300) // Album cover can be animated after 300ms
-
-        const nowPlayingBarWidth = parseInt(localStorage.getItem('nowPlayingBarWidth')) // Get width from local storage
-        if (nowPlayingBarWidth) setWidth(nowPlayingBarWidth) // Set width to local storage value if it exists
-        else setWidth(MAX_WIDTH) // Set width to max width when width is not set
 
         try {
             const bigAlbumCover = JSON.parse(localStorage.getItem('bigAlbumCover')) // Get big album cover from local storage
@@ -60,7 +62,12 @@ export default function NowPlayingBar() {
 
         window.addEventListener('resize', () => { // When window resize
             setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
+            setWidth(window.innerWidth - 48) // Set width to max width
         })
+
+        const nowPlayingBarWidth = parseInt(localStorage.getItem('nowPlayingBarWidth')) // Get width from local storage
+        if (nowPlayingBarWidth) setWidth(nowPlayingBarWidth) // Set width to local storage value if it exists
+        else setWidth(window.innerWidth - 48) // Set width to max width when width is not set
     }, [])
 
     useEffect(() => { // Update side panel space when width changes
@@ -88,8 +95,7 @@ export default function NowPlayingBar() {
             if (!isNaN(sidePanelWidth) && window.innerWidth - w < sidePanelWidth * 2) // When now playing bar is on side panel
                 dispatchSidePanelSpace(1) // Set side panel bottom padding to 1
             else dispatchSidePanelSpace(0)
-        }
-        else dispatchSidePanelSpace(0)
+        } else dispatchSidePanelSpace(0)
     }
 
     const updateAlbumCoverData = () => {
@@ -111,6 +117,10 @@ export default function NowPlayingBar() {
         updateAlbumCoverData() // Update album cover data
     }
 
+    useEffect(() => {
+        console.log(width)
+    }, [widthRef])
+
     return (
         <>
             <div
@@ -125,93 +135,92 @@ export default function NowPlayingBar() {
                     </button>
                 </div>
             </div>
-            {typeof width === 'number' && (
-                <div className={styles.nowPlayingBar}
-                     style={{width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`}}>
-                    <div
-                        className={`${styles.nowPlayingBarWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
-                        <div className={`${styles.layoutResizer} ${styles.left}`}
-                             onMouseDown={e => handleResize(e, 1)}></div>
-                        <div className={styles.track}>
-                            <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
-                                <img src="/album_cover_1.jpg" alt="Album Cover"/>
-                                <div className={styles.overlay}>
-                                    <button className={styles.hideButton}
-                                            onClick={() => toggleAlbumCover()}>
-                                        <LeftArrowIcon/>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className={styles.trackInfo}>
-                                <div className={styles.trackName}>
-                                    <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
-                                        Seek & Destroy - Remastered
-                                    </Link>
-                                    <button className={styles.trackLike}>
-                                        <LikeIcon strokeWidth={12}/>
-                                    </button>
-                                </div>
-                                <div className={`${styles.trackArtist} ${width < HIDING_BREAKPOINT ? 'hide' : ''}`}>
-                                    <Link href="/">
-                                        Metallica
-                                    </Link>
-                                </div>
+            <div className={styles.nowPlayingBar}
+                 style={{width: `${Math.min(Math.max(widthRef.current, MIN_WIDTH), MAX_WIDTH)}px`}}>
+                <div
+                    className={`${styles.nowPlayingBarWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
+                    <div className={`${styles.layoutResizer} ${styles.left}`}
+                         onMouseDown={e => handleResize(e, 1)}></div>
+                    <div className={styles.track}>
+                        <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
+                            <img src="/album_cover_1.jpg" alt="Album Cover"/>
+                            <div className={styles.overlay}>
+                                <button className={styles.hideButton}
+                                        onClick={() => toggleAlbumCover()}>
+                                    <LeftArrowIcon/>
+                                </button>
                             </div>
                         </div>
-                        <div className={styles.trackControls}>
-                            <div className={styles.buttons}>
-                                <button className={styles.repeat}>
-                                    <RepeatIcon/>
-                                </button>
-                                <button className={styles.prevTrack}>
-                                    <PrevTrackIcon/>
-                                </button>
-                                <button className={styles.play}>
-                                    <PlayIcon/>
-                                </button>
-                                <button className={styles.nextTrack}>
-                                    <NextTrackIcon/>
-                                </button>
-                                <button className={styles.shuffle}>
-                                    <ShuffleIcon/>
+                        <div className={styles.trackInfo}>
+                            <div className={styles.trackName}>
+                                <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
+                                    Seek & Destroy - Remastered
+                                </Link>
+                                <button className={styles.trackLike}>
+                                    <LikeIcon strokeWidth={12}/>
                                 </button>
                             </div>
-                            <ProgressBar duration={6 * 60 + 55}/>
+                            <div className={`${styles.trackArtist} ${width < HIDING_BREAKPOINT ? 'hide' : ''}`}>
+                                <Link href="/">
+                                    Metallica
+                                </Link>
+                            </div>
                         </div>
-                        <div className={styles.otherControls}>
-                            <div className={styles.buttons}>
-                                <button className={styles.button} onClick={() => router.pathname !== '/lyrics' ? router.push('/lyrics') : router.back()}>
-                                    <MicrophoneIcon/>
-                                </button>
+                    </div>
+                    <div className={styles.trackControls}>
+                        <div className={styles.buttons}>
+                            <button className={styles.repeat}>
+                                <RepeatIcon/>
+                            </button>
+                            <button className={styles.prevTrack}>
+                                <PrevTrackIcon/>
+                            </button>
+                            <button className={styles.play}>
+                                <PlayIcon/>
+                            </button>
+                            <button className={styles.nextTrack}>
+                                <NextTrackIcon/>
+                            </button>
+                            <button className={styles.shuffle}>
+                                <ShuffleIcon/>
+                            </button>
+                        </div>
+                        <ProgressBar duration={6 * 60 + 55}/>
+                    </div>
+                    <div className={styles.otherControls}>
+                        <div className={styles.buttons}>
+                            <button className={styles.button}
+                                    onClick={() => router.pathname !== '/lyrics' ? router.push('/lyrics') : router.back()}>
+                                <MicrophoneIcon/>
+                            </button>
+                            <button className={styles.button}>
+                                <VolumeHighIcon/>
+                            </button>
+                            <button className={styles.button}>
+                                <CustomizationIcon/>
+                            </button>
+                            {width < HIDING_BREAKPOINT ? (
                                 <button className={styles.button}>
-                                    <VolumeHighIcon/>
+                                    <QueueIcon/>
                                 </button>
-                                <button className={styles.button}>
-                                    <CustomizationIcon/>
-                                </button>
-                                {width < HIDING_BREAKPOINT ? (
-                                    <button className={styles.button}>
-                                        <QueueIcon/>
-                                    </button>
-                                ) : ''}
-                            </div>
-                            {width >= HIDING_BREAKPOINT ? (
-                                <>
-                                    <div className={styles.separator}></div>
-                                    <div className={styles.queue}>
-                                        <div className={styles.queueImage}>
-                                            <img src="/album_cover_2.jpg" alt=""/>
-                                        </div>
-                                        <div className={styles.queueText}>Queue</div>
-                                    </div>
-                                </>
                             ) : ''}
                         </div>
-                        <div className={`${styles.layoutResizer} ${styles.right}`}
-                             onMouseDown={e => handleResize(e, 2)}></div>
+                        {width >= HIDING_BREAKPOINT ? (
+                            <>
+                                <div className={styles.separator}></div>
+                                <div className={styles.queue}>
+                                    <div className={styles.queueImage}>
+                                        <img src="/album_cover_2.jpg" alt=""/>
+                                    </div>
+                                    <div className={styles.queueText}>Queue</div>
+                                </div>
+                            </>
+                        ) : ''}
                     </div>
+                    <div className={`${styles.layoutResizer} ${styles.right}`}
+                         onMouseDown={e => handleResize(e, 2)}></div>
                 </div>
-            )}
+            </div>
         </>
     )
 }
