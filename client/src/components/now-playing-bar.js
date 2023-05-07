@@ -62,7 +62,7 @@ export default function NowPlayingBar() {
 
         window.addEventListener('resize', () => { // When window resize
             setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48
-            setWidth(window.innerWidth - 48) // Set width to max width
+            setWidth(widthRef.current || window.innerWidth - 48) // Set width to max width
         })
 
         const nowPlayingBarWidth = parseInt(localStorage.getItem('nowPlayingBarWidth')) // Get width from local storage
