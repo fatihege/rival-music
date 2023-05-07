@@ -5,7 +5,7 @@
   display: block
   width: 100%
   min-height: 100%
-  background: #0c0c0c
+  background: #090909
   color: #fff
   padding: 2rem
 
@@ -17,6 +17,7 @@
     left: 0
     z-index: 0
     overflow: hidden
+    opacity: .8
 
     .color
       filter: blur(80px)
@@ -24,7 +25,7 @@
 
       &:first-child
         width: 60%
-        height: 250px
+        height: 350px
         border-radius: 0 50% 100% 0
         background-image: linear-gradient(to bottom right, transparentize(#3600e8, .7), transparentize(#3600e8, 1))
         z-index: -3
@@ -32,7 +33,7 @@
 
       &:nth-child(2)
         width: 350px
-        height: 350px
+        height: 450px
         border-radius: 30% 20% 50% 20%
         background-image: radial-gradient(circle at center, transparentize(#f5d300, .5), transparentize(#f5d300, 1))
         right: -100px
@@ -41,7 +42,7 @@
 
       &:last-child
         width: 90%
-        height: 250px
+        height: 350px
         border-radius: 0 0 0 100%
         background-image: linear-gradient(to bottom right, transparentize(#e80000, .5), transparentize(#e80000, 1))
         top: -100px

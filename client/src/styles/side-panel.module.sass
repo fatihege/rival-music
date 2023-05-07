@@ -82,6 +82,10 @@
       &.active
         opacity: 1
 
+      &.active
+        .label
+          color: $accentColor
+
       &:active .label
         transform: scale(.95)
 
@@ -147,20 +151,20 @@
         padding: .25rem
 
         &.nowPlayingBarSpace
-          padding-bottom: calc(100px + .75rem)
+          padding-bottom: calc(100px + .5rem)
 
         &.albumSpace
-          padding-bottom: calc(250px + .75rem)
+          padding-bottom: calc(250px + .5rem)
 
         &.bothSpaces
-          padding-bottom: calc(350px + 1.5rem)
+          padding-bottom: calc(350px + 1.25rem)
 
         .listItem
           display: flex
           align-items: center
           gap: .5rem
-          padding: .5rem .75rem
-          border-radius: 8px
+          padding: .5rem
+          border-radius: .75rem
           white-space: nowrap
 
           &:hover
@@ -170,17 +174,21 @@
             background-color: rgba(56, 56, 56, 0.2)
 
           .image
-            border-radius: 4px
+            border-radius: .5rem
             overflow: hidden
             min-width: 3.5rem
             min-height: 3.5rem
             max-width: 3.5rem
             max-height: 3.5rem
+            border: 1px solid rgba(255, 255, 255, .05)
+            display: flex
+            justify-content: center
+            align-items: center
 
             img
               width: 100%
               height: auto
-              object-fit: cover
+              object-fit: contain
 
           .info
             display: flex

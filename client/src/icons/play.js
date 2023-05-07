@@ -12,11 +12,11 @@ export default function PlayIcon({fill = '#fff'}) {
             viewBox="0 0 256 256"
         >
             <path
-                d="M0 41.144a22.874 22.874 0 0 1 34.946-19.428l147.296 91.533a17.368 17.368 0 0 1 0 29.502L34.946 234.284A22.874 22.874 0 0 1 0 214.856V41.144Z"
+                d="m0 0 205.979 128L0 256V0Z"
                 style={{
                     fill,
                 }}
-                transform="translate(35.761 -19.355) scale(1.15121)"
+                transform="translate(45.344)"
             />
         </svg>
     )

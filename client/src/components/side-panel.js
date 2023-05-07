@@ -29,16 +29,17 @@ export default function SidePanel() {
         {
             href: '/',
             icon: <HomeIcon/>,
-            activeIcon: <HomeIcon filled={true}/>,
+            activeIcon: <HomeIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>,
             label: 'Home',
         },
         {
             href: '/explore',
             icon: <SearchIcon/>,
-            activeIcon: <SearchIcon filled={true}/>,
+            activeIcon: <SearchIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>,
             label: 'Explore',
         },
     ]
+    const [libraryItems, setLibraryItems] = useState([]) // Library items
 
     const setWidth = value => { // Set width of the side panel
         widthRef.current = value
@@ -46,6 +47,14 @@ export default function SidePanel() {
     }
 
     useEffect(() => {
+        if (!libraryItems.length)
+            for (let id = 1; id <= 6; id++) setLibraryItems(prevState => [...prevState, {
+                id: id,
+                name: id === 6 ? 'Ride The Lightning' : id === 5 ? 'Fear of the Dark (2015 Remaster)' : id === 4 ? 'Hells Bells' : id === 3 ? 'The Devil in I' : id === 2 ? 'Heaven and Hell - 2009 Remaster' : 'Seek & Destroy - Remastered',
+                artist: id === 5 ? 'Iron Maiden' : id === 4 ? 'AC/DC' : id === 3 ? 'Slipknot' : id === 2 ? 'Black Sabbath' : 'Metallica',
+                image: id === 6 ? '/album_cover_6.jpg' : id === 5 ? '/album_cover_5.jpg' : id === 4 ? '/album_cover_4.jpg' : id === 3 ? '/album_cover_3.jpg' : id === 2 ? '/album_cover_2.jpg' : '/album_cover_1.jpg',
+            }])
+
         const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
         if (width && !isNaN(parseInt(width))) // If width is valid
             if (parseInt(width) === -1) setIsMinimized(true) // If width is -1, set is minimized
@@ -110,7 +119,11 @@ export default function SidePanel() {
                     <div className={styles.header}>
                         <SpanLink href="/library" className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`} noRedirect={isMinimized} onClick={() => handleMinimize(true)}>
                             <div className={styles.icon}>
-                                <LibraryIcon filled={activeLink === '/library'}/>
+                                {activeLink === '/library' ? (
+                                    <LibraryIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>
+                                ) : (
+                                    <LibraryIcon/>
+                                )}
                             </div>
                             {!isMinimized && (
                                 <div className={styles.label}>
@@ -130,57 +143,25 @@ export default function SidePanel() {
                         )}
                     </div>
                     <div className={`${styles.libraryList} ${PADDING[sidePanelSpace] || ''}`}>
-                        <SpanLink href="/">
-                            <div className={styles.listItem}>
-                                <div className={styles.image}>
-                                    <img src="/album_cover_1.jpg"/>
-                                </div>
-                                {!isMinimized && (
-                                    <div className={styles.info}>
-                                        <div className={styles.name}>
-                                            <Link href="/">Seek & Destroy - Remastered</Link>
-                                        </div>
-                                        <div className={styles.creator}>
-                                            <Link href="/">Metallica</Link>
-                                        </div>
+                        {libraryItems.map(({id, name, artist, image}) => (
+                            <SpanLink href="/" key={id}>
+                                <div className={styles.listItem}>
+                                    <div className={styles.image}>
+                                        <img src={image} alt={name}/>
                                     </div>
-                                )}
-                            </div>
-                        </SpanLink>
-                        <SpanLink href="/">
-                            <div className={styles.listItem}>
-                                <div className={styles.image}>
-                                    <img src="/album_cover_2.jpg"/>
+                                    {!isMinimized && (
+                                        <div className={styles.info}>
+                                            <div className={styles.name}>
+                                                <Link href="/">{name}</Link>
+                                            </div>
+                                            <div className={styles.creator}>
+                                                <Link href="/">{artist}</Link>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                {!isMinimized && (
-                                    <div className={styles.info}>
-                                        <div className={styles.name}>
-                                            <Link href="/">Heaven and Hell - 2009 Remastered</Link>
-                                        </div>
-                                        <div className={styles.creator}>
-                                            <Link href="/">Black Sabbath</Link>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </SpanLink>
-                        <SpanLink href="/">
-                            <div className={styles.listItem}>
-                                <div className={styles.image}>
-                                    <img src="/album_cover_3.jpg"/>
-                                </div>
-                                {!isMinimized && (
-                                    <div className={styles.info}>
-                                        <div className={styles.name}>
-                                            <Link href="/">The Devil in I</Link>
-                                        </div>
-                                        <div className={styles.creator}>
-                                            <Link href="/">Slipknot</Link>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </SpanLink>
+                            </SpanLink>
+                        ))}
                     </div>
                 </div>
                 <div className={styles.layoutResizer} ref={resizerRef} onMouseDown={handleResize}></div>

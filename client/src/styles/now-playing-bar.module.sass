@@ -11,6 +11,7 @@
   z-index: 3
   transition: .3s ease-in-out
   transition-property: left, right, bottom
+  border: 1px solid rgba(255, 255, 255, .05)
 
   &.show
     left: 1.5rem
@@ -123,6 +124,7 @@
         position: relative
         transition: .2s ease-in-out
         transition-property: min-width, width, opacity
+        border: 1px solid rgba(255, 255, 255, .02)
 
         &.hide
           width: 0
@@ -244,7 +246,7 @@
       .buttons
         display: flex
         align-items: center
-        gap: 1rem
+        gap: .75rem
         margin-top: .5rem
 
         button
@@ -318,7 +320,6 @@
       .buttons
         display: flex
         align-items: center
-        column-gap: .25rem
 
         .button
           width: 2.25rem
@@ -333,7 +334,8 @@
           transition: background-color .1s ease-out
 
           &:hover
-            background-color: rgba(255, 255, 255, .05)
+            svg
+              opacity: .9
 
           &:active
             transform: scale(.9)
@@ -355,24 +357,28 @@
         cursor: pointer
         background-color: transparent
         padding: .5rem
-        border-radius: 8px
+        border-radius: .5rem
 
         &:hover
           background-color: rgba(255, 255, 255, .05)
 
         &:active
-          background-color: rgba(255, 255, 255, .15)
+          background-color: rgba(255, 255, 255, .02)
 
         .queueImage
           width: 32px
           height: 32px
-          border-radius: 4px
+          border-radius: .25rem
           overflow: hidden
+          border: 1px solid rgba(255, 255, 255, .05)
+          display: flex
+          justify-content: center
+          align-items: center
 
           img
-            width: 100%
+            width: 32px
             height: auto
-            object-fit: cover
+            object-fit: contain
 
         .queueText
           font-weight: 400
