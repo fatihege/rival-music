@@ -1,7 +1,6 @@
 import {useRouter} from 'next/router'
 import Link from 'next/link'
-import {useContext, useEffect, useRef, useState} from 'react'
-import {NPBarResizingContext, SidePanelSpaceContext} from '@/pages/_app'
+import {useCallback, useEffect, useRef, useState} from 'react'
 import {
     CloseIcon,
     CustomizationIcon, LeftArrowIcon,
@@ -19,8 +18,8 @@ import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
     const router = useRouter() // Router instance
-    const [, setIsResizing] = useContext(NPBarResizingContext) // Now playing bar resizing state
-    const [, dispatchSidePanelSpace] = useContext(SidePanelSpaceContext) // Side panel bottom padding
+    const [isResizing, setIsResizing] = useState(false) // Is now playing bar resizing
+    const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
     const [showAlbumCover, _setShowAlbumCover] = useState(false) // Is album cover shown
     const [albumCoverRight, _setAlbumCoverRight] = useState(false) // Album cover right position
     const showAlbumCoverRef = useRef(showAlbumCover) // Ref for showAlbumCover
@@ -47,6 +46,23 @@ export default function NowPlayingBar() {
         widthRef.current = value // Update ref
     }
 
+    const updateAlbumCoverData = () => {
+        localStorage.setItem('bigAlbumCover', JSON.stringify({ // Save showAlbumCover and albumCoverRight to local storage
+            showAlbumCover: showAlbumCoverRef.current,
+            albumCoverRight: albumCoverRightRef.current,
+        }))
+    }
+
+    const toggleAlbumCover = () => {
+        setShowAlbumCover(!showAlbumCover) // Toggle showAlbumCover
+        updateAlbumCoverData() // Update album cover data
+    }
+
+    const toggleAlbumCoverRight = () => {
+        setAlbumCoverRight(!albumCoverRight) // Toggle albumCoverRight
+        updateAlbumCoverData() // Update album cover data
+    }
+
     useEffect(() => {
         setTimeout(() => setAnimateAlbumCover(true), 300) // Album cover can be animated after 300ms
 
@@ -70,52 +86,40 @@ export default function NowPlayingBar() {
         else setWidth(window.innerWidth - 48) // Set width to max width when width is not set
     }, [])
 
-    useEffect(() => { // Update side panel space when width changes
-        updateAlbumCoverSpace(width || MAX_WIDTH) // Update side panel space
-    }, [MAX_WIDTH])
+    const handleResizeDown = useCallback((e, side) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsResizing(true) // Set resizing to true
+        setResizingSide(side) // Set resizing side
+    }, []) // Handle resizing down
 
-    const handleResize = (e, side) => setIsResizing({ // Handle resizing
-        active: true, // Set resizing state to active
-        side, // Set resizing side
-        MIN_WIDTH, // Set min width
-        MAX_WIDTH, // Set max width
-        offset: MAX_WIDTH - e.clientX, // Set offset
-        setWidth: value => {
-            setWidth(value) // Update width
-            updateAlbumCoverSpace(value)
-            localStorage.setItem('nowPlayingBarWidth', value) // Save width to local storage
-        }, // Pass setWidth function
-    })
+    const handleResizeUp = useCallback(e => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (isResizing) setIsResizing(false) // Set resizing to false
+    }, [isResizing]) // Handle resizing down
 
-    const updateAlbumCoverSpace = (w = width) => {
-        if (showAlbumCoverRef.current && !albumCoverRightRef.current && MAX_WIDTH > 0 && w >= MAX_WIDTH - 516) dispatchSidePanelSpace(3) // When album cover is shown and not right and now playing bar is on side panel
-        else if (showAlbumCoverRef.current && !albumCoverRightRef.current) dispatchSidePanelSpace(2) // When album cover is shown and not right
-        else if (!showAlbumCoverRef.current) { // When album cover is not shown
-            const sidePanelWidth = parseInt(localStorage.getItem('sidePanelWidth')) // Get side panel width from local storage
-            if (!isNaN(sidePanelWidth) && window.innerWidth - w < sidePanelWidth * 2) // When now playing bar is on side panel
-                dispatchSidePanelSpace(1) // Set side panel bottom padding to 1
-            else dispatchSidePanelSpace(0)
-        } else dispatchSidePanelSpace(0)
-    }
+    const handleResize = useCallback(e => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (!isResizing) return // Return if resizing is not active
 
-    const updateAlbumCoverData = () => {
-        updateAlbumCoverSpace()
+        const newWidth = resizingSide === 1 ? window.innerWidth - e.clientX * 2 : window.innerWidth - (window.innerWidth - e.clientX) * 2 // Calculate new width of now playing bar
+        setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of now playing bar
+        localStorage.setItem('nowPlayingBarWidth', newWidth) // Save width to local storage
+    }, [isResizing, MAX_WIDTH]) // Handle resizing
 
-        localStorage.setItem('bigAlbumCover', JSON.stringify({ // Save showAlbumCover and albumCoverRight to local storage
-            showAlbumCover: showAlbumCoverRef.current,
-            albumCoverRight: albumCoverRightRef.current,
-        }))
-    }
+    useEffect(() => {
+        document.addEventListener('mousemove', handleResize)
+        document.addEventListener('mouseup', handleResizeUp)
+        document.addEventListener('mouseleave', handleResizeUp)
 
-    const toggleAlbumCover = () => {
-        setShowAlbumCover(!showAlbumCover) // Toggle showAlbumCover
-        updateAlbumCoverData() // Update album cover data
-    }
-
-    const toggleAlbumCoverRight = () => {
-        setAlbumCoverRight(!albumCoverRight) // Toggle albumCoverRight
-        updateAlbumCoverData() // Update album cover data
-    }
+        return () => { // Remove event listeners when component unmount
+            document.removeEventListener('mousemove', handleResize)
+            document.removeEventListener('mouseup', handleResizeUp)
+            document.removeEventListener('mouseleave', handleResizeUp)
+        }
+    }, [handleResize])
 
     return (
         <>
@@ -136,7 +140,7 @@ export default function NowPlayingBar() {
                 <div
                     className={`${styles.nowPlayingBarWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
                     <div className={`${styles.layoutResizer} ${styles.left}`}
-                         onMouseDown={e => handleResize(e, 1)}></div>
+                         onMouseDown={e => handleResizeDown(e, 1)}></div>
                     <div className={styles.track}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
                             <img src="/album_cover_1.jpg" alt="Album Cover"/>
