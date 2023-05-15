@@ -218,7 +218,7 @@ export default function NowPlayingBar() {
                         ) : ''}
                     </div>
                     <div className={`${styles.layoutResizer} ${styles.right}`}
-                         onMouseDown={e => handleResize(e, 2)}></div>
+                         onMouseDown={e => handleResizeDown(e, 2)}></div>
                 </div>
             </div>
         </>
