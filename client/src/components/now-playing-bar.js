@@ -13,7 +13,7 @@ import {
     ShuffleIcon,
     VolumeHighIcon
 } from '@/icons'
-import ProgressBar from '@/components/progress-bar'
+import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
@@ -185,7 +185,7 @@ export default function NowPlayingBar() {
                                 <ShuffleIcon/>
                             </button>
                         </div>
-                        <ProgressBar duration={6 * 60 + 55}/>
+                        <Player duration={6 * 60 + 55}/>
                     </div>
                     <div className={styles.otherControls}>
                         <div className={styles.buttons}>
