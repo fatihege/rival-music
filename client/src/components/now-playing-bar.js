@@ -176,7 +176,7 @@ export default function NowPlayingBar() {
                                 <PrevTrackIcon/>
                             </button>
                             <button className={styles.play}>
-                                <PlayIcon/>
+                                <PlayIcon fill={'#181818'}/>
                             </button>
                             <button className={styles.nextTrack}>
                                 <NextTrackIcon/>
@@ -199,23 +199,10 @@ export default function NowPlayingBar() {
                             <button className={styles.button}>
                                 <CustomizationIcon/>
                             </button>
-                            {width < HIDING_BREAKPOINT ? (
-                                <button className={styles.button}>
-                                    <QueueIcon/>
-                                </button>
-                            ) : ''}
+                            <button className={styles.button}>
+                                <QueueIcon/>
+                            </button>
                         </div>
-                        {width >= HIDING_BREAKPOINT ? (
-                            <>
-                                <div className={styles.separator}></div>
-                                <div className={styles.queue}>
-                                    <div className={styles.queueImage}>
-                                        <img src="/album_cover_2.jpg" alt=""/>
-                                    </div>
-                                    <div className={styles.queueText}>Queue</div>
-                                </div>
-                            </>
-                        ) : ''}
                     </div>
                     <div className={`${styles.layoutResizer} ${styles.right}`}
                          onMouseDown={e => handleResizeDown(e, 2)}></div>

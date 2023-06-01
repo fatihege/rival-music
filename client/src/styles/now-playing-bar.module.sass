@@ -301,13 +301,19 @@
           &.play
             width: 2.5rem
             height: 2.5rem
-            background-color: transparent
-            border: 1px solid rgba(255, 255, 255, .4)
+            background-color: rgba(255, 255, 255)
+            box-shadow: 0 4px 10px 0 rgba(0, 0, 0, .1)
             border-radius: 50%
             transition-property: border-color, background-color
 
+            svg
+              opacity: 1
+
             &:hover
-              background-color: rgba(255, 255, 255, .08)
+              transform: scale(1.05)
+
+            &:active
+              transform: scale(1)
 
     .otherControls
       display: flex
@@ -348,7 +354,7 @@
       .separator
         width: 1px
         height: 48px
-        background-color: rgba(58, 58, 58, 0.4)
+        background-color: rgba(255, 255, 255, 0.4)
 
       .queue
         display: flex
