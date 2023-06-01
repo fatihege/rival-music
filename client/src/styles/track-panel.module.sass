@@ -13,6 +13,9 @@
       .trackArtist a
         color: #131313 !important
 
+      .trackArtist a
+        font-weight: 500
+
     .trackControls
       .control
         background: rgba(0, 0, 0, .14) !important
@@ -28,7 +31,6 @@
     height: 100%
     z-index: 0
     transition: opacity .15s ease-in-out
-    background-image: radial-gradient(circle at 0 0, #8e3936, #daa09e)
 
   .trackVisual
     z-index: 1
@@ -68,12 +70,12 @@
 
           a
             font-size: 1.5rem
-            color: #fff
+            color: #e8e8e8
 
         .trackArtist a
-          color: #fff
+          color: #e8e8e8
           font-family: $quaternaryFont
-          font-weight: 500
+          font-weight: 400
           opacity: .7
 
           &:hover
@@ -90,14 +92,14 @@
           height: 2.5rem
           border: none
           border-radius: 50%
-          background: rgba(255, 255, 255, .14)
+          background: rgba(255, 255, 255, .1)
           display: flex
           justify-content: center
           align-items: center
           cursor: pointer
 
           &:hover
-            background: rgba(255, 255, 255, .2)
+            background: rgba(255, 255, 255, .15)
 
           &:active
             transform: scale(.9)

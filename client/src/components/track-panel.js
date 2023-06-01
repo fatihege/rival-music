@@ -1,22 +1,23 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import {useEffect, useState} from 'react'
-import {ColorExtractor} from 'react-color-extractor'
+import {prominent} from 'color.js'
 import {AddIcon, CopyIcon, DownloadIcon, LikeIcon} from '@/icons'
 import rgbToHsl from '@/utils/rgb-to-hsl'
 import rgbToString from '@/utils/rgb-to-string'
 import styles from '@/styles/track-panel.module.sass'
 
 export default function TrackPanel({type = 'lyrics'}) {
-    const [colors, setColors] = useState([]) // Colors state
+    const [color, setColor] = useState(null) // Colors state
     const [darkText, setDarkText] = useState(false) // Dark text state
 
     useEffect(() => {
-        let newColors = null // Initialize new colors
-        if (colors.length) newColors = colors.map(color => rgbToHsl(color)).filter((_,i) => i < 2) // Convert colors to HSL and get first two
-        const averageLightness = newColors ? newColors.reduce((acc, cur) => acc + cur[2], 0) / newColors.length : 0 // Get average lightness of colors
-        setDarkText(averageLightness * 100 > 50) // Set dark text state
-    }, [colors])
+        (async () => {
+            const colors = await prominent('/album_cover_1.jpg', {amount: 2, group: 20}) // Extract 2 prominent colors from the album cover
+            setColor(colors[1]) // Update color state to 2nd prominent color
+            setDarkText(rgbToHsl(colors[1])[2] >= .5) // Set dark text state to true if prominent color lightness equal or greater than 50
+        })()
+    }, [])
 
     return (
         <>
@@ -24,13 +25,11 @@ export default function TrackPanel({type = 'lyrics'}) {
                 <title>Seek & Destroy - Remastered • Rival Music</title>
             </Head>
             <div className={`${styles.trackPanelContainer} ${darkText ? styles.darkText : ''}`}>
-                <div className={styles.panelBackground} style={colors.length ? {backgroundImage: `radial-gradient(circle at 0 0, ${rgbToString(colors[0])}, ${rgbToString(colors[1])})`} : {}}></div>
+                <div className={styles.panelBackground} style={color ? {backgroundColor: `${rgbToString(color)}`} : {}}></div>
                 <div className={styles.trackVisual}>
                     <div className={styles.trackWrapper}>
                         <div className={styles.trackImage}>
-                            <ColorExtractor rgb getColors={colors => setColors(colors)}>
-                                <img src="/album_cover_1.jpg" alt="Album Cover"/>
-                            </ColorExtractor>
+                            <img src="/album_cover_1.jpg" alt="Album Cover"/>
                         </div>
                         <div className={styles.trackInfo}>
                             <h2 className={styles.trackName}>
@@ -52,7 +51,7 @@ export default function TrackPanel({type = 'lyrics'}) {
                                 <LikeIcon stroke={darkText ? '#131313' : '#fff'}/>
                             </button>
                             <button className={styles.control}>
-                                <AddIcon stroke={darkText ? '#131313' : '#fff'}/>
+                                <AddIcon strokeWidth={24} stroke={darkText ? '#131313' : '#fff'}/>
                             </button>
                             <button className={styles.control}>
                                 <DownloadIcon stroke={darkText ? '#131313' : '#fff'}/>
