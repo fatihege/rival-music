@@ -124,6 +124,7 @@ export default function Slider({title, items = []}) {
                                 <div className={styles.overlay}>
                                     <PlayIcon/>
                                 </div>
+                                <div className={styles.imageBorder}></div>
                             </div>
                             <div className={styles.itemInfo}>
                                 <div className={styles.itemName}>
