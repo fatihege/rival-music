@@ -19,6 +19,7 @@ import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
+    const ALBUM_IMAGE = '/album_cover_6.jpg'
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, setIsResizing] = useState(false) // Is now playing bar resizing
     const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
@@ -127,7 +128,7 @@ export default function NowPlayingBar() {
         <>
             <div
                 className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${albumCoverRight ? styles.right : ''} ${width < MAX_WIDTH - 516 ? styles.lower : ''}`}>
-                <img src="/album_cover_6.jpg" alt="Album Cover"/>
+                <img src={ALBUM_IMAGE} alt="Album Cover"/>
                 <div className={styles.overlay}>
                     <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
                         {albumCoverRight ? <LeftArrowIcon stroke={'#c7c7c7'}/> : <RightArrowIcon stroke={'#c7c7c7'}/>}
@@ -137,15 +138,28 @@ export default function NowPlayingBar() {
                     </button>
                 </div>
             </div>
-            <div className={styles.nowPlayingBar}
+            <div className={styles.bar}
                  style={{width: `${Math.min(Math.max(widthRef.current, MIN_WIDTH), MAX_WIDTH)}px`}}>
                 <div
-                    className={`${styles.nowPlayingBarWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
+                    className={`${styles.barWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
+                    <div className={styles.blurryBackground}>
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="100%">
+                            <filter id="displacementFilter">
+                                <feTurbulence type="turbulence" baseFrequency=".01 .01"
+                                              numOctaves="4" result="turbulence" seed="10"/>
+                                <feDisplacementMap in2="turbulence" in="SourceGraphic"
+                                                   scale="60" xChannelSelector="R" yChannelSelector="B"/>
+                            </filter>
+                            <image href={ALBUM_IMAGE} width="110%" height="130%" x="-30" y="-30" preserveAspectRatio="none"
+                                   filter="url(#displacementFilter)"/>
+                        </svg>
+                        <div className={styles.blurBorder}></div>
+                    </div>
                     <div className={`${styles.layoutResizer} ${styles.left}`}
                          onMouseDown={e => handleResizeDown(e, 1)}></div>
                     <div className={styles.track}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
-                            <img src="/album_cover_6.jpg" alt="Album Cover"/>
+                            <img src={ALBUM_IMAGE} alt="Album Cover"/>
                             <div className={styles.overlay}>
                                 <button className={styles.hideButton}
                                         onClick={() => toggleAlbumCover()}>
