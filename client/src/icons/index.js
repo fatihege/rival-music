@@ -29,11 +29,8 @@ import CopyIcon from '@/icons/copy'
 import DownloadIcon from '@/icons/download'
 import FullScreenIcon from '@/icons/full-screen'
 import ExitFullScreenIcon from '@/icons/exit-full-screen'
-
-/* TODO: Add more icons
-import DownloadingIcon from '@/icons/downloading'
-import EditIcon from '@/icons/edit'
-*/
+import PanelPrevTrackIcon from '@/icons/panel-prev-track'
+import PanelNextTrackIcon from '@/icons/panel-next-track'
 
 export {
     Logo,
@@ -67,4 +64,6 @@ export {
     DownloadIcon,
     FullScreenIcon,
     ExitFullScreenIcon,
+    PanelPrevTrackIcon,
+    PanelNextTrackIcon,
 }

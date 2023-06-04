@@ -1,15 +1,17 @@
-import {useRouter} from 'next/router'
 import Link from 'next/link'
-import {useCallback, useEffect, useRef, useState} from 'react'
+import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import {TrackPanelContext} from '@/pages/_app'
 import {
     CloseIcon,
-    CustomizationIcon, LeftArrowIcon,
-    LikeIcon, MicrophoneIcon,
+    LeftArrowIcon,
+    LikeIcon,
+    MicrophoneIcon,
     NextTrackIcon,
     PlayIcon,
     PrevTrackIcon,
     QueueIcon,
-    RepeatIcon, RightArrowIcon,
+    RepeatIcon,
+    RightArrowIcon,
     ShuffleIcon,
     VolumeHighIcon
 } from '@/icons'
@@ -17,7 +19,7 @@ import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
 
 export default function NowPlayingBar() {
-    const router = useRouter() // Router instance
+    const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, setIsResizing] = useState(false) // Is now playing bar resizing
     const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
     const [showAlbumCover, _setShowAlbumCover] = useState(false) // Is album cover shown
@@ -125,7 +127,7 @@ export default function NowPlayingBar() {
         <>
             <div
                 className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${albumCoverRight ? styles.right : ''} ${width < MAX_WIDTH - 516 ? styles.lower : ''}`}>
-                <img src="/album_cover_1.jpg" alt="Album Cover"/>
+                <img src="/album_cover_6.jpg" alt="Album Cover"/>
                 <div className={styles.overlay}>
                     <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
                         {albumCoverRight ? <LeftArrowIcon stroke={'#c7c7c7'}/> : <RightArrowIcon stroke={'#c7c7c7'}/>}
@@ -143,7 +145,7 @@ export default function NowPlayingBar() {
                          onMouseDown={e => handleResizeDown(e, 1)}></div>
                     <div className={styles.track}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
-                            <img src="/album_cover_1.jpg" alt="Album Cover"/>
+                            <img src="/album_cover_6.jpg" alt="Album Cover"/>
                             <div className={styles.overlay}>
                                 <button className={styles.hideButton}
                                         onClick={() => toggleAlbumCover()}>
@@ -154,7 +156,7 @@ export default function NowPlayingBar() {
                         <div className={styles.trackInfo}>
                             <div className={styles.trackName}>
                                 <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
-                                    Seek & Destroy - Remastered
+                                    Creeping Death - Remastered
                                 </Link>
                                 <button className={styles.trackLike}>
                                     <LikeIcon strokeWidth={12}/>
@@ -185,19 +187,16 @@ export default function NowPlayingBar() {
                                 <ShuffleIcon/>
                             </button>
                         </div>
-                        <Player duration={6 * 60 + 55}/>
+                        <Player duration={6 * 60 + 36}/>
                     </div>
                     <div className={styles.otherControls}>
                         <div className={styles.buttons}>
                             <button className={styles.button}
-                                    onClick={() => router.pathname !== '/lyrics' ? router.push('/lyrics') : router.back()}>
+                                    onClick={() => setTrackPanel({...trackPanel, active: !trackPanel.active})}>
                                 <MicrophoneIcon/>
                             </button>
                             <button className={styles.button}>
                                 <VolumeHighIcon/>
-                            </button>
-                            <button className={styles.button}>
-                                <CustomizationIcon/>
                             </button>
                             <button className={styles.button}>
                                 <QueueIcon/>

@@ -44,7 +44,7 @@
     width: 100%
     height: 100%
     background-color: rgba(0, 0, 0, .4)
-    backdrop-filter: blur(4px)
+    backdrop-filter: blur(4px) saturate(1.5)
     display: flex
     justify-content: center
     align-items: center
@@ -148,7 +148,7 @@
           position: absolute
           top: 0
           background-color: rgba(0, 0, 0, .4)
-          backdrop-filter: blur(4px)
+          backdrop-filter: blur(4px) saturate(1.5)
           display: flex
           justify-content: center
           align-items: center
@@ -192,7 +192,7 @@
           a
             cursor: pointer
             color: #fff
-            font-family: $quaternaryFont
+            font-family: $primaryFont
             display: block
             overflow: hidden
             white-space: nowrap
@@ -203,7 +203,7 @@
               opacity: 1
 
         .trackName
-          font-size: 1rem
+          font-size: .9rem
           display: flex
           align-items: center
           column-gap: .5rem

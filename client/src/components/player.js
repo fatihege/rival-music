@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'react'
 import formatTime from '@/utils/format-time'
 import styles from '@/styles/player.module.sass'
 
-export default function Player({duration = 0}) {
+export default function Player({duration = 0, type = 'bar'}) {
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
     const playerRef = useRef() // Progress bar ref
     const [width, _setWidth] = useState(0) // Progress bar width
@@ -46,16 +46,32 @@ export default function Player({duration = 0}) {
     }, [handleProgressMove, handleProgressUp])
 
     return (
-        <div className={styles.timeline}>
-            <div className={styles.timeText}>{formatTime(duration * (widthRef.current / 100))}</div>
-            <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
-                <div className={styles.player} ref={playerRef}>
-                    <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
-                        <div className={styles.button}></div>
+        type === 'bar' ? (
+            <div className={styles.timeline}>
+                <div className={styles.timeText}>{formatTime(duration * (widthRef.current / 100))}</div>
+                <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
+                    <div className={styles.player} ref={playerRef}>
+                        <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
+                            <div className={styles.button}></div>
+                        </div>
                     </div>
                 </div>
+                <div className={styles.timeText}>{formatTime(duration)}</div>
             </div>
-            <div className={styles.timeText}>{formatTime(duration)}</div>
-        </div>
+        ) : (
+            <div className={`${styles.timeline} ${styles.wide}`}>
+                <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
+                    <div className={styles.player} ref={playerRef}>
+                        <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
+                            <div className={styles.button}></div>
+                        </div>
+                    </div>
+                </div>
+                <div className={styles.timeLabels}>
+                    <div className={styles.timeText}>{formatTime(duration * (widthRef.current / 100))}</div>
+                    <div className={styles.timeText}>{formatTime(duration)}</div>
+                </div>
+            </div>
+        )
     )
 }
