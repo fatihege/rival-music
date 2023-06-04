@@ -4,7 +4,7 @@ import styles from '@/styles/player.module.sass'
 
 export default function Player({duration = 0, type = 'bar'}) {
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
-    const playerRef = useRef() // Progress bar ref
+    const trackRef = useRef() // Progress bar ref
     const [width, _setWidth] = useState(0) // Progress bar width
     const widthRef = useRef(width) // Progress bar width ref
 
@@ -14,8 +14,8 @@ export default function Player({duration = 0, type = 'bar'}) {
     }
 
     const updateDuration = e => {
-        const absValue = e.clientX - playerRef.current.getBoundingClientRect().left // Get absolute value
-        const percentage = Math.max(Math.min(absValue / playerRef.current.clientWidth * 100, 100), 0) // Get percentage
+        const absValue = e.clientX - trackRef.current.getBoundingClientRect().left // Get absolute value
+        const percentage = Math.max(Math.min(absValue / trackRef.current.clientWidth * 100, 100), 0) // Get percentage
         setWidth(percentage) // Set progress bar width
     }
 
@@ -33,9 +33,9 @@ export default function Player({duration = 0, type = 'bar'}) {
     }, [isDragging])
 
     const handleProgressMove = useCallback(e => {
-        if (!playerRef.current || !isDragging) return // If progress bar ref or dragging is not set, return
+        if (!trackRef.current || !isDragging) return // If progress bar ref or dragging is not set, return
         updateDuration(e)
-    }, [isDragging, playerRef.current])
+    }, [isDragging, trackRef.current])
 
     useEffect(() => {
         document.addEventListener('mousemove', handleProgressMove)
@@ -54,7 +54,7 @@ export default function Player({duration = 0, type = 'bar'}) {
             <div className={styles.timeline}>
                 <div className={styles.timeText}>{formatTime(duration * (widthRef.current / 100))}</div>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
-                    <div className={styles.player} ref={playerRef}>
+                    <div className={styles.player} ref={trackRef}>
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
                             <div className={styles.button}></div>
                         </div>
@@ -65,7 +65,7 @@ export default function Player({duration = 0, type = 'bar'}) {
         ) : (
             <div className={`${styles.timeline} ${styles.wide}`}>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
-                    <div className={styles.player} ref={playerRef}>
+                    <div className={styles.player} ref={trackRef}>
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
                             <div className={styles.button}></div>
                         </div>

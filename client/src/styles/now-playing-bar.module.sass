@@ -373,8 +373,8 @@
         align-items: center
 
         .button
-          width: 2.25rem
-          height: 2.25rem
+          width: 2rem !important
+          height: 2rem !important
           display: flex
           justify-content: center
           align-items: center
@@ -392,49 +392,18 @@
             transform: scale(.9)
 
           svg
-            width: 1.5rem
-            height: 1.5rem
+            width: 1.4rem
+            height: 1.4rem
             opacity: .7
+
+        .volume
+          width: 110px
+          padding-right: .5rem
 
       .separator
         width: 1px
         height: 48px
         background-color: rgba(255, 255, 255, 0.4)
-
-      .queue
-        display: flex
-        align-items: center
-        gap: .5rem
-        cursor: pointer
-        background-color: transparent
-        padding: .5rem
-        border-radius: .5rem
-
-        &:hover
-          background-color: rgba(255, 255, 255, .05)
-
-        &:active
-          background-color: rgba(255, 255, 255, .02)
-
-        .queueImage
-          width: 32px
-          height: 32px
-          border-radius: .25rem
-          overflow: hidden
-          border: 1px solid rgba(255, 255, 255, .05)
-          display: flex
-          justify-content: center
-          align-items: center
-
-          img
-            width: 32px
-            height: auto
-            object-fit: contain
-
-        .queueText
-          font-weight: 400
-          font-family: $tertiaryFont
-          color: rgba(255, 255, 255, 0.7)
 
     .layoutResizer
       position: absolute

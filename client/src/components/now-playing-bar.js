@@ -13,10 +13,10 @@ import {
     RepeatIcon,
     RightArrowIcon,
     ShuffleIcon,
-    VolumeHighIcon
 } from '@/icons'
 import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
+import Volume from '@/components/volume'
 
 export default function NowPlayingBar() {
     const ALBUM_IMAGE = '/album_cover_6.jpg'
@@ -210,11 +210,11 @@ export default function NowPlayingBar() {
                                 <MicrophoneIcon/>
                             </button>
                             <button className={styles.button}>
-                                <VolumeHighIcon/>
-                            </button>
-                            <button className={styles.button}>
                                 <QueueIcon/>
                             </button>
+                            <div className={styles.volume}>
+                                <Volume volLevel={100}/>
+                            </div>
                         </div>
                     </div>
                     <div className={`${styles.layoutResizer} ${styles.right}`}

@@ -1,4 +1,4 @@
-export default function MicrophoneIcon({stroke = '#fff', strokeWidth = 10}) {
+export default function MicrophoneIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ export default function MicrophoneIcon({stroke = '#fff', strokeWidth = 10}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${10 * strokeRate}px`,
                 }}
                 transform="rotate(-30 22.995 284.299) scale(1.52967)"
             />
@@ -28,7 +28,7 @@ export default function MicrophoneIcon({stroke = '#fff', strokeWidth = 10}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${10 * strokeRate}px`,
                 }}
                 transform="rotate(-30 33.276 258.372) scale(1.43916)"
             />
