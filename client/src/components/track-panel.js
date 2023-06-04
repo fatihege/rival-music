@@ -29,9 +29,12 @@ export default function TrackPanel() {
                             <feDisplacementMap in2="turbulence" in="SourceGraphic"
                                                scale="60" xChannelSelector="R" yChannelSelector="B"/>
                         </filter>
-                        <image href={ALBUM_IMAGE} width="110%" height="110%" x="-20" y="-20" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
-                        <image href={ALBUM_IMAGE} width="60%" height="50%" x="40%" y="-20" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
-                        <image href={ALBUM_IMAGE} width="50%" height="50%" x="-10%" y="40%" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                        <image href={ALBUM_IMAGE} width="110%" height="110%" x="-20" y="-20" preserveAspectRatio="none"
+                               filter="url(#displacementFilter)"/>
+                        <image href={ALBUM_IMAGE} width="60%" height="50%" x="40%" y="-20" preserveAspectRatio="none"
+                               filter="url(#displacementFilter)"/>
+                        <image href={ALBUM_IMAGE} width="50%" height="50%" x="-10%" y="40%" preserveAspectRatio="none"
+                               filter="url(#displacementFilter)"/>
                     </svg>
                 </div>
                 <div className={styles.wrapper}>

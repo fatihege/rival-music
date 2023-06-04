@@ -13,10 +13,17 @@ export default function Player({duration = 0, type = 'bar'}) {
         widthRef.current = value
     }
 
+    const updateDuration = e => {
+        const absValue = e.clientX - playerRef.current.getBoundingClientRect().left // Get absolute value
+        const percentage = Math.max(Math.min(absValue / playerRef.current.clientWidth * 100, 100), 0) // Get percentage
+        setWidth(percentage) // Set progress bar width
+    }
+
     const handleProgressDown = useCallback(e => {
         e.preventDefault()
         e.stopPropagation()
         setIsDragging(true) // Set dragging to true
+        updateDuration(e)
     }, [])
 
     const handleProgressUp = useCallback(e => {
@@ -27,10 +34,7 @@ export default function Player({duration = 0, type = 'bar'}) {
 
     const handleProgressMove = useCallback(e => {
         if (!playerRef.current || !isDragging) return // If progress bar ref or dragging is not set, return
-
-        const absValue = e.clientX - playerRef.current.getBoundingClientRect().left // Get absolute value
-        const percentage = Math.max(Math.min(absValue / playerRef.current.clientWidth * 100, 100), 0) // Get percentage
-        setWidth(percentage) // Set progress bar width
+        updateDuration(e)
     }, [isDragging, playerRef.current])
 
     useEffect(() => {
