@@ -27,6 +27,6 @@ app.get('/', (req, res) => {
 
 app.use('/track', trackRoutes) // Use track routes in /track endpoint
 
-app.listen(process.env.PORT, () => { // Listen to the server
+app.listen(process.env.PORT || 8000, () => { // Listen to the server
     console.log(`Server running: http://localhost:${process.env.PORT}`)
 })
