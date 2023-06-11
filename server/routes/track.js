@@ -44,7 +44,7 @@ router.get('/manifest/:track', async (req, res) => {
     })
 
     readManifest.on('end', () => {
-        result = result.replaceAll(track, `http://localhost:8000/track/${track}`) // Replace segment file names with URL
+        result = result.replaceAll(track, `${process.env.API_URL || 'https://rival-music-server.onrender.com'}/track/${track}`) // Replace segment file names with URL
         res.status(200).header('application/vnd.apple.mpegurl').send(result) // Return response
     })
 
