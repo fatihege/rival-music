@@ -1,17 +1,12 @@
 import express from 'express'
 import 'dotenv/config'
+import cors from 'cors'
 import trackRoutes from './routes/track.js'
 import config from './config.js'
 
 const app = express() // Create Express server instance
 
-app.use((req, res, next) => { // Add a middleware to check requests
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-    res.header('Access-Control-Allow-Credentials', 'true')
-
-    next()
-})
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.status(200).json({
