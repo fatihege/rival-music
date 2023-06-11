@@ -4,6 +4,9 @@ node_modules/
 # IDE
 .idea
 
+# environment variables
+.env
+
 # audios
 audio/*
 audio/manifest/*
