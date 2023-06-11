@@ -36,15 +36,21 @@ export default function App({Component, pageProps}) {
     const [shuffle, setShuffle] = useState(false) // Shuffle mode state
     const [loop, setLoop] = useState(0) // Loop mode state
     const [isPlaying, _setIsPlaying] = useState(false) // Is playing state
-    const [duration, setDuration] = useState(0) // Track duration
+    const [duration, _setDuration] = useState(0) // Track duration
     const [currentTime, setCurrentTime] = useState(0) // Current time
     const [volume, setVolume] = useState(1) // Volume level of audio
     const hlsRef = useRef(null) // HLS instance reference
     const isPlayingRef = useRef(isPlaying) // Is playing state reference
+    const durationRef = useRef(duration) // Duration state reference
 
     const setIsPlaying = value => { // Set is playing state
         isPlayingRef.current = value
         _setIsPlaying(value)
+    }
+
+    const setDuration = value => { // Set duration state
+        durationRef.current = value
+        _setDuration(value)
     }
 
     useEffect(() => {
@@ -188,6 +194,7 @@ export default function App({Component, pageProps}) {
     }, [queueIndex])
 
     const handlePlayPause = state => {
+        if (!durationRef.current) return
         if (typeof state !== 'boolean') setIsPlaying(!isPlaying) // Toggle play/pause if state value type is not set
         else setIsPlaying(state) // Otherwise, set is playing value to state
     }
@@ -204,7 +211,7 @@ export default function App({Component, pageProps}) {
     }
 
     const handleSeek = time => {
-        if (!duration) return
+        if (!durationRef.current) return
 
         setCurrentTime(time) // Update current time state by time
         audioRef.current.currentTime = time // Set audio element's current time to time
@@ -230,7 +237,7 @@ export default function App({Component, pageProps}) {
         <>
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
                 <Wrapper load={load}>
-                    <AudioContext.Provider value={{handlePlayPause, isPlaying, handleSeek, currentTime, duration, volume, handleVolumeUpdate, loop, handleLoop, shuffle, handleShuffle}}>
+                    <AudioContext.Provider value={{handlePlayPause, isPlaying, handleSeek, currentTime, durationRef, volume, handleVolumeUpdate, loop, handleLoop, shuffle, handleShuffle}}>
                         <ScrollbarContext.Provider value={[]}>
                             <TrackPanelContext.Provider value={[trackPanel, setTrackPanel]}>
                                 {trackPanel.active ? <TrackPanel/> : ''}

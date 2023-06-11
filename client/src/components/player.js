@@ -4,7 +4,7 @@ import formatTime from '@/utils/format-time'
 import styles from '@/styles/player.module.sass'
 
 export default function Player({type = 'bar'}) {
-    const {handleSeek, currentTime, duration} = useContext(AudioContext) // Audio context controls
+    const {handleSeek, currentTime, durationRef} = useContext(AudioContext) // Audio context controls
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
     const trackRef = useRef() // Progress bar ref
     const [width, _setWidth] = useState(0) // Progress bar width
@@ -16,7 +16,6 @@ export default function Player({type = 'bar'}) {
     }
 
     const updateDuration = e => {
-        if (!duration) return
         const absValue = e.clientX - trackRef.current.getBoundingClientRect().left // Get absolute value
         const percentage = Math.max(Math.min(absValue / trackRef.current.clientWidth * 100, 100), 0) // Get percentage
         setWidth(percentage) // Set progress bar width
@@ -25,6 +24,7 @@ export default function Player({type = 'bar'}) {
     const handleProgressDown = useCallback(e => {
         e.preventDefault()
         e.stopPropagation()
+        if (!durationRef.current) return
         setIsDragging(true) // Set dragging to true
         updateDuration(e)
     }, [])
@@ -33,7 +33,7 @@ export default function Player({type = 'bar'}) {
         e.preventDefault()
         e.stopPropagation()
         if (isDragging) {
-            const currentTime = duration * (widthRef.current / 100) // Calculate current time as seconds
+            const currentTime = durationRef.current * (widthRef.current / 100) // Calculate current time as seconds
             handleSeek(currentTime) // Seek the current time
             setIsDragging(false) // Set dragging to false
         }
@@ -45,11 +45,11 @@ export default function Player({type = 'bar'}) {
     }, [isDragging, trackRef.current])
 
     useEffect(() => {
-        if (duration && !isDragging) { // If duration is set and the player thumb is not dragging
-            const percentage = Math.max(Math.min(currentTime / duration * 100, 100), 0) // Calculate percentage
+        if (durationRef.current && !isDragging) { // If durationRef.current is set and the player thumb is not dragging
+            const percentage = Math.max(Math.min(currentTime / durationRef.current * 100, 100), 0) // Calculate percentage
             setWidth(percentage) // Update player bar width
         }
-    }, [currentTime, duration])
+    }, [currentTime, durationRef.current])
 
     useEffect(() => {
         document.addEventListener('mousemove', handleProgressMove)
@@ -66,7 +66,7 @@ export default function Player({type = 'bar'}) {
     return (
         type === 'bar' ? (
             <div className={styles.timeline}>
-                <div className={styles.timeText}>{formatTime(currentTime || null)}</div>
+                <div className={styles.timeText}>{formatTime(typeof currentTime !== 'number' || !durationRef.current ? null : currentTime)}</div>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
                     <div className={styles.player} ref={trackRef}>
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
@@ -74,7 +74,7 @@ export default function Player({type = 'bar'}) {
                     </div>
                     <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
                 </div>
-                <div className={styles.timeText}>{formatTime(duration || null)}</div>
+                <div className={styles.timeText}>{formatTime(durationRef.current || null)}</div>
             </div>
         ) : (
             <div className={`${styles.timeline} ${styles.wide}`}>
@@ -86,8 +86,8 @@ export default function Player({type = 'bar'}) {
                     <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
                 </div>
                 <div className={styles.timeLabels}>
-                    <div className={styles.timeText}>{formatTime(currentTime || null)}</div>
-                    <div className={styles.timeText}>{formatTime(duration || null)}</div>
+                    <div className={styles.timeText}>{formatTime(typeof currentTime !== 'number' || !durationRef.current ? null : currentTime)}</div>
+                    <div className={styles.timeText}>{formatTime(durationRef.current || null)}</div>
                 </div>
             </div>
         )
