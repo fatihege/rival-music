@@ -204,6 +204,8 @@ export default function App({Component, pageProps}) {
     }
 
     const handleSeek = time => {
+        if (!duration) return
+
         setCurrentTime(time) // Update current time state by time
         audioRef.current.currentTime = time // Set audio element's current time to time
         localStorage.setItem('currentTime', time.toString()) // Set current time value on local storage

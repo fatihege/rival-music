@@ -1,4 +1,6 @@
 export default (seconds) => {
+    if (typeof seconds !== 'number') return '--:--'
+
     const minutes = Math.floor(seconds / 60) // Get minutes
     const hours = Math.floor(minutes / 60) // Get hours
 

@@ -16,6 +16,7 @@ export default function Player({type = 'bar'}) {
     }
 
     const updateDuration = e => {
+        if (!duration) return
         const absValue = e.clientX - trackRef.current.getBoundingClientRect().left // Get absolute value
         const percentage = Math.max(Math.min(absValue / trackRef.current.clientWidth * 100, 100), 0) // Get percentage
         setWidth(percentage) // Set progress bar width
@@ -65,7 +66,7 @@ export default function Player({type = 'bar'}) {
     return (
         type === 'bar' ? (
             <div className={styles.timeline}>
-                <div className={styles.timeText}>{formatTime(currentTime || 0)}</div>
+                <div className={styles.timeText}>{formatTime(currentTime || null)}</div>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
                     <div className={styles.player} ref={trackRef}>
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
@@ -73,7 +74,7 @@ export default function Player({type = 'bar'}) {
                     </div>
                     <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
                 </div>
-                <div className={styles.timeText}>{formatTime(duration || 0)}</div>
+                <div className={styles.timeText}>{formatTime(duration || null)}</div>
             </div>
         ) : (
             <div className={`${styles.timeline} ${styles.wide}`}>
@@ -85,8 +86,8 @@ export default function Player({type = 'bar'}) {
                     <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
                 </div>
                 <div className={styles.timeLabels}>
-                    <div className={styles.timeText}>{formatTime(currentTime || 0)}</div>
-                    <div className={styles.timeText}>{formatTime(duration || 0)}</div>
+                    <div className={styles.timeText}>{formatTime(currentTime || null)}</div>
+                    <div className={styles.timeText}>{formatTime(duration || null)}</div>
                 </div>
             </div>
         )
