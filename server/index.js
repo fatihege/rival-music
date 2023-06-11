@@ -10,12 +10,7 @@ app.use((req, res, next) => { // Add a middleware to check requests
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
     res.header('Access-Control-Allow-Credentials', 'true')
 
-    console.log(req.ip) // Log request IP to the console
-    if (config.allowedIps.includes(req.ip)) next() // If request IP is allowed, continue
-    else res.status(403).json({ // Otherwise, return 403 message
-        status: 'FORBIDDEN',
-        message: '',
-    })
+    next()
 })
 
 app.get('/', (req, res) => {
