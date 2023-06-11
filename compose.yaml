@@ -4,8 +4,12 @@ services:
     build: 
       context: ./server
     restart: always
-    ports: 
+    ports:
       - "8000:8000"
+    volumes:
+      - ./server:/server
+      - /server/node_modules
+      - /server/audio
   app:
     image: rival-music-client
     build: 

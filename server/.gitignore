@@ -4,5 +4,13 @@ node_modules/
 # IDE
 .idea
 
-# audio
+# audios
 audio/*
+audio/manifest/*
+!audio/manifest
+!audio/track.m4a
+!audio/manifest/track.m4a.m3u8
+!audio/manifest/track.m4a.ts
+
+# unnecessary
+utils/*-file.js

@@ -1,16 +1,16 @@
 import Link from 'next/link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
-import {TrackPanelContext} from '@/pages/_app'
+import {AudioContext, TrackPanelContext} from '@/pages/_app'
 import {
     CloseIcon,
     LeftArrowIcon,
     LikeIcon,
     MicrophoneIcon,
-    NextTrackIcon,
+    NextTrackIcon, PauseIcon,
     PlayIcon,
     PrevTrackIcon,
     QueueIcon,
-    RepeatIcon,
+    RepeatIcon, RepeatOneIcon,
     RightArrowIcon,
     ShuffleIcon,
 } from '@/icons'
@@ -20,6 +20,7 @@ import Volume from '@/components/volume'
 
 export default function NowPlayingBar() {
     const ALBUM_IMAGE = '/album_cover_6.jpg'
+    const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle} = useContext(AudioContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, setIsResizing] = useState(false) // Is now playing bar resizing
     const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
@@ -185,23 +186,23 @@ export default function NowPlayingBar() {
                     </div>
                     <div className={styles.trackControls}>
                         <div className={styles.buttons}>
-                            <button className={styles.repeat}>
-                                <RepeatIcon/>
+                            <button className={`no_focus ${styles.repeat} ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
+                                {loop === 2 ? <RepeatOneIcon/> : <RepeatIcon/>}
                             </button>
-                            <button className={styles.prevTrack}>
+                            <button className={`no_focus ${styles.prevTrack}`}>
                                 <PrevTrackIcon/>
                             </button>
-                            <button className={styles.play}>
-                                <PlayIcon fill={'#181818'}/>
+                            <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
+                                {!isPlaying ? <PlayIcon fill={'#181818'}/> : <PauseIcon fill={'#181818'}/>}
                             </button>
-                            <button className={styles.nextTrack}>
+                            <button className={`no_focus ${styles.nextTrack}`}>
                                 <NextTrackIcon/>
                             </button>
-                            <button className={styles.shuffle}>
+                            <button className={`no_focus ${styles.shuffle} ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
                                 <ShuffleIcon/>
                             </button>
                         </div>
-                        <Player duration={6 * 60 + 36}/>
+                        <Player duration={300}/>
                     </div>
                     <div className={styles.otherControls}>
                         <div className={styles.buttons}>
@@ -213,7 +214,7 @@ export default function NowPlayingBar() {
                                 <QueueIcon/>
                             </button>
                             <div className={styles.volume}>
-                                <Volume volLevel={100}/>
+                                <Volume/>
                             </div>
                         </div>
                     </div>

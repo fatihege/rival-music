@@ -36,3 +36,6 @@ next-env.d.ts
 
 # IDE
 .idea
+
+# unnecessary
+src/utils/decrypt-chunk.js

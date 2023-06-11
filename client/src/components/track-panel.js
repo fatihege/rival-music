@@ -1,13 +1,23 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import {useContext, useEffect, useState} from 'react'
-import {TrackPanelContext} from '@/pages/_app'
+import {AudioContext, TrackPanelContext} from '@/pages/_app'
 import Player from '@/components/player'
-import {CloseIcon, PlayIcon, RepeatIcon, ShuffleIcon, PanelPrevTrackIcon, PanelNextTrackIcon} from '@/icons'
+import {
+    CloseIcon,
+    PlayIcon,
+    RepeatIcon,
+    ShuffleIcon,
+    PanelPrevTrackIcon,
+    PanelNextTrackIcon,
+    PauseIcon,
+    RepeatOneIcon
+} from '@/icons'
 import styles from '@/styles/track-panel.module.sass'
 
 export default function TrackPanel() {
     const ALBUM_IMAGE = '/album_cover_6.jpg'
+    const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle} = useContext(AudioContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [fade, setFade] = useState(false) // Can the panel fade in
 
@@ -54,19 +64,19 @@ export default function TrackPanel() {
                             </div>
                             <div className={styles.player}>
                                 <div className={styles.playerControls}>
-                                    <button>
-                                        <RepeatIcon strokeRate={1.5}/>
+                                    <button className={`no_focus ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
+                                        {loop === 2 ? <RepeatOneIcon strokeRate={1.5}/> : <RepeatIcon strokeRate={1.5}/>}
                                     </button>
-                                    <button>
+                                    <button className="no_focus">
                                         <PanelPrevTrackIcon/>
                                     </button>
-                                    <button>
-                                        <PlayIcon/>
+                                    <button className="no_focus" onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
+                                        {!isPlaying ? <PlayIcon/> : <PauseIcon/>}
                                     </button>
-                                    <button>
+                                    <button className="no_focus">
                                         <PanelNextTrackIcon/>
                                     </button>
-                                    <button>
+                                    <button className={`no_focus ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
                                         <ShuffleIcon strokeRate={1.5}/>
                                     </button>
                                 </div>

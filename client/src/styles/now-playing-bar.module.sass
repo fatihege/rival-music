@@ -302,6 +302,7 @@
           border-radius: 50%
           border: none
           transition: background-color .1s ease-out
+          position: relative
 
           svg
             width: 1rem
@@ -322,6 +323,24 @@
           &.shuffle
             width: 2rem
             height: 2rem
+
+            &:hover
+              background-color: transparent
+
+            &.active
+              svg
+                opacity: 1 !important
+
+              &::after
+                content: ""
+                position: absolute
+                top: 1.7rem
+                left: 50%
+                transform: translateX(-50%)
+                height: 4px
+                width: 4px
+                background-color: #fff
+                border-radius: 2px
 
             svg
               width: 1.5rem

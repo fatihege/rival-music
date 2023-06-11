@@ -1,4 +1,4 @@
-export default function PauseIcon({fill = '#1c1c1c'}) {
+export default function PauseIcon({fill = '#fff'}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

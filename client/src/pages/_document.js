@@ -5,7 +5,6 @@ export default function Document() {
         <Html lang="en">
             <Head>
                 <meta name="description" content="Rival is a modern and up-to-date music streaming platform."/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <meta name="theme-color" content="#00ff78"/>
                 <meta name="author" content="Fatih EGE"/>
                 <meta name="keywords" content="rival,music,streaming,platform"/>

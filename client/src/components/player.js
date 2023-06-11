@@ -1,8 +1,10 @@
-import {useCallback, useEffect, useRef, useState} from 'react'
+import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import {AudioContext} from '@/pages/_app'
 import formatTime from '@/utils/format-time'
 import styles from '@/styles/player.module.sass'
 
-export default function Player({duration = 0, type = 'bar'}) {
+export default function Player({type = 'bar'}) {
+    const {handleSeek, currentTime, duration} = useContext(AudioContext) // Audio context controls
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
     const trackRef = useRef() // Progress bar ref
     const [width, _setWidth] = useState(0) // Progress bar width
@@ -29,13 +31,24 @@ export default function Player({duration = 0, type = 'bar'}) {
     const handleProgressUp = useCallback(e => {
         e.preventDefault()
         e.stopPropagation()
-        if (isDragging) setIsDragging(false) // Set dragging to false
+        if (isDragging) {
+            const currentTime = duration * (widthRef.current / 100) // Calculate current time as seconds
+            handleSeek(currentTime) // Seek the current time
+            setIsDragging(false) // Set dragging to false
+        }
     }, [isDragging])
 
     const handleProgressMove = useCallback(e => {
         if (!trackRef.current || !isDragging) return // If progress bar ref or dragging is not set, return
         updateDuration(e)
     }, [isDragging, trackRef.current])
+
+    useEffect(() => {
+        if (duration && !isDragging) { // If duration is set and the player thumb is not dragging
+            const percentage = Math.max(Math.min(currentTime / duration * 100, 100), 0) // Calculate percentage
+            setWidth(percentage) // Update player bar width
+        }
+    }, [currentTime, duration])
 
     useEffect(() => {
         document.addEventListener('mousemove', handleProgressMove)
@@ -52,28 +65,28 @@ export default function Player({duration = 0, type = 'bar'}) {
     return (
         type === 'bar' ? (
             <div className={styles.timeline}>
-                <div className={styles.timeText}>{formatTime(duration * (widthRef.current / 100))}</div>
+                <div className={styles.timeText}>{formatTime(currentTime || 0)}</div>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
                     <div className={styles.player} ref={trackRef}>
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
-                            <div className={styles.button}></div>
                         </div>
                     </div>
+                    <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
                 </div>
-                <div className={styles.timeText}>{formatTime(duration)}</div>
+                <div className={styles.timeText}>{formatTime(duration || 0)}</div>
             </div>
         ) : (
             <div className={`${styles.timeline} ${styles.wide}`}>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
                     <div className={styles.player} ref={trackRef}>
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
-                            <div className={styles.button}></div>
                         </div>
                     </div>
+                    <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
                 </div>
                 <div className={styles.timeLabels}>
-                    <div className={styles.timeText}>{formatTime(duration * (widthRef.current / 100))}</div>
-                    <div className={styles.timeText}>{formatTime(duration)}</div>
+                    <div className={styles.timeText}>{formatTime(currentTime || 0)}</div>
+                    <div className={styles.timeText}>{formatTime(duration || 0)}</div>
                 </div>
             </div>
         )

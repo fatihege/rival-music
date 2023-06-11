@@ -43,35 +43,35 @@
     cursor: pointer
     display: flex
     align-items: center
+    position: relative
 
     &:hover
-      .player
-        .progress .button
-            opacity: 1
+      .button
+        opacity: 1
 
     .player
       width: 100%
       height: 4px
       background: rgba(255, 255, 255, .4)
       border-radius: 2px
+      overflow: hidden
 
       .progress
         width: 0
         height: 100%
         background-color: #fff
-        border-radius: 2px
         position: relative
 
         &.active .button
             opacity: 1
 
-        .button
-          width: 12px
-          height: 12px
-          background-color: #fff
-          border-radius: 50%
-          position: absolute
-          right: 0
-          top: 50%
-          transform: translate(50%, -50%)
-          opacity: 0
+    .button
+      width: 12px
+      height: 12px
+      background-color: #fff
+      border-radius: 50%
+      position: absolute
+      left: 0
+      top: 50%
+      transform: translate(-50%, -50%)
+      opacity: 0

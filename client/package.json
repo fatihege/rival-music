@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "color.js": "^1.2.0",
+    "dotenv": "^16.1.4",
+    "hls.js": "^1.4.5",
     "next": "13.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
