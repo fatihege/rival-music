@@ -6,19 +6,28 @@ import styles from '@/styles/player.module.sass'
 export default function Player({type = 'bar'}) {
     const {handleSeek, currentTime, durationRef} = useContext(AudioContext) // Audio context controls
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
-    const trackRef = useRef() // Progress bar ref
     const [width, _setWidth] = useState(0) // Progress bar width
-    const widthRef = useRef(width) // Progress bar width ref
+    const [dragTime, _setDragTime] = useState(null) // Temporary drag time state
+    const trackRef = useRef() // Progress bar reference
+    const widthRef = useRef(width) // Progress bar width reference
+    const dragTimeRef = useRef(dragTime) // Temporary drag time reference
 
     const setWidth = value => { // Set progress bar width
         _setWidth(value)
         widthRef.current = value
     }
 
+    const setDragTime = value => { // Set temporary drag time
+        _setDragTime(value)
+        dragTimeRef.current = value
+    }
+
     const updateDuration = e => {
         const absValue = e.clientX - trackRef.current.getBoundingClientRect().left // Get absolute value
         const percentage = Math.max(Math.min(absValue / trackRef.current.clientWidth * 100, 100), 0) // Get percentage
         setWidth(percentage) // Set progress bar width
+        const currentTime = durationRef.current * (widthRef.current / 100) // Calculate current time as seconds
+        setDragTime(currentTime)
     }
 
     const handleProgressDown = useCallback(e => {
@@ -36,6 +45,7 @@ export default function Player({type = 'bar'}) {
             const currentTime = durationRef.current * (widthRef.current / 100) // Calculate current time as seconds
             handleSeek(currentTime) // Seek the current time
             setIsDragging(false) // Set dragging to false
+            setDragTime(null)
         }
     }, [isDragging])
 
@@ -66,13 +76,13 @@ export default function Player({type = 'bar'}) {
     return (
         type === 'bar' ? (
             <div className={styles.timeline}>
-                <div className={styles.timeText}>{formatTime(typeof currentTime !== 'number' || !durationRef.current ? null : currentTime)}</div>
+                <div className={styles.timeText}>{formatTime(dragTimeRef.current !== null ? dragTimeRef.current : (typeof currentTime !== 'number' || !durationRef.current ? null : currentTime))}</div>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
                     <div className={styles.player} ref={trackRef}>
-                        <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
+                        <div className={styles.progress} style={{width: `${widthRef.current}%`}}>
                         </div>
                     </div>
-                    <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
+                    <div className={`${styles.button} ${isDragging ? styles.active : ''}`} style={{left: `${widthRef.current}%`}}></div>
                 </div>
                 <div className={styles.timeText}>{formatTime(durationRef.current || null)}</div>
             </div>
@@ -83,10 +93,10 @@ export default function Player({type = 'bar'}) {
                         <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
                         </div>
                     </div>
-                    <div className={styles.button} style={{left: `${widthRef.current}%`}}></div>
+                    <div className={`${styles.button} ${isDragging ? styles.active : ''}`} style={{left: `${widthRef.current}%`}}></div>
                 </div>
                 <div className={styles.timeLabels}>
-                    <div className={styles.timeText}>{formatTime(typeof currentTime !== 'number' || !durationRef.current ? null : currentTime)}</div>
+                    <div className={styles.timeText}>{formatTime(dragTimeRef.current !== null ? dragTimeRef.current : (typeof currentTime !== 'number' || !durationRef.current ? null : currentTime))}</div>
                     <div className={styles.timeText}>{formatTime(durationRef.current || null)}</div>
                 </div>
             </div>
