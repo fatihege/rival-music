@@ -31,7 +31,7 @@ export default function App({Component, pageProps}) {
     }
 
     const audioRef = useRef(null) // Audio element
-    const [queue, setQueue] = useState([`${process.env.API_URL}/track/manifest/track.m4a`]) // Queue state
+    const [queue, setQueue] = useState([`${process.env.API_URL}/track/manifest/track_1.m4a`]) // Queue state
     const [queueIndex, setQueueIndex] = useState(0) // Queue index of active track
     const [shuffle, setShuffle] = useState(false) // Shuffle mode state
     const [loop, setLoop] = useState(0) // Loop mode state

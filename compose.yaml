@@ -1,9 +1,18 @@
 services:
+  redis:
+    image: redis:7.0
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
   server:
     image: rival-music-server
-    build: 
+    build:
       context: ./server
     restart: always
+    depends_on:
+      - redis
     ports:
       - "8000:8000"
     volumes:
@@ -12,7 +21,7 @@ services:
       - /server/audio
   app:
     image: rival-music-client
-    build: 
+    build:
       context: ./client
     restart: always
     ports:
@@ -21,4 +30,8 @@ services:
       - ./client:/app
       - /app/node_modules
       - /app/.next
+    environment:
+      - NEXT_WEBPACK_USEPOLLING=true
 
+volumes:
+  cache:
