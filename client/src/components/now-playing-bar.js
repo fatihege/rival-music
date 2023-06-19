@@ -1,6 +1,7 @@
-import Link from 'next/link'
+import Link from '@/components/custom-link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
-import {AudioContext, TrackPanelContext} from '@/pages/_app'
+import {TrackPanelContext} from '@/contexts/track-panel'
+import {AudioContext} from '@/contexts/audio'
 import {
     CloseIcon,
     LeftArrowIcon,
@@ -147,11 +148,11 @@ export default function NowPlayingBar() {
                         <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="100%">
                             <filter id="displacementFilter">
                                 <feTurbulence type="turbulence" baseFrequency=".01 .01"
-                                              numOctaves="4" result="turbulence" seed="10"/>
+                                              numOctaves="3" result="turbulence" seed="10"/>
                                 <feDisplacementMap in2="turbulence" in="SourceGraphic"
-                                                   scale="60" xChannelSelector="R" yChannelSelector="B"/>
+                                                   scale="40" xChannelSelector="R" yChannelSelector="B"/>
                             </filter>
-                            <image href={ALBUM_IMAGE} width="110%" height="130%" x="-30" y="-30" preserveAspectRatio="none"
+                            <image href={ALBUM_IMAGE} width="110%" height="140" x="-5%" y="-25" preserveAspectRatio="none"
                                    filter="url(#displacementFilter)"/>
                         </svg>
                         <div className={styles.blurBorder}></div>

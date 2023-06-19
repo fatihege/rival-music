@@ -1,10 +1,11 @@
-import Link from 'next/link'
-import {useEffect, useRef, useState} from 'react'
+import Link from '@/components/custom-link'
+import {useContext, useEffect, useRef, useState} from 'react'
+import {AuthContext} from '@/contexts/auth'
 import {NextIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
 export default function Slider({title, items = []}) {
-    for (let i = 0; i < 4; i++)
+    for (let i = 0; i < 2; i++)
         for (let id = 1; id <= 6; id++)
             items.push({
                 id: id + i * 6,
@@ -14,6 +15,7 @@ export default function Slider({title, items = []}) {
             })
 
     const [isClickable, setIsClickable] = useState(false) // Is slider item clickable
+    const containerRef = useRef() // Slider container
     const sliderRef = useRef() // Slider wrapper
     const slidesRef = useRef() // Slides container
     const prevButtonRef = useRef() // Previous button
@@ -30,17 +32,6 @@ export default function Slider({title, items = []}) {
         let scrollLeft // Scroll left position
         let walk // Mouse walk
 
-        const checkControls = () => {
-            const scrollLeft = slider.scrollLeft
-            const scrollRight = slider.scrollWidth - slider.scrollLeft - slider.clientWidth
-
-            if (scrollLeft <= 0) prevButtonRef.current?.classList.add(styles.disabled)
-            else prevButtonRef.current?.classList.remove(styles.disabled)
-
-            if (scrollRight <= 0) nextButtonRef.current?.classList.add(styles.disabled)
-            else nextButtonRef.current?.classList.remove(styles.disabled)
-        }
-
         const handleScroll = (prev = false) => { // Scroll to previous or next slide
             const sliderRect = slider?.getBoundingClientRect() // Slider wrapper rectangle
             const referenceSlideRect = referenceSlideRef.current?.getBoundingClientRect() // Reference slide rectangle
@@ -50,11 +41,7 @@ export default function Slider({title, items = []}) {
 
             slider.style.scrollBehavior = 'smooth' // Enable smooth scroll
             slider.scrollLeft = Math.min(slider.scrollLeft + scrollAmount - snapScroll, slider.scrollWidth - slider.clientWidth) // Scroll to slide
-            checkControls() // Check if controls should be disabled
         }
-
-        window.addEventListener('resize', checkControls) // Check if controls should be disabled on resize
-        slider.addEventListener('scroll', checkControls) // Check if controls should be disabled on scroll
 
         slides.addEventListener('mousedown', (e) => {
             setIsClickable(true)
@@ -99,24 +86,31 @@ export default function Slider({title, items = []}) {
         // TODO: Play song
     }
 
+    const [showAll, _setShowAll] = useState(false)
+    const showAllRef = useRef(showAll)
+    const setShowAll = value => {
+        showAllRef.current = value
+        _setShowAll(value)
+    }
+
     return (
-        <div className={styles.container}>
+        <div className={styles.container} ref={containerRef}>
             <div className={styles.header}>
                 <div className={styles.title}>
                     {title}
                 </div>
                 <div className={styles.controls}>
-                    <button className={`${styles.control} ${styles.disabled}`} ref={prevButtonRef}>
-                        <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
+                    <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`} ref={prevButtonRef}>
+                            <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
                     </button>
-                    <button className={styles.control} ref={nextButtonRef}>
+                    <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`} ref={nextButtonRef}>
                         <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
                     </button>
-                    <Link href="/" className={styles.control}>View all</Link>
+                    <span className={styles.control} onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                 </div>
             </div>
             <div className={styles.wrapper} ref={sliderRef}>
-                <div className={styles.slides} ref={slidesRef}>
+                <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
                     {items.map((item, i) => (
                         <div className={styles.item} key={item.id} ref={i === 0 ? referenceSlideRef : null} onClick={handlePlay}>
                             <div className={styles.itemImage}>
@@ -124,7 +118,6 @@ export default function Slider({title, items = []}) {
                                 <div className={styles.overlay}>
                                     <PlayIcon/>
                                 </div>
-                                <div className={styles.imageBorder}></div>
                             </div>
                             <div className={styles.itemInfo}>
                                 <div className={styles.itemName}>

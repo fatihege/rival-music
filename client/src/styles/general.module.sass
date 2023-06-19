@@ -1,9 +1,11 @@
+@import "variables"
+
 .container
   width: 100%
   height: 100vh
   overflow: hidden
   position: relative
-  background-color: #050505
+  background-color: $backgroundDark
 
   &.hide
     > *
@@ -22,3 +24,12 @@
       max-height: 100vh
       border-radius: 1rem
       overflow: auto
+
+      .innerContent
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        min-height: 100%
+        padding-bottom: 100px
+        background: $foregroundDark

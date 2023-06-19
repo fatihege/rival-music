@@ -1,4 +1,4 @@
-export default function NextIcon({stroke = '#fff', strokeWidth = 32}) {
+export default function NextIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +16,7 @@ export default function NextIcon({stroke = '#fff', strokeWidth = 32}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${32 * strokeRate}px`,
                 }}
                 transform="matrix(.63955 0 0 .63955 84.837 46.137)"
             />

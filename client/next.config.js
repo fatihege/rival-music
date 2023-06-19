@@ -13,7 +13,7 @@ const nextConfig = {
     return config
   },
   env: {
-    API_URL: process.env.API_URL || 'https://rival-music-api.fatxh.repl.co',
+    API_URL: process.env.API_URL,
   },
 }
 

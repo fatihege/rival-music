@@ -4,7 +4,7 @@
   position: relative
   width: 300px
   height: 100vh
-  background-color: #050505
+  background-color: $backgroundDark
   padding: .75rem
   z-index: 2
   display: grid
@@ -26,12 +26,6 @@
         &:active .icon svg
           transform: scale(.9)
 
-      &.linksSection
-        .logo
-          .logoLink
-            height: 3.5rem
-            padding: .25rem
-
       &.librarySection
         .libraryList
           padding: 0
@@ -45,11 +39,17 @@
             &:active
               background-color: transparent
 
+      &.linksSection
+        .logo
+          .logoLink
+            height: 3.5rem
+            padding: .4rem
+
   .section
     padding: .75rem
     display: flex
     flex-direction: column
-    background-color: #0c0c0c
+    background-color: $foregroundDark
     border-radius: 1rem
     overflow: hidden
 
@@ -74,7 +74,7 @@
         font-size: 1rem
         line-height: 1
         font-weight: 500
-        font-family: $tertiaryFont
+        font-family: $primaryFont
         user-select: none
         color: #fff
 
@@ -99,8 +99,8 @@
         .logoLink
           display: block
           width: 100%
-          height: 4rem
-          padding: .5rem 1rem
+          height: 3.5rem
+          padding: .5rem .75rem
 
           svg
             height: 100%
@@ -193,18 +193,19 @@
               color: #fff
 
             .name
-              font-size: 1rem
-              font-weight: 500
+              font-size: .9rem
+              font-weight: 600
+              opacity: .9
               line-height: 1
-              font-family: $quaternaryFont
+              font-family: $primaryFont
               width: 100%
               overflow: hidden
               text-overflow: ellipsis
 
             .creator
-              font-family: $secondaryFont
+              font-family: $primaryFont
               font-size: .8rem
-              opacity: .8
+              opacity: .7
               margin-top: .25rem
               overflow: hidden
               text-overflow: ellipsis
@@ -232,7 +233,7 @@
       transition: background-color .15s ease-out
 
     &:hover::after
-        background-color: $accentContrastColor
+        background-color: #1c1c1c
 
     &:active::after
       background-color: $accentColor

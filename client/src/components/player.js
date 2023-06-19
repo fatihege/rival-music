@@ -1,5 +1,5 @@
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
-import {AudioContext} from '@/pages/_app'
+import {AudioContext} from '@/contexts/audio'
 import formatTime from '@/utils/format-time'
 import styles from '@/styles/player.module.sass'
 

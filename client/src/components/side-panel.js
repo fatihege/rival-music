@@ -1,14 +1,13 @@
-import Link from 'next/link'
+import Link from '@/components/custom-link'
 import {useRouter} from 'next/router'
 import {useCallback, useEffect, useRef, useState} from 'react'
-import SpanLink from '@/components/span-link'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {AddIcon, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
 const MIN_WIDTH = 298, // Minimum width of the side panel
     DEFAULT_WIDTH = 320, // Default width of the side panel
-    MAX_WIDTH = 600 // Maximum width of the side panel
+    MAX_WIDTH = 598 // Maximum width of the side panel
 
 export default function SidePanel() {
     const resizerRef = useRef() // Reference to the resizer element
@@ -126,12 +125,12 @@ export default function SidePanel() {
                  style={!isMinimized ? {width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`} : {}}>
                 <div className={`${styles.section} ${styles.linksSection}`}>
                     <div className={styles.logo}>
-                        <SpanLink href="/" className={styles.logoLink}>
+                        <Link href="/" className={styles.logoLink}>
                             {isMinimized ? <LogoIcon/> : <Logo/>}
-                        </SpanLink>
+                        </Link>
                     </div>
                     {links.map(({href, icon, activeIcon, label}, index) => (
-                            <SpanLink href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`}
+                            <Link href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`}
                                       key={index}>
                                 <div className={styles.icon}>
                                     {activeLink === href ? activeIcon : icon}
@@ -141,15 +140,13 @@ export default function SidePanel() {
                                         {label}
                                     </div>
                                 )}
-                            </SpanLink>
+                            </Link>
                         )
                     )}
                 </div>
                 <div className={`${styles.section} ${styles.librarySection}`}>
                     <div className={styles.header}>
-                        <SpanLink href="/library"
-                                  className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`}
-                                  noRedirect={isMinimized} onClick={() => handleMinimize(true)}>
+                        <Link href="/library" className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`}>
                             <div className={styles.icon}>
                                 {activeLink === '/library' ? (
                                     <LibraryIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>
@@ -162,7 +159,7 @@ export default function SidePanel() {
                                     Your Library
                                 </div>
                             )}
-                        </SpanLink>
+                        </Link>
                         {!isMinimized && (
                             <div className={styles.operations}>
                                 <button>
@@ -177,7 +174,7 @@ export default function SidePanel() {
                     <CustomScrollbar>
                         <div className={styles.libraryList}>
                             {libraryItems.map(({id, name, artist, image}) => (
-                                <SpanLink href="/" key={id}>
+                                <Link href="/" key={id}>
                                     <div className={styles.listItem}>
                                         <div className={styles.image}>
                                             <img src={image} alt={name}/>
@@ -185,34 +182,15 @@ export default function SidePanel() {
                                         {!isMinimized && (
                                             <div className={styles.info}>
                                                 <div className={styles.name}>
-                                                    <Link href="/">{name}</Link>
+                                                    {name}
                                                 </div>
                                                 <div className={styles.creator}>
-                                                    <Link href="/">{artist}</Link>
+                                                    {artist}
                                                 </div>
                                             </div>
                                         )}
                                     </div>
-                                </SpanLink>
-                            ))}
-                            {libraryItems.map(({id, name, artist, image}) => (
-                                <SpanLink href="/" key={id}>
-                                    <div className={styles.listItem}>
-                                        <div className={styles.image}>
-                                            <img src={image} alt={name}/>
-                                        </div>
-                                        {!isMinimized && (
-                                            <div className={styles.info}>
-                                                <div className={styles.name}>
-                                                    <Link href="/">{name}</Link>
-                                                </div>
-                                                <div className={styles.creator}>
-                                                    <Link href="/">{artist}</Link>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </SpanLink>
+                                </Link>
                             ))}
                         </div>
                     </CustomScrollbar>

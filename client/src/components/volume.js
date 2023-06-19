@@ -1,5 +1,5 @@
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
-import {AudioContext} from '@/pages/_app'
+import {AudioContext} from '@/contexts/audio'
 import styles from '@/styles/volume.module.sass'
 import {VolumeHighIcon, VolumeLowIcon, VolumeMidIcon, VolumeMuteIcon} from '@/icons'
 

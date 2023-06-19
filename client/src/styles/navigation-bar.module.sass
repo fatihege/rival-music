@@ -1,0 +1,72 @@
+@import "variables"
+
+.barContainer
+  position: sticky
+  display: flex
+  justify-content: space-between
+  align-items: center
+  width: 100%
+  top: 0
+  left: 0
+  padding: 1rem 3rem 4px 3rem
+  z-index: 2
+
+  .navButtons
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    column-gap: .5rem
+
+    button
+      width: 2.25rem
+      height: 2.25rem
+      border-radius: 50%
+      background-color: rgba(0, 0, 0, 0.4)
+      backdrop-filter: blur(12px)
+      padding: .5rem
+      border: none
+      cursor: pointer
+
+      &.disabled
+        pointer-events: none
+        opacity: .6
+
+      &:hover
+        transform: scale(1.1)
+
+      &:active
+        transform: scale(1)
+
+      svg
+        opacity: .8
+
+  .accountSection
+    .buttons
+      display: flex
+      column-gap: .5rem
+
+      button
+        cursor: pointer
+        padding: .5rem 1rem
+        border-radius: 9999px
+        border: none
+        font-family: $primaryFont
+        font-weight: 600
+        font-size: .9rem
+
+        &:hover
+          transform: scale(1.05)
+
+        &:active
+          transform: scale(1)
+
+        &.login
+          background: none
+          color: #ffffff
+          opacity: .8
+
+        &.signup
+          background: rgba(255, 255, 255, 0.1)
+          border: 1px solid rgba(255, 255, 255, 0.5)
+          color: #ffffff
+          backdrop-filter: blur(12px) saturate(1.5)

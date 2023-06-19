@@ -33,7 +33,7 @@ export default function Document() {
                 <meta name="twitter:domain" content="rival-music.vercel.app"/>
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
-            <body>
+            <body suppressHydrationWarning={true}>
             <Main/>
             <NextScript/>
             </body>

@@ -1,7 +1,8 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import {useContext, useEffect, useState} from 'react'
-import {AudioContext, TrackPanelContext} from '@/pages/_app'
+import {TrackPanelContext} from '@/contexts/track-panel'
+import {AudioContext} from '@/contexts/audio'
+import Link from '@/components/custom-link'
 import Player from '@/components/player'
 import {
     CloseIcon,
