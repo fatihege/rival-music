@@ -137,7 +137,7 @@ const AudioProvider = ({children}) => {
             audioRef.current.removeEventListener('play', handlePlay)
             audioRef.current.removeEventListener('pause', handlePause)
             window.removeEventListener('keydown', handleKeyDown)
-            if (hlsRef.current) hlsRef.current.destroy()
+            if (hlsRef.current) hlsRef.current.destroy() // If there is an HLS instance, destroy it
         }
     }, [])
 

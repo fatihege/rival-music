@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from 'react'
 import {AuthProvider} from '@/contexts/auth'
 import {AudioProvider} from '@/contexts/audio'
 import {TrackPanelProvider} from '@/contexts/track-panel'
+import {NavigationBarProvider} from '@/contexts/navigation-bar'
 import Wrapper from '@/components/wrapper'
 import SidePanel from '@/components/side-panel'
 import NowPlayingBar from '@/components/now-playing-bar'
@@ -11,27 +12,27 @@ import NavigationBar from '@/components/navigation-bar'
 import '@/styles/globals.sass'
 import styles from '@/styles/general.module.sass'
 
-export const useHistory = () => {
-    const router = useRouter()
-    const historyRef = useRef([])
-    const forwardRef = useRef([])
+export const useHistory = () => { // History hook
+    const router = useRouter() // Get router
+    const historyRef = useRef([]) // Create history reference
+    const forwardRef = useRef([]) // Create forward reference
 
     useEffect(() => {
-        historyRef.current.push(router.asPath)
+        historyRef.current.push(router.asPath) // Push current path to the history when it changes
     }, [router.asPath])
 
     const goBack = () => {
-        if (historyRef.current.length > 1) {
-            forwardRef.current.unshift(historyRef.current.pop())
-            router.push(historyRef.current.pop())
+        if (historyRef.current.length > 1) { // If history length is greater than 1
+            forwardRef.current.unshift(historyRef.current.pop()) // Push the current path from the history to the first index of the forward list
+            router.push(historyRef.current.pop()) // And change route to the last item of history
         }
     }
 
     const goForward = () => {
-        if (forwardRef.current.length) router.push(forwardRef.current.shift())
+        if (forwardRef.current.length) router.push(forwardRef.current.shift()) // If forward list is not empty, change route to its first element
     }
 
-    const flushForward = () => forwardRef.current.splice(0, forwardRef.current.length)
+    const flushForward = () => forwardRef.current.splice(0, forwardRef.current.length) // Flush forward list
 
     return [goBack, goForward, flushForward]
 }
@@ -58,13 +59,13 @@ export default function App({Component, pageProps}) {
                     <AudioProvider>
                         <TrackPanelProvider>
                             <div className={styles.main}>
-                                <SidePanel/>
-                                <div className={styles.content}>
-                                    <NavigationBar/>
-                                    <div className={styles.innerContent}>
+                                <NavigationBarProvider>
+                                    <SidePanel/>
+                                    <div className={styles.content}>
+                                        <NavigationBar/>
                                         <Component {...pageProps}/>
                                     </div>
-                                </div>
+                                </NavigationBarProvider>
                             </div>
                             <NowPlayingBar/>
                         </TrackPanelProvider>

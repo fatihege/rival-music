@@ -3,7 +3,7 @@ import styles from '@/styles/scrollbars.module.sass'
 
 const MIN_THUMB_HEIGHT = 16 // Minimum thumb height
 
-export default function CustomScrollbar({children, className = ''}) {
+export default function CustomScrollbar({children, className = '', scrollbarPadding = 0}) {
     const contentRef = useRef() // Content ref
     const trackRef = useRef() // Track ref
     const thumbRef = useRef() // Thumb ref
@@ -115,10 +115,16 @@ export default function CustomScrollbar({children, className = ''}) {
     }, [thumbHeight, children])
 
     useEffect(() => {
-        window.addEventListener('resize', () => {
+        const handleWindowResize = () => {
             handleResize(contentRef.current, trackRef.current.clientHeight) // Handle thumb resize
             handleThumbPosition() // Handle thumb position
-        })
+        }
+
+        window.addEventListener('resize', handleWindowResize)
+
+        return () => {
+            window.removeEventListener('resize', handleWindowResize)
+        }
     }, [])
 
     return (
@@ -126,9 +132,9 @@ export default function CustomScrollbar({children, className = ''}) {
             <div className={styles.content} ref={contentRef}>
                 {children}
             </div>
-            <div className={styles.scrollbar}>
+            <div className={styles.scrollbar} style={{top: `${scrollbarPadding}px`, right: `${scrollbarPadding}px`}}>
                 <div className={styles.scrollbarWrapper} ref={trackRef} onMouseDown={handleTrackClick}>
-                    {!hide ? <div className={styles.thumb} ref={thumbRef} style={{height: `${thumbHeight}px`}} onMouseDown={handleThumbMouseDown}></div> : ''}
+                    {!hide ? <div className={styles.thumb} ref={thumbRef} style={{height: `${thumbHeight - scrollbarPadding * 2}px`}} onMouseDown={handleThumbMouseDown}></div> : '' }
                 </div>
             </div>
         </div>

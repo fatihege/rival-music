@@ -31,6 +31,7 @@ import FullScreenIcon from '@/icons/full-screen'
 import ExitFullScreenIcon from '@/icons/exit-full-screen'
 import PanelPrevTrackIcon from '@/icons/panel-prev-track'
 import PanelNextTrackIcon from '@/icons/panel-next-track'
+import OptionsIcon from '@/icons/options'
 
 export {
     Logo,
@@ -66,4 +67,5 @@ export {
     ExitFullScreenIcon,
     PanelPrevTrackIcon,
     PanelNextTrackIcon,
+    OptionsIcon,
 }

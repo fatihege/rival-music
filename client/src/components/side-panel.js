@@ -1,6 +1,7 @@
-import Link from '@/components/custom-link'
 import {useRouter} from 'next/router'
-import {useCallback, useEffect, useRef, useState} from 'react'
+import Link from '@/components/custom-link'
+import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import {NavigationBarContext} from '@/contexts/navigation-bar'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {AddIcon, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
@@ -12,6 +13,7 @@ const MIN_WIDTH = 298, // Minimum width of the side panel
 export default function SidePanel() {
     const resizerRef = useRef() // Reference to the resizer element
     const router = useRouter() // Router instance
+    const [, setNavBarWidth] = useContext(NavigationBarContext)
     const [activeLink, setActiveLink] = useState(router.pathname || '/') // Active link
     const [isResizing, setIsResizing] = useState(false) // Is resizing active
     const [offset, setOffset] = useState(0) // Offset of mouse from layout resizer
@@ -37,6 +39,8 @@ export default function SidePanel() {
     const setWidth = value => { // Set width of the side panel
         widthRef.current = value
         _setWidth(value)
+
+        setNavBarWidth(window.innerWidth - value - 12)
     }
 
     useEffect(() => {

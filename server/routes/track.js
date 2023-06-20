@@ -18,7 +18,7 @@ router.get('/:track', async (req, res) => {
         const readStream = createReadStream(trackPath, (req.headers.range && !range.includes(NaN)) ? {start: range[0], end: range[1]} : {}) // Create read stream to track file. If range is set, read the range. If it is not, read whole file
         readStream.pipe(res) // Pipe read stream to the response
     } catch (e) {
-        res.status(500).json({
+        res.status(500).json({ // Send error response to the client
             status: 'ERROR',
             message: e.message,
         })

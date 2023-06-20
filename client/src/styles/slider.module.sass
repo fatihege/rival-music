@@ -13,7 +13,7 @@
     .title
       font-size: 1.2rem
       font-family: $primaryFont
-      font-weight: 700
+      font-weight: 500
       opacity: .9
 
     .controls
@@ -64,117 +64,168 @@
         line-height: 1
         text-align: center
 
-  .wrapper
-    width: 100%
-    overflow-y: hidden
-    overflow-x: auto
-    scrollbar-width: none
-    border-top-left-radius: .5rem
-    border-top-right-radius: .5rem
+  .fading
+    position: relative
 
-    &::-webkit-scrollbar
-      width: 0
-      height: 0
-      background-color: transparent
+    &::before,
+    &::after
+      z-index: 1
+      content: ""
+      position: absolute
+      top: 0
+      height: 100%
+      width: 50px
+      pointer-events: none
+      opacity: 0
+      transition: opacity .15s ease-out
 
-    .slides
-      position: relative
-      display: flex
-      gap: 1.5rem
-      width: max-content
-      padding-right: .75rem
+    &::before
+      left: 0
+      background-image: linear-gradient(to right, transparentize($foregroundDark, .2), transparentize($foregroundDark, 1))
 
-      &.wrap
-        flex-wrap: wrap
-        max-width: 100%
+    &::after
+      right: 0
+      background-image: linear-gradient(to left, transparentize($foregroundDark, .2), transparentize($foregroundDark, 1))
 
-      .item
-        .itemImage
-          position: relative
-          width: 225px
-          height: 225px
-          border-radius: 10px
-          overflow: hidden
-          display: flex
-          justify-content: center
-          align-items: center
-          border: 1px solid #1c1c1c
-          box-shadow: 0 0 6px 0 rgba(12, 12, 12, 0.3)
+    &.left::before
+      opacity: 1
 
-          &:hover
-            .overlay
-              opacity: 1
-              pointer-events: all
+    &.right::after
+      opacity: 1
 
-          img
-            width: auto
-            height: 100%
-            object-fit: cover
+    .wrapper
+      width: 100%
+      overflow-y: hidden
+      overflow-x: auto
+      scrollbar-width: none
+      border-radius: 8px
 
-          .overlay
-            position: absolute
-            top: 0
-            left: 0
-            width: 100%
-            height: 100%
-            background-image: linear-gradient(to bottom, rgba(0, 0, 0, .8), rgba(0, 0, 0, .35), rgba(0, 0, 0, .35), rgba(0, 0, 0, .8))
-            padding: 2rem
+      &::-webkit-scrollbar
+        width: 0
+        height: 0
+        background-color: transparent
+
+      .slides
+        position: relative
+        display: flex
+        gap: 1.5rem
+        width: max-content
+        padding-right: .75rem
+
+        &.wrap
+          flex-wrap: wrap
+          max-width: 100%
+
+        .item
+          .itemImage
+            position: relative
+            width: 220px
+            height: 220px
+            border-radius: 10px
+            overflow: hidden
             display: flex
             justify-content: center
             align-items: center
-            transition: opacity .15s ease-out
-            pointer-events: none
-            opacity: 0
-            cursor: pointer
-
-            &:active
-              svg
-                transform: scale(.9)
-
-            svg
-              width: 2.5rem
-              height: 2.5rem
-              opacity: .7
-
-          //.imageBorder
-          //  width: 100%
-          //  height: 100%
-          //  position: absolute
-          //  top: 0
-          //  left: 0
-          //  border: 2px solid rgba(220, 220, 220, 0.43)
-          //  mix-blend-mode: overlay
-          //  border-radius: 15px
-          //  pointer-events: none
-
-        .itemInfo
-          margin-top: .25rem
-          text-overflow: ellipsis
-
-          a
-            color: #fff
-            text-decoration: none
-            display: inline-block
-            width: 100%
-            line-height: 1
+            border: 1px solid #1c1c1c
+            box-shadow: 0 0 6px 0 rgba(12, 12, 12, 0.3)
 
             &:hover
-              text-decoration: underline
+              .overlay
+                opacity: 1
+                pointer-events: all
 
-          .itemName
-            font-family: $primaryFont
-            font-size: .9rem
-            font-weight: 600
-            max-width: 225px
-            height: max-content
-            max-height: 1.85rem
-            overflow: hidden
-            opacity: .85
-            padding-bottom: 2px
+                .button
+                  backdrop-filter: blur(12px) saturate(1.5)
 
-          .itemArtist
-            font-family: $primaryFont
-            font-size: .9rem
-            font-weight: 400
-            opacity: .6
-            width: max-content
+            img
+              width: auto
+              height: 100%
+              object-fit: cover
+
+            .overlay
+              position: absolute
+              top: 0
+              left: 0
+              width: 100%
+              height: 100%
+              background-color: rgba(25, 25, 25, .35)
+              padding: 2rem
+              transition: opacity .12s ease-out
+              opacity: 0
+              cursor: pointer
+
+              .button
+                position: absolute
+                background-color: rgba(35, 35, 35, .5)
+                border: none
+                width: 2.5rem
+                height: 2.5rem
+                border-radius: 50%
+                display: flex
+                justify-content: center
+                align-items: center
+                padding: .8rem
+                cursor: pointer
+                backdrop-filter: blur(0) saturate(1)
+                transition: .15s ease-out
+                transition-property: backdrop-filter, background-color
+
+                &:hover
+                  backdrop-filter: blur(0) saturate(1)
+                  background-color: $accentColor
+                  transform: scale(1.1)
+
+                  svg *
+                    fill: $backgroundDark !important
+
+                &:active
+                  transform: scale(1)
+
+                svg
+                  width: 100%
+                  height: auto
+                  opacity: .9
+
+                  svg *
+                    transition: fill .15s ease-out
+
+                &.play
+                  bottom: 16px
+                  left: 16px
+
+                &.options
+                  bottom: 16px
+                  right: 16px
+                  padding: .6rem
+
+          .itemInfo
+            margin-top: .25rem
+            text-overflow: ellipsis
+
+            a
+              color: #fff
+              text-decoration: none
+              display: inline-block
+              width: 100%
+              line-height: 1
+
+              &:hover
+                text-decoration: underline
+
+            .itemName
+              font-family: $primaryFont
+              font-size: .9rem
+              font-weight: 600
+              max-width: 225px
+              height: max-content
+              max-height: 1.85rem
+              overflow: hidden
+              opacity: .85
+              padding-bottom: 2px
+
+            .itemArtist
+              font-family: $primaryFont
+              font-size: .9rem
+              font-weight: 400
+              opacity: .6
+              width: max-content
