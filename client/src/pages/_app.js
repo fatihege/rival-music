@@ -1,13 +1,14 @@
 import {useRouter} from 'next/router'
 import {useEffect, useRef, useState} from 'react'
+import {SkeletonTheme} from 'react-loading-skeleton'
 import {AuthProvider} from '@/contexts/auth'
 import {AudioProvider} from '@/contexts/audio'
 import {TrackPanelProvider} from '@/contexts/track-panel'
 import {NavigationBarProvider} from '@/contexts/navigation-bar'
+import {ModalProvider} from '@/contexts/modal'
 import Wrapper from '@/components/wrapper'
 import SidePanel from '@/components/side-panel'
 import NowPlayingBar from '@/components/now-playing-bar'
-import {SkeletonTheme} from 'react-loading-skeleton'
 import NavigationBar from '@/components/navigation-bar'
 import '@/styles/globals.sass'
 import styles from '@/styles/general.module.sass'
@@ -58,16 +59,18 @@ export default function App({Component, pageProps}) {
                 <Wrapper load={load}>
                     <AudioProvider>
                         <TrackPanelProvider>
-                            <div className={styles.main}>
-                                <NavigationBarProvider>
-                                    <SidePanel/>
-                                    <div className={styles.content}>
-                                        <NavigationBar/>
-                                        <Component {...pageProps}/>
-                                    </div>
-                                </NavigationBarProvider>
-                            </div>
-                            <NowPlayingBar/>
+                            <ModalProvider>
+                                <div className={styles.main}>
+                                    <NavigationBarProvider>
+                                        <SidePanel/>
+                                        <div className={styles.content}>
+                                            <NavigationBar/>
+                                            <Component {...pageProps}/>
+                                        </div>
+                                    </NavigationBarProvider>
+                                </div>
+                                <NowPlayingBar/>
+                            </ModalProvider>
                         </TrackPanelProvider>
                     </AudioProvider>
                 </Wrapper>

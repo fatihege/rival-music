@@ -8,7 +8,7 @@ export default function ExplorePage() {
                 <title>Rival Music — Explore</title>
             </Head>
             <div className={styles.container}>
-                <h1>EXPLORE PAGE</h1>
+                <h1 className={styles.pageTitle}>EXPLORE PAGE</h1>
             </div>
         </>
     )

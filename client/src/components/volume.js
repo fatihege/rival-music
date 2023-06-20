@@ -24,21 +24,22 @@ export default function Volume() {
     }
 
     const handleProgressDown = useCallback(e => {
-        e.preventDefault()
-        e.stopPropagation()
         setIsDragging(true) // Set dragging to true
         updateVolumeLevel(e, true) // Update volume level and save to the local storage
     }, [])
 
     const handleProgressUp = useCallback(e => {
+        if (!isDragging) return
         e.preventDefault()
         e.stopPropagation()
-        if (isDragging) setIsDragging(false) // Set dragging to false
+        setIsDragging(false) // Set dragging to false
         if (levelRef.current !== 0) localStorage.setItem('volumeLevel', levelRef.current) // If volume level not 0, save to the local storage when mouse is up
     }, [isDragging])
 
     const handleProgressMove = useCallback(e => {
         if (!trackRef.current || !isDragging) return // If progress bar ref or dragging is not set, return
+        e.preventDefault()
+        e.stopPropagation()
         updateVolumeLevel(e) // Update volume level
     }, [isDragging, trackRef.current])
 

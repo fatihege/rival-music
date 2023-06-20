@@ -92,22 +92,24 @@ export default function NowPlayingBar() {
     }, [])
 
     const handleResizeDown = useCallback((e, side) => {
-        e.preventDefault()
-        e.stopPropagation()
         setIsResizing(true) // Set resizing to true
         setResizingSide(side) // Set resizing side
     }, []) // Handle resizing down
 
     const handleResizeUp = useCallback(e => {
+        if (!isResizing) return
+
         e.preventDefault()
         e.stopPropagation()
-        if (isResizing) setIsResizing(false) // Set resizing to false
+
+        setIsResizing(false) // Set resizing to false
     }, [isResizing]) // Handle resizing down
 
     const handleResize = useCallback(e => {
+        if (!isResizing) return // Return if resizing is not active
+
         e.preventDefault()
         e.stopPropagation()
-        if (!isResizing) return // Return if resizing is not active
 
         const newWidth = resizingSide === 1 ? window.innerWidth - e.clientX * 2 : window.innerWidth - (window.innerWidth - e.clientX) * 2 // Calculate new width of now playing bar
         setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of now playing bar

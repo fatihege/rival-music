@@ -56,32 +56,24 @@ export default function CustomScrollbar({children, className = '', scrollbarPadd
     })
 
     const handleThumbMouseDown = useCallback(e => {
-        e.preventDefault()
-        e.stopPropagation()
-
         setScrollStartPosition(e.clientY) // Set scroll start position
         if (contentRef.current) setInitialScrollTop(contentRef.current.scrollTop) // Set initial scroll top position
         setIsDragging(true) // Thumb is being dragged
     }, [])
 
     const handleThumbMouseUp = useCallback((e) => {
-        e.preventDefault()
-        e.stopPropagation()
-
-        if (isDragging) setIsDragging(false) // Thumb is not being dragged
+        if (!isDragging) return
+        setIsDragging(false) // Thumb is not being dragged
     }, [isDragging])
 
     const handleThumbMouseMove = useCallback((e) => {
-        e.preventDefault()
-        e.stopPropagation()
+        if (!isDragging) return
 
-        if (isDragging) { // If thumb is being dragged
-            const {scrollHeight: contentScrollHeight, offsetHeight: contentOffsetHeight} = contentRef.current // Get content scroll height and offset height
-            const deltaY = (e.clientY - scrollStartPosition) * (contentOffsetHeight / thumbHeight) // Calculate delta y
-            const newScrollTop = Math.min(initialScrollTop + deltaY, contentScrollHeight - contentOffsetHeight) // Calculate new scroll top position
+        const {scrollHeight: contentScrollHeight, offsetHeight: contentOffsetHeight} = contentRef.current // Get content scroll height and offset height
+        const deltaY = (e.clientY - scrollStartPosition) * (contentOffsetHeight / thumbHeight) // Calculate delta y
+        const newScrollTop = Math.min(initialScrollTop + deltaY, contentScrollHeight - contentOffsetHeight) // Calculate new scroll top position
 
-            contentRef.current.scrollTop = newScrollTop // Set new scroll top position
-        }
+        contentRef.current.scrollTop = newScrollTop // Set new scroll top position
     }, [isDragging, scrollStartPosition, thumbHeight])
 
     useEffect(() => {

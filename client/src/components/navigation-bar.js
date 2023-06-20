@@ -2,12 +2,15 @@ import {useContext} from 'react'
 import {useHistory} from '@/pages/_app'
 import {AuthContext} from '@/contexts/auth'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
+import {ModalContext} from '@/contexts/modal'
+import LoginModal from '@/components/modals/login'
 import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
 
 export default function NavigationBar() {
     const [user] = useContext(AuthContext) // Get user from auth context
     const [width] = useContext(NavigationBarContext) // Get navigation bar width from context
+    const [, setModal] = useContext(ModalContext) // Use modal context
     const [goBack, goForward] = useHistory() // Get goBack and goForward functions from history hook
 
     return (
@@ -23,7 +26,7 @@ export default function NavigationBar() {
             <div className={styles.accountSection}>
                 {!user ? (
                     <div className={styles.buttons}>
-                        <button className={styles.login}>Log in</button>
+                        <button className={styles.login} onClick={() => setModal(<LoginModal/>)}>Log in</button>
                         <button className={styles.signup}>Sign up</button>
                     </div>
                 ) : ''}

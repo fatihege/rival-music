@@ -31,26 +31,27 @@ export default function Player({type = 'bar'}) {
     }
 
     const handleProgressDown = useCallback(e => {
-        e.preventDefault()
-        e.stopPropagation()
         if (!durationRef.current) return
         setIsDragging(true) // Set dragging to true
         updateDuration(e)
     }, [])
 
     const handleProgressUp = useCallback(e => {
+        if (!isDragging) return
+
         e.preventDefault()
         e.stopPropagation()
-        if (isDragging) {
-            const currentTime = durationRef.current * (widthRef.current / 100) // Calculate current time as seconds
-            handleSeek(currentTime) // Seek the current time
-            setIsDragging(false) // Set dragging to false
-            setDragTime(null)
-        }
+
+        const currentTime = durationRef.current * (widthRef.current / 100) // Calculate current time as seconds
+        handleSeek(currentTime) // Seek the current time
+        setIsDragging(false) // Set dragging to false
+        setDragTime(null)
     }, [isDragging])
 
     const handleProgressMove = useCallback(e => {
         if (!trackRef.current || !isDragging) return // If progress bar ref or dragging is not set, return
+        e.preventDefault()
+        e.stopPropagation()
         updateDuration(e)
     }, [isDragging, trackRef.current])
 

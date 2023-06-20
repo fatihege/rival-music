@@ -10,6 +10,8 @@ const MIN_WIDTH = 298, // Minimum width of the side panel
     DEFAULT_WIDTH = 320, // Default width of the side panel
     MAX_WIDTH = 598 // Maximum width of the side panel
 
+const ACCENT_COLOR = '#00ff78'
+
 export default function SidePanel() {
     const resizerRef = useRef() // Reference to the resizer element
     const router = useRouter() // Router instance
@@ -24,13 +26,13 @@ export default function SidePanel() {
         {
             href: '/',
             icon: <HomeIcon/>,
-            activeIcon: <HomeIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>,
+            activeIcon: <HomeIcon filled={true} fill={ACCENT_COLOR} stroke={ACCENT_COLOR}/>,
             label: 'Home',
         },
         {
             href: '/explore',
             icon: <SearchIcon/>,
-            activeIcon: <SearchIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>,
+            activeIcon: <SearchIcon filled={true} fill={ACCENT_COLOR} stroke={ACCENT_COLOR}/>,
             label: 'Explore',
         },
     ]
@@ -64,22 +66,22 @@ export default function SidePanel() {
     }, [router.pathname]) // On route change
 
     const handleResizeDown = useCallback(e => {
-        e.preventDefault()
-        e.stopPropagation()
         setIsResizing(true) // Set resizing to true
         setOffset(isMinimized ? 0 : widthRef.current - e.clientX) // Set offset to current width minus mouse position
     }, [isMinimized]) // Handle resizing down
 
     const handleResizeUp = useCallback(e => {
+        if (!isResizing) return
         e.preventDefault()
         e.stopPropagation()
-        if (isResizing) setIsResizing(false) // Set resizing to false
+        setIsResizing(false) // Set resizing to false
     }, [isResizing]) // Handle resizing down
 
     const handleResize = useCallback(e => {
+        if (!isResizing) return // If resizing is not active, return
+
         e.preventDefault()
         e.stopPropagation()
-        if (!isResizing) return // If resizing is not active, return
 
         const newWidth = e.clientX + offset // Calculate new width of side panel
 
@@ -153,7 +155,7 @@ export default function SidePanel() {
                         <Link href="/library" className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`}>
                             <div className={styles.icon}>
                                 {activeLink === '/library' ? (
-                                    <LibraryIcon filled={true} fill={'#00ff78'} stroke={'#00ff78'}/>
+                                    <LibraryIcon filled={true} fill={ACCENT_COLOR} stroke={ACCENT_COLOR}/>
                                 ) : (
                                     <LibraryIcon/>
                                 )}

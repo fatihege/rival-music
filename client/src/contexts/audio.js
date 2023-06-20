@@ -7,6 +7,11 @@ const REPEAT = { // Repeat value constants
     ONE: 2,
 }
 
+const EXCLUDED_ELEMENTS = [
+    'BUTTON',
+    'INPUT',
+]
+
 const AudioContext = createContext(null) // Create audio context
 
 const AudioProvider = ({children}) => {
@@ -113,7 +118,7 @@ const AudioProvider = ({children}) => {
         const handlePause = () => handlePlayPause(false) // Pause the track
 
         const handleKeyDown = e => {
-            if (e.code === 'Space' || e.code === 'MediaPlayPause' || e.key === 'MediaPlayPause') handlePlayPause(!isPlayingRef.current) // Toggle play/pause if space or media play/pause key pressed
+            if (!EXCLUDED_ELEMENTS.includes(e.target.tagName) && e.code === 'Space' || e.code === 'MediaPlayPause' || e.key === 'MediaPlayPause') handlePlayPause(!isPlayingRef.current) // Toggle play/pause if space or media play/pause key pressed
         }
 
         const localLoop = localStorage.getItem('loop') && !isNaN(parseInt(localStorage.getItem('loop'))) ? parseInt(localStorage.getItem('loop')) : REPEAT.NO // Get loop value from local storage

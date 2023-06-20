@@ -12,7 +12,7 @@ export default function HomePage() {
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>
                     <div className={styles.content}>
-                        <h1 className={styles.welcomeTitle}>Listen now!</h1>
+                        <h1 className={styles.pageTitle}>Listen Now</h1>
                         <Slider title="Rhythm of Sounds"/>
                         <Slider title="Highlights of Your Music World"/>
                     </div>

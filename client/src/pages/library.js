@@ -8,7 +8,7 @@ export default function LibraryPage() {
                 <title>Rival Music — Library</title>
             </Head>
             <div className={styles.container}>
-                <h1>LIBRARY PAGE</h1>
+                <h1 className={styles.pageTitle}>LIBRARY PAGE</h1>
             </div>
         </>
     )
