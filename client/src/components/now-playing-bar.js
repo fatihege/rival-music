@@ -34,7 +34,7 @@ export default function NowPlayingBar() {
     const [width, _setWidth] = useState(null) // Now playing bar width
     const widthRef = useRef(width) // Ref for now playing bar width
     const MIN_WIDTH = 700 // Min width of now playing bar
-    const HIDING_BREAKPOINT = 800 // Hide some elements when width is less than this value
+    const BAR_BREAKPOINT = 850 // Hide some elements when width is less than this value
 
     const setShowAlbumCover = (value) => {
         _setShowAlbumCover(value) // Set showAlbumCover
@@ -143,7 +143,7 @@ export default function NowPlayingBar() {
             <div className={styles.bar}
                  style={{width: `${Math.min(Math.max(widthRef.current, MIN_WIDTH), MAX_WIDTH)}px`}}>
                 <div
-                    className={`${styles.barWrapper} ${width < HIDING_BREAKPOINT ? styles.breakpoint : ''}`}>
+                    className={`${styles.barWrapper} ${width < BAR_BREAKPOINT ? styles.breakpoint : ''}`}>
                     <div className={styles.blurryBackground}>
                         <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="100%">
                             <filter id="displacementFilter">
@@ -171,14 +171,14 @@ export default function NowPlayingBar() {
                         </div>
                         <div className={styles.trackInfo}>
                             <div className={styles.trackName}>
-                                <Link href="/" className={width < HIDING_BREAKPOINT ? 'hide' : ''}>
+                                <Link href="/">
                                     Creeping Death - Remastered
                                 </Link>
                                 <button className={styles.trackLike}>
                                     <LikeIcon strokeWidth={12}/>
                                 </button>
                             </div>
-                            <div className={`${styles.trackArtist} ${width < HIDING_BREAKPOINT ? 'hide' : ''}`}>
+                            <div className={styles.trackArtist}>
                                 <Link href="/">
                                     Metallica
                                 </Link>
