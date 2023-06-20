@@ -18,7 +18,7 @@ export default function CustomScrollbar({children, className = '', scrollbarPadd
         const {clientHeight, scrollHeight} = content // Get content height
         setThumbHeight(Math.max((clientHeight / scrollHeight) * trackHeight, MIN_THUMB_HEIGHT)) // Set thumb height based on content height
 
-        if (thumbHeight >= scrollHeight && !hide) setHide(true) // Hide scrollbar if content height is less than or equals to thumb height
+        if (thumbHeight >= scrollHeight || clientHeight === scrollHeight && !hide) setHide(true) // Hide scrollbar if content height is less than or equals to thumb height
         else if (hide) setHide(false) // Show scrollbar if content height is greater than thumb height
     }
 
@@ -34,6 +34,8 @@ export default function CustomScrollbar({children, className = '', scrollbarPadd
     }, [])
 
     const handleTrackClick = useCallback(e => {
+        if(e.target.classList.contains(styles.thumb)) return
+
         e.preventDefault()
         e.stopPropagation()
 
