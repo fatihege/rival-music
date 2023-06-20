@@ -74,15 +74,18 @@
     .inputGroup
       .input
         margin-bottom: 0
+        border-radius: 0
 
         &:first-child
-          border-bottom-left-radius: 0
-          border-bottom-right-radius: 0
+          border-top-left-radius: 12px
+          border-top-right-radius: 12px
+
+        &:nth-child(n+2)
+          border-top: none
 
         &:last-child
-          border-top: none
-          border-top-left-radius: 0
-          border-top-right-radius: 0
+          border-bottom-left-radius: 12px
+          border-bottom-right-radius: 12px
 
   .extras
     margin-top: 3rem
@@ -92,12 +95,14 @@
     align-items: center
     row-gap: .5rem
 
-    a
+    a,
+    span
       color: #ffffff
       font-size: .9rem
       font-weight: 400
       opacity: .5
       line-height: 2
+      cursor: pointer
 
       &:hover
         opacity: .8

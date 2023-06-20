@@ -1,10 +1,15 @@
+import {useContext} from 'react'
+import {ModalContext} from '@/contexts/modal'
 import Link from '@/components/custom-link'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
+import SignupModal from '@/components/modals/signup'
 import {LogoIcon, NextIcon} from '@/icons'
 import styles from '@/styles/modals.module.sass'
 
 export default function LoginModal() {
+    const [, setModal] = useContext(ModalContext)
+
     return (
         <div className={styles.loginModal}>
             <div className={styles.logo}>
@@ -20,7 +25,7 @@ export default function LoginModal() {
                 <Button value="Sign in" icon={<NextIcon stroke={'#1c1c1c'}/>}/>
             </div>
             <div className={styles.extras}>
-                <Link href="/">Create new account</Link>
+                <span onClick={() => setModal(<SignupModal/>)}>Create new account</span>
                 <Link href="/">Forgot your password?</Link>
             </div>
         </div>

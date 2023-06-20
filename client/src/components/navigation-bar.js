@@ -4,6 +4,7 @@ import {AuthContext} from '@/contexts/auth'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {ModalContext} from '@/contexts/modal'
 import LoginModal from '@/components/modals/login'
+import SignupModal from '@/components/modals/signup'
 import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
 
@@ -27,7 +28,7 @@ export default function NavigationBar() {
                 {!user ? (
                     <div className={styles.buttons}>
                         <button className={styles.login} onClick={() => setModal(<LoginModal/>)}>Log in</button>
-                        <button className={styles.signup}>Sign up</button>
+                        <button className={styles.signup} onClick={() => setModal(<SignupModal/>)}>Sign up</button>
                     </div>
                 ) : ''}
             </div>
