@@ -26,7 +26,7 @@ export default function SignupModal() {
                 <Button value="Sign up" icon={<NextIcon stroke={'#1c1c1c'}/>}/>
             </div>
             <div className={styles.extras}>
-                <span onClick={() => setModal(<LoginModal/>)}>Log in your account</span>
+                <span onClick={() => setModal(<LoginModal/>)}>Log in to your account</span>
             </div>
         </div>
     )
