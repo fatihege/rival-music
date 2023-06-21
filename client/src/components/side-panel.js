@@ -125,6 +125,7 @@ export default function SidePanel() {
     const handleMinimize = (maximize = false) => {
         if (!maximize) { // If minimize
             setIsMinimized(true) // Minimize side panel
+            updateNavBarWidth(-1, true) // Update navigation bar width
             localStorage.setItem('sidePanelWidth', -1) // Save width to local storage
         } else { // If maximize
             setIsMinimized(false) // Maximize side panel
