@@ -25,6 +25,7 @@
     color: #ffffff
     z-index: 11
     border-radius: 16px
+    overflow: hidden
 
     .wrapper
       position: relative
@@ -113,3 +114,38 @@
 
       &:hover
         opacity: .8
+
+.askLoginModal
+  .backgroundImage
+    position: absolute
+    top: -24px
+    left: 0
+    right: 0
+    z-index: 0
+
+  .logo
+    z-index: 1
+    position: absolute
+    width: 180px
+    left: 50%
+    top: 110px
+    transform: translateX(-50%)
+
+  .slogan
+    width: 250px
+    position: absolute
+    z-index: 1
+    font-size: 1.8rem
+    font-weight: 800
+    color: #ffffff
+    text-align: center
+    top: 210px
+    left: 50%
+    transform: translateX(-50%)
+    
+  .buttons
+    position: absolute
+    z-index: 1
+    top: 310px
+    left: 50%
+    transform: translateX(-50%)
