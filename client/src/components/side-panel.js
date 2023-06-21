@@ -41,8 +41,12 @@ export default function SidePanel() {
     const setWidth = value => { // Set width of the side panel
         widthRef.current = value
         _setWidth(value)
+        updateNavBarWidth(value, isMinimized) // Update navigation bar width
+    }
 
-        setNavBarWidth(window.innerWidth - value - 12)
+    const updateNavBarWidth = (value, isMinimized) => {
+        if (isMinimized) setNavBarWidth(window.innerWidth - 116)
+        else setNavBarWidth(window.innerWidth - value - 12)
     }
 
     useEffect(() => {
@@ -56,7 +60,10 @@ export default function SidePanel() {
 
         const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
         if (width && !isNaN(parseInt(width))) // If width is valid
-            if (parseInt(width) === -1) setIsMinimized(true) // If width is -1, set is minimized
+            if (parseInt(width) === -1) {
+                setIsMinimized(true) // If width is -1, set is minimized
+                updateNavBarWidth(-1, true) // Update navigation bar width
+            }
             else setWidth(parseInt(width)) // Otherwise, set width
         else setWidth(DEFAULT_WIDTH) // Otherwise, set default width
     }, [])
