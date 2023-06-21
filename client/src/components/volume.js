@@ -78,10 +78,10 @@ export default function Volume() {
             <div className={styles.icon}>
                 <button className={styles.iconButton} onClick={() => toggleMute()}>
                     {
-                        level >= 60 ? <VolumeHighIcon/> :
-                        level >= 30 ? <VolumeMidIcon/> :
-                        level > 0 ? <VolumeLowIcon/> :
-                        level === 0 ? <VolumeMuteIcon/> : <VolumeHighIcon/>
+                        level >= 60 ? <VolumeHighIcon strokeRate={1.2}/> :
+                        level >= 30 ? <VolumeMidIcon strokeRate={1.2}/> :
+                        level > 0 ? <VolumeLowIcon strokeRate={1.2}/> :
+                        level === 0 ? <VolumeMuteIcon strokeRate={1.2}/> : <VolumeHighIcon strokeRate={1.2}/>
                     }
                 </button>
             </div>

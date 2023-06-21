@@ -211,10 +211,10 @@ export default function NowPlayingBar() {
                         <div className={styles.buttons}>
                             <button className={styles.button}
                                     onClick={() => setTrackPanel({...trackPanel, active: !trackPanel.active})}>
-                                <MicrophoneIcon/>
+                                <MicrophoneIcon strokeRate={1.2}/>
                             </button>
                             <button className={styles.button}>
-                                <QueueIcon/>
+                                <QueueIcon strokeRate={1.2}/>
                             </button>
                             <div className={styles.volume}>
                                 <Volume/>
