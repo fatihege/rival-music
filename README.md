@@ -4,13 +4,14 @@ This application is a web application that allows users to search, play, and sha
 
 ## Technologies
 
-This application is built using MERN (MongoDB, Express.js, React.js, Node.js) stack and a Server Side Rendering (SSR) framework such as Next.js.
+This application is built using MERN (MongoDB, Express.js, React.js, Node.js) stack and a Server Side Rendering (SSR) framework such as Next.js. Additionally, Redis is used for caching and improving performance.
 
 * **MongoDB** - NoSQL database is used.
 * **Express.js** - Server-side web application framework is used.
 * **React.js** - Used for building user interfaces.
 * **Node.js** - Used for running server-side logic.
 * **Next.js** - Used for server-side rendering.
+* **Redis** - In-memory data store used for caching.
 
 ## Installation
 
