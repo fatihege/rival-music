@@ -1,10 +1,10 @@
 import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
+import 'dotenv/config'
 import client from './lib/redis.js'
 import userRoutes from './routes/user.js'
 import trackRoutes from './routes/track.js'
-import 'dotenv/config'
 
 const app = express() // Create Express server instance
 
