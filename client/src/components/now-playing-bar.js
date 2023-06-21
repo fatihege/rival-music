@@ -138,7 +138,7 @@ export default function NowPlayingBar() {
                         {albumCoverRight ? <LeftArrowIcon stroke={'#c7c7c7'}/> : <RightArrowIcon stroke={'#c7c7c7'}/>}
                     </button>
                     <button className={styles.button} onClick={() => toggleAlbumCover()}>
-                        <CloseIcon stroke={'#c7c7c7'}/>
+                        <CloseIcon stroke={'#c7c7c7'} strokeRate={1.2}/>
                     </button>
                 </div>
             </div>

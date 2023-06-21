@@ -4,13 +4,16 @@ import Modal from '@/components/modal'
 const ModalContext = createContext(null) // Create modal context
 
 const ModalProvider = ({children}) => {
-    const [modal, setModal] = useState(null) // Active modal state
+    const [modal, setModal] = useState({ // Active modal state
+        active: null,
+        canClose: true,
+    })
 
     return (
         <ModalContext.Provider value={[modal, setModal]}>
-            {modal ? (
+            {modal.active ? (
                 <Modal>
-                    {modal}
+                    {modal.active}
                 </Modal>
             ) : ''}
             {children}

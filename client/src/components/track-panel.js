@@ -50,7 +50,7 @@ export default function TrackPanel() {
                 </div>
                 <div className={styles.wrapper}>
                     <div className={styles.close} onClick={() => setTrackPanel({...trackPanel, active: false})}>
-                        <CloseIcon strokeWidth={24}/>
+                        <CloseIcon/>
                     </div>
                     <div className={styles.innerContainer}>
                         <div className={styles.controls}>

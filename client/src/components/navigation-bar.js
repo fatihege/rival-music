@@ -11,7 +11,7 @@ import styles from '@/styles/navigation-bar.module.sass'
 export default function NavigationBar() {
     const [user] = useContext(AuthContext) // Get user from auth context
     const [width] = useContext(NavigationBarContext) // Get navigation bar width from context
-    const [, setModal] = useContext(ModalContext) // Use modal context
+    const [modal, setModal] = useContext(ModalContext) // Use modal context
     const [goBack, goForward] = useHistory() // Get goBack and goForward functions from history hook
 
     return (
@@ -25,10 +25,19 @@ export default function NavigationBar() {
                 </button>
             </div>
             <div className={styles.accountSection}>
-                {!user ? (
+                {(user.loaded && !user.id) ? (
                     <div className={styles.buttons}>
-                        <button className={styles.login} onClick={() => setModal(<LoginModal/>)}>Log in</button>
-                        <button className={styles.signup} onClick={() => setModal(<SignupModal/>)}>Sign up</button>
+                        <button className={styles.login} onClick={() => setModal({...modal, active: <LoginModal/>})}>Log in</button>
+                        <button className={styles.signup} onClick={() => setModal({...modal, active: <SignupModal/>})}>Sign up</button>
+                    </div>
+                ) : user.loaded && user.id ? (
+                    <div className={styles.user}>
+                        {!user.image ? (
+                            <div className={styles.pseudoImage}>{user?.name[0]?.toUpperCase()}</div>
+                        ) : ''}
+                        <div className={styles.name}>
+                            {user.name}
+                        </div>
                     </div>
                 ) : ''}
             </div>

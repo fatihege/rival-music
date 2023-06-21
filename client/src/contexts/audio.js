@@ -127,9 +127,6 @@ const AudioProvider = ({children}) => {
         const localShuffle = localStorage.getItem('shuffle') && !isNaN(Number(localStorage.getItem('shuffle'))) ? !!Number(localStorage.getItem('shuffle')) : false // Get shuffle value from local storage
         handleShuffle(localShuffle) // Handle shuffle by local value
 
-        const localCurrentTime = localStorage.getItem('currentTime') && !isNaN(parseInt(localStorage.getItem('currentTime'))) ? parseInt(localStorage.getItem('currentTime')) : 0 // Get current time of track from local storage
-        handleSeek(localCurrentTime) // Seek current time by local value
-
         audioRef.current.addEventListener('loadedmetadata', handleMetaData)
         audioRef.current.addEventListener('volumechange', handleVolumeChange)
         audioRef.current.addEventListener('play', handlePlay)
@@ -161,10 +158,6 @@ const AudioProvider = ({children}) => {
     }, [shuffle])
 
     useEffect(() => {
-        if (Math.round(currentTime) % 5 === 0) localStorage.setItem('currentTime', currentTime.toString()) // Update local storage value of current time when divided by 5 and when it changes
-    }, [currentTime])
-
-    useEffect(() => {
         if (!queue[queueIndex]) setQueueIndex(queueIndex - 1) // Rewind if there is no track at that index
     }, [queueIndex])
 
@@ -190,7 +183,6 @@ const AudioProvider = ({children}) => {
 
         setCurrentTime(time) // Update current time state by time
         audioRef.current.currentTime = time // Set audio element's current time to time
-        localStorage.setItem('currentTime', time.toString()) // Set current time value on local storage
     }
 
     const handleVolumeUpdate = level => {

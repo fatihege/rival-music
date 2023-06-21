@@ -69,3 +69,39 @@
           background: rgba(255, 255, 255, .1)
           border: 1px solid rgba(255, 255, 255, .5)
           color: #ffffff
+
+    .user
+      height: 2.25rem
+      background-color: rgba(0, 0, 0, .4)
+      backdrop-filter: blur(12px)
+      border: 1px solid rgba(14, 14, 14, .5)
+      border-radius: 2.25rem
+      display: flex
+      justify-content: flex-start
+      align-items: center
+      column-gap: .5rem
+      padding: .25rem .75rem .25rem .25rem
+      cursor: pointer
+
+      .pseudoImage
+        width: 1.75rem
+        height: 1.75rem
+        background: #ffffff
+        color: #252525
+        display: flex
+        justify-content: center
+        align-items: center
+        font-weight: 800
+        font-size: .9rem
+        border-radius: 50%
+        
+      .name
+        color: #ffffff
+        font-size: .9rem
+        font-weight: 500
+        padding: 2px 0
+        line-height: 1
+        max-width: 100px
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis

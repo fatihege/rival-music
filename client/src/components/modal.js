@@ -9,7 +9,7 @@ export default function Modal({children}) {
 
     useEffect(() => {
         const handleKeyUp = e => {
-            if (e.code === 'Escape' && modal) setModal(null) // Close modal if Esc key is pressed
+            if (e.code === 'Escape' && modal.active && modal.canClose) setModal({...modal, active: null}) // Close modal if Esc key is pressed and the modal is can be closed
         }
 
         window.addEventListener('keyup', handleKeyUp)
@@ -23,14 +23,12 @@ export default function Modal({children}) {
         <div className={styles.container}>
             <div className={styles.modal}>
                 <div className={styles.wrapper}>
-                    {/*<CustomScrollbar scrollbarPadding={8}>*/}
-                        <button className={styles.close} onClick={() => setModal(null)}>
-                            <CloseIcon/>
-                        </button>
-                        <div className={styles.content}>
-                            {children}
-                        </div>
-                    {/*</CustomScrollbar>*/}
+                    <button className={styles.close} onClick={() => modal.canClose ? setModal({...modal, active: null}) : false}>
+                        <CloseIcon/>
+                    </button>
+                    <div className={styles.content}>
+                        {children}
+                    </div>
                 </div>
             </div>
         </div>

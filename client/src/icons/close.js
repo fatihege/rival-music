@@ -1,4 +1,4 @@
-export default function CloseIcon({stroke = '#fff', strokeWidth = 33}) {
+export default function CloseIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function CloseIcon({stroke = '#fff', strokeWidth = 33}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${32 * strokeRate}px`,
                 }}
                 transform="translate(62.603 62.603) scale(.51091)"
             />
@@ -26,7 +26,7 @@ export default function CloseIcon({stroke = '#fff', strokeWidth = 33}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${32 * strokeRate}px`,
                 }}
                 transform="rotate(-90 128 65.397) scale(.51091)"
             />
