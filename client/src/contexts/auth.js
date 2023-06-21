@@ -8,21 +8,22 @@ const AuthProvider = ({children}) => {
         loaded: false,
     })
 
+    const getUserData = async () => {
+        const token = localStorage.getItem('token') // Get token from local storage
+
+        if (token?.length) { // If there is a token
+            try {
+                const response = await axios.get(`${process.env.API_URL}/user/${token}`) // Send a GET request for user info
+                if (response.data?.status === 'OK') setUser({loaded: true, token, ...response.data.user}) // If response is OK, update user state
+            } catch (e) {
+                setUser({loaded: true}) // User data is loaded
+            }
+        } else setUser({loaded: true}) // User data is loaded
+    }
+
     useEffect(() => {
         if (!localStorage) return // If localStorage is undefined, return
-
-        (async () => {
-            const token = localStorage.getItem('token') // Get token from local storage
-
-            if (token?.length) { // If there is a token
-                try {
-                    const response = await axios.get(`${process.env.API_URL}/user/${token}`) // Send a GET request for user info
-                    if (response.data?.status === 'OK') setUser({loaded: true, token, ...response.data.user}) // If response is OK, update user state
-                } catch (e) {
-                    setUser({loaded: true}) // User data is loaded
-                }
-            } else setUser({loaded: true}) // User data is loaded
-        })()
+        getUserData() // Get user data
     }, [])
 
     useEffect(() => { // If user state value changes

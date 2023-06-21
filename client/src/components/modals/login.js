@@ -56,7 +56,7 @@ export default function LoginModal() {
             })
 
             if (response.data?.status === 'OK') { // If response is OK
-                setUser(response.data.user) // Update user from auth context
+                setUser({loaded: true, ...response.data.user}) // Update user from auth context
                 setModal({...modal, canClose: true, active: null}) // Enable modal closure and close modal
             }
         } catch (e) { // If there is an error
