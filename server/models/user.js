@@ -15,7 +15,11 @@ const UserSchema = new Schema({
         required: true,
     },
     dateOfBirth: Date,
-    followedArtists: [{
+    profileBackground: {
+        type: String,
+        default: '#ffffff',
+    },
+    favouriteArtists: [{
         type: Schema.Types.ObjectId,
         ref: 'Artist',
     }],
@@ -25,7 +29,7 @@ const UserSchema = new Schema({
     }],
     playlists: [{
         type: Schema.Types.ObjectId,
-        ref: 'Playlist'
+        ref: 'Playlist',
     }],
     accepted: {
         type: Boolean,

@@ -4,6 +4,7 @@ import {promisify} from 'util'
 import {exec as execCmd} from "child_process";
 import client from '../lib/redis.js'
 import {__dirname} from '../utils/dirname.js'
+import checkDir from "../utils/check-dir.js";
 
 const exec = promisify(execCmd) // Promisify exec function
 
@@ -27,7 +28,10 @@ export const getManifest = async (req, res) => {
     const {track} = req.params // Get track file name from request parameters
     const trackFileName = track.slice(0, track.lastIndexOf('.'))
     const trackPath = join(__dirname, '..', 'audio', track) // Create track path
-    const destination = join(__dirname, '..', 'audio', 'manifest', trackFileName) // Create destination of track manifest
+    const manifestPath = join(__dirname, '..', 'audio', 'manifest') // Create manifest directory path
+    const destination = join(manifestPath, trackFileName) // Create destination of track manifest
+
+    checkDir(manifestPath)
 
     const cacheValue = await client.get(`manifest:${trackFileName}`)
     if (cacheValue) return res.status(200).set('Content-Type', 'application/vnd.apple.mpegurl').send(Buffer.from(cacheValue))

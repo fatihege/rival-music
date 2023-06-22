@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import styles from '@/styles/inputs.module.sass'
 
-export default function  Input({type = 'text', name = '', placeholder = '', className = '', autoComplete = 'on', set = null, alert = null, onChange = () => {}, onBlur = () => {}}) {
+export default function  Input({type = 'text', name = '', placeholder = '', value = '', className = '', autoComplete = 'on', set = null, alert = null, onChange = () => {}, onBlur = () => {}}) {
     const inputRef = useRef() // Input reference
     const [focused, setFocused] = useState(false) // Is input focused
 
@@ -22,9 +22,9 @@ export default function  Input({type = 'text', name = '', placeholder = '', clas
             style={focused ? {zIndex: 1} : {}}>
             <span className={styles.placeholder}>{placeholder}</span>
             <input type={type} name={name} ref={inputRef} onChange={e => {
-                set.current = e.target.value
+                if (set) set.current = e.target.value
                 onChange()
-            }} autoComplete={autoComplete} onBlur={onBlur}/>
+            }} autoComplete={autoComplete} onBlur={onBlur} defaultValue={value}/>
             {alert ? (
                 <>
                     <div className={styles.alert}>i</div>

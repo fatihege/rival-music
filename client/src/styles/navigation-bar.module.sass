@@ -87,7 +87,7 @@
         cursor: pointer
         position: relative
 
-        .pseudoImage
+        .image
           width: 1.75rem
           height: 1.75rem
           background: #ffffff
@@ -98,6 +98,12 @@
           font-weight: 800
           font-size: .9rem
           border-radius: 50%
+          overflow: hidden
+
+          img
+            width: 100%
+            height: auto
+            object-fit: contain
 
         .name
           color: #ffffff

@@ -190,7 +190,7 @@ export default function SidePanel() {
                         {!isMinimized && (
                             <div className={styles.operations}>
                                 <button>
-                                    <AddIcon strokeWidth={24} stroke="#aeaeae"/>
+                                    <AddIcon strokeRate={1.2} stroke="#aeaeae"/>
                                 </button>
                                 <button onClick={() => handleMinimize()}>
                                     <PrevIcon strokeWidth={24} stroke="#aeaeae"/>

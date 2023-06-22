@@ -5,15 +5,6 @@ import {NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
 export default function Slider({title, items = []}) {
-    for (let i = 0; i < 2; i++)
-        for (let id = 1; id <= 6; id++)
-            items.push({
-                id: id + i * 6,
-                name: id === 6 ? 'Ride The Lightning' : id === 5 ? 'Fear of the Dark (2015 Remaster)' : id === 4 ? 'Hells Bells' : id === 3 ? 'The Devil in I' : id === 2 ? 'Heaven and Hell - 2009 Remaster' : 'Seek & Destroy - Remastered',
-                artist: id === 5 ? 'Iron Maiden' : id === 4 ? 'AC/DC' : id === 3 ? 'Slipknot' : id === 2 ? 'Black Sabbath' : 'Metallica',
-                image: id === 6 ? '/album_cover_6.jpg' : id === 5 ? '/album_cover_5.jpg' : id === 4 ? '/album_cover_4.jpg' : id === 3 ? '/album_cover_3.jpg' : id === 2 ? '/album_cover_2.jpg' : '/album_cover_1.jpg',
-            })
-
     const router = useRouter() // Router hook
     const containerRef = useRef() // Slider container
     const sliderRef = useRef() // Slider wrapper
@@ -133,7 +124,7 @@ export default function Slider({title, items = []}) {
             prevButtonRef.current?.removeEventListener('click', handlePrevClick)
             nextButtonRef.current?.removeEventListener('click', handleNextClick)
         }
-    }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef])
+    }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef, items])
 
     const handlePlay = (e) => {
         e.stopPropagation() // Prevent click on parent element
@@ -166,7 +157,7 @@ export default function Slider({title, items = []}) {
                             <div className={styles.item} key={item.id} ref={i === 0 ? referenceSlideRef : null}>
                                 <div className={styles.itemImage}>
                                     <img src={item.image} alt={item.name}/>
-                                    <div className={styles.overlay} onClick={() => router.push('/')}>
+                                    <div className={styles.overlay}>
                                         <button className={`${styles.button} ${styles.play}`} onClick={handlePlay}>
                                             <PlayIcon/>
                                         </button>

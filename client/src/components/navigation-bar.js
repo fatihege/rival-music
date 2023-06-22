@@ -48,9 +48,9 @@ export default function NavigationBar() {
                 ) : user.loaded && user.id ? (
                     <div className={styles.user}>
                         <div className={styles.info} onClick={handleShowMenu}>
-                            {!user.image ? (
-                                <div className={styles.pseudoImage}>{user?.name[0]?.toUpperCase()}</div>
-                            ) : ''}
+                                <div className={styles.image}>
+                                    {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`}/> : user?.name[0]?.toUpperCase()}
+                                </div>
                             <div className={styles.name}>
                                 {user.name}
                             </div>
@@ -58,13 +58,13 @@ export default function NavigationBar() {
                         <div className={`${styles.menu} ${showMenu.current ? styles.show : ''}`} ref={menuRef}>
                             <ul>
                                 <li>
-                                    <Link href="/">Account</Link>
+                                    <Link href="/" onClick={() => setShowMenu(false)}>Account</Link>
                                 </li>
                                 <li>
-                                    <Link href="/">Profile</Link>
+                                    <Link href="/profile" onClick={() => setShowMenu(false)}>Profile</Link>
                                 </li>
                                 <li>
-                                    <Link href="/">Settings</Link>
+                                    <Link href="/" onClick={() => setShowMenu(false)}>Settings</Link>
                                 </li>
                                 <li className={styles.separator}></li>
                                 <li>
@@ -72,7 +72,7 @@ export default function NavigationBar() {
                                 </li>
                                 {user.admin ? (
                                     <li>
-                                        <Link href="/admin">Admin Panel</Link>
+                                        <Link href="/admin" onClick={() => setShowMenu(false)}>Admin Panel</Link>
                                     </li>
                                 ) : ''}
                             </ul>

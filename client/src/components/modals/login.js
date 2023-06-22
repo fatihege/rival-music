@@ -1,6 +1,7 @@
 import {useContext, useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import {AuthContext} from '@/contexts/auth'
+import {AlertContext} from '@/contexts/alert'
 import {ModalContext} from '@/contexts/modal'
 import Link from '@/components/custom-link'
 import Input from '@/components/form/input'
@@ -12,6 +13,7 @@ import styles from '@/styles/modals.module.sass'
 
 export default function LoginModal() {
     const [, setUser] = useContext(AuthContext) // Use auth context
+    const [, setAlertPopup] = useContext(AlertContext) // Use alert context
     const [modal, setModal] = useContext(ModalContext) // Use modal context
     const email = useRef('') // Email value reference
     const password = useRef('') // Password value reference
@@ -66,7 +68,13 @@ export default function LoginModal() {
                     [error.field]: error.message
                 })
             else {
-                window.alert('An error occurred while logging into your account. Try again later or contact with site owner.') // Otherwise, show an alert
+                setAlertPopup({ // Otherwise, show an alert
+                    active: true,
+                    title: 'We are sorry',
+                    description: 'An error occurred while logging into your account. Try again later or contact with site owner.',
+                    button: 'OK',
+                    type: ''
+                })
                 console.error(e)
             }
 

@@ -6,6 +6,7 @@ import {AudioProvider} from '@/contexts/audio'
 import {TrackPanelProvider} from '@/contexts/track-panel'
 import {NavigationBarProvider} from '@/contexts/navigation-bar'
 import {ModalProvider} from '@/contexts/modal'
+import {AlertProvider} from '@/contexts/alert'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
 import '@/styles/globals.sass'
@@ -54,17 +55,19 @@ export default function App({Component, pageProps}) {
         <AuthProvider>
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
                 <Wrapper load={load}>
-                    <AudioProvider>
-                        <TrackPanelProvider>
-                            <ModalProvider>
-                                <NavigationBarProvider>
-                                    <Main>
-                                        <Component {...pageProps}/>
-                                    </Main>
-                                </NavigationBarProvider>
-                            </ModalProvider>
-                        </TrackPanelProvider>
-                    </AudioProvider>
+                    <AlertProvider>
+                        <AudioProvider>
+                            <TrackPanelProvider>
+                                <ModalProvider>
+                                    <NavigationBarProvider>
+                                        <Main>
+                                            <Component {...pageProps}/>
+                                        </Main>
+                                    </NavigationBarProvider>
+                                </ModalProvider>
+                            </TrackPanelProvider>
+                        </AudioProvider>
+                    </AlertProvider>
                 </Wrapper>
             </SkeletonTheme>
         </AuthProvider>

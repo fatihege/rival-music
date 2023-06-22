@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken'
+import fs from 'fs'
+import {join} from 'path'
 import checkEmail from '../utils/check-email.js'
 import {encrypt} from '../utils/encryption.js'
 import User from '../models/user.js'
 import authenticate from '../utils/authenticate.js'
+import {__dirname} from '../utils/dirname.js'
 
 const returnErrors = (errors, res) => {
     if (errors.length) { // If errors is not empty
@@ -16,41 +19,65 @@ const returnErrors = (errors, res) => {
     return false // Otherwise, return false
 }
 
+const getFollowers = async (userId, count = true) => {
+    const query = {followedUsers: {$in: [userId]}}
+    return count ? await User.countDocuments(query) : await User.find(query)
+}
+
 export const getUser = async (req, res) => {
     try {
         const {token} = req.params // Get token from request parameters
+        const {id, props} = req.query // Get user ID and requested props from query string
 
-        if (!token) return res.status(400).json({ // If token is not specified, return 400 response
+        if (!token && !id) return res.status(400).json({ // If token is not specified, return 400 response
             status: 'ERROR',
-            message: 'Token is required.',
+            message: 'Token or ID is required.',
         })
 
-        const decodedToken = jwt.verify(token, process.env.JWT_KEY) // Decode JWT token
+        let userId = null
 
-        if (!decodedToken.userId) return res.status(404).json({ // If decoded JWT token is not valid, return 404 response
-            status: 'ERROR',
-            message: 'Token expired.',
-        })
+        if (token) {
+            const decodedToken = jwt.verify(token, process.env.JWT_KEY) // Decode JWT token
 
-        const user = await User.findById(decodedToken.userId) // Find user from the user id of the decoded token
+            if (!decodedToken.userId) return res.status(404).json({ // If decoded JWT token is not valid, return 404 response
+                status: 'ERROR',
+                message: 'Token expired.',
+            })
+
+            userId = decodedToken.userId
+        } else userId = id
+
+        const user = await User.findById(userId) // Find user from the user id of the decoded token
 
         if (!user || !user._id) return res.status(404).json({ // If there is no user, return 404 response
             status: 'ERROR',
             message: 'User not found.',
         })
 
+        let result = {}
+
+        if (props && props.split(',').length) {
+            for (let prop of props.split(',')) {
+                const propName = prop.trim().startsWith('count:') ? prop.trim().slice('count:'.length).trim() : prop.trim()
+                if (propName === 'followers') {
+                    result[propName] = await getFollowers(user._id, prop.trim().startsWith('count:'))
+                } else if (typeof user[propName] !== 'undefined' && !prop.includes('password'))
+                    result[propName] = prop.startsWith('count:') ? user[propName]?.length : user[propName]
+            }
+        } else result = {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            accepted: user.accepted,
+            admin: user.admin,
+            dateOfBirth: user.dateOfBirth,
+            createdAt: user.createdAt,
+        }
+
         res.status(200).json({ // If there is a user, return user info
             status: 'OK',
-            user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
-                image: user.image,
-                accepted: user.accepted,
-                admin: user.admin,
-                dateOfBirth: user.dateOfBirth,
-                createdAt: user.createdAt,
-            },
+            user: result,
         })
     } catch (e) {
         res.status(500).json({ // Return 500 response when an error occurs
@@ -181,6 +208,58 @@ export const postLoginUser = async (req, res) => {
         res.status(500).json({ // Return 500 response when an error occurs
             status: 'ERROR',
             message: 'An error occurred while authenticating user.',
+        })
+    }
+}
+
+export const postUpdateProfile = async (req, res) => {
+    try {
+        const {id} = req.params
+        const image = req.file
+        const {name, noImage} = req.body
+
+        console.log(id, image, name, noImage)
+
+        if (!id) return res.status(400).json({
+            status: 'ERROR',
+            message: 'Bad request.',
+        })
+
+        const user = await User.findById(id)
+        let newName = user.name
+        let newImage = user.image
+
+        if (!user) return res.status(404).json({
+            status: 'ERROR',
+            message: 'User not found.',
+        })
+
+        const currentImagePath = join(__dirname, '..', 'images', user.image || '_')
+        if (user.image && fs.existsSync(currentImagePath)) fs.unlinkSync(currentImagePath)
+
+        if (name && name.length >= 4) newName = name
+        if (image) newImage = image.filename
+        if (noImage) newImage = null
+
+        await User.updateOne({_id: id}, {
+            $set: {
+                name: newName,
+                image: newImage,
+            }
+        })
+
+        return res.status(200).json({
+            status: 'OK',
+            message: 'User profile updated.',
+            image: newImage,
+            name: newName,
+        })
+    } catch (e) {
+        console.error(e)
+        res.status(500).json({ // Return 500 response when an error occurs
+            status: 'ERROR',
+            message: 'An error occurred while updating user profile.',
+            error: e.message,
         })
     }
 }

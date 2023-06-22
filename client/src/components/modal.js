@@ -1,8 +1,7 @@
 import {useContext, useEffect} from 'react'
 import {ModalContext} from '@/contexts/modal'
-import CustomScrollbar from '@/components/custom-scrollbar'
-import styles from '@/styles/modals.module.sass'
 import {CloseIcon} from '@/icons'
+import styles from '@/styles/modals.module.sass'
 
 export default function Modal({children}) {
     const [modal, setModal] = useContext(ModalContext)

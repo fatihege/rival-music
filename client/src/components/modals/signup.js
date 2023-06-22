@@ -1,6 +1,7 @@
 import {useContext, useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import {AuthContext} from '@/contexts/auth'
+import {AlertContext} from '@/contexts/alert'
 import {ModalContext} from '@/contexts/modal'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
@@ -11,6 +12,7 @@ import styles from '@/styles/modals.module.sass'
 
 export default function SignupModal() {
     const [, setUser] = useContext(AuthContext) // Use auth context
+    const [, setAlertPopup] = useContext(AlertContext) // Use alert context
     const [modal, setModal] = useContext(ModalContext) // Use modal context
     const name = useRef('') // Name value reference
     const email = useRef('') // Email value reference
@@ -96,7 +98,13 @@ export default function SignupModal() {
                     [error.field]: error.message
                 })
             else {
-                window.alert('An error occurred while creating your account. Try again later or contact with site owner.') // Otherwise, show an alert
+                setAlertPopup({ // Otherwise, show an alert
+                    active: true,
+                    title: 'We are sorry',
+                    description: 'An error occurred while creating your account. Try again later or contact with site owner.',
+                    button: 'OK',
+                    type: ''
+                })
                 console.error(e)
             }
 
