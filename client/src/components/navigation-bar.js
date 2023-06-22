@@ -70,6 +70,11 @@ export default function NavigationBar() {
                                 <li>
                                     <span onClick={handleLogout}>Log out</span>
                                 </li>
+                                {user.admin ? (
+                                    <li>
+                                        <Link href="/admin">Admin Panel</Link>
+                                    </li>
+                                ) : ''}
                             </ul>
                         </div>
                     </div>

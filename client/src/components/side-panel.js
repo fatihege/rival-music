@@ -66,6 +66,19 @@ export default function SidePanel() {
             }
             else setWidth(parseInt(width)) // Otherwise, set width
         else setWidth(DEFAULT_WIDTH) // Otherwise, set default width
+
+        const handleResize = () => {
+            const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
+            if (width && !isNaN(parseInt(width))) // If width is valid
+                if (parseInt(width) === -1) updateNavBarWidth(-1, true) // Update navigation bar width
+                else updateNavBarWidth(parseInt(width))
+        }
+
+        window.addEventListener('resize', handleResize)
+
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
     }, [])
 
     useEffect(() => {

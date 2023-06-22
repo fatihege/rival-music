@@ -19,6 +19,10 @@ const TrackSchema = new Schema({
         ref: 'Album',
         required: true,
     },
+    genres: [{
+        type: String,
+        required: true
+    }],
 }, {
     timestamps: true,
 })
