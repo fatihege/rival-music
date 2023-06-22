@@ -12,5 +12,8 @@ audio/*
 audio/manifest/*
 !audio/manifest
 
+# images
+images/*
+
 # unnecessary
 utils/*-file.js

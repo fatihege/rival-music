@@ -1,10 +1,10 @@
 import {join} from 'path'
 import {createReadStream, existsSync} from 'fs'
 import {promisify} from 'util'
-import {exec as execCmd} from "child_process";
+import {exec as execCmd} from 'child_process'
 import client from '../lib/redis.js'
+import checkDir from '../utils/check-dir.js'
 import {__dirname} from '../utils/dirname.js'
-import checkDir from "../utils/check-dir.js";
 
 const exec = promisify(execCmd) // Promisify exec function
 
