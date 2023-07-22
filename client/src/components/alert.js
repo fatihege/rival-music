@@ -3,8 +3,15 @@ import {AlertContext} from '@/contexts/alert'
 import Button from '@/components/form/button'
 import styles from '@/styles/alert.module.sass'
 
+/**
+ * @param {string} title
+ * @param {string} description
+ * @param {string} button
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function Alert({title = '', description = '', button = 'OK'}) {
-    const [alert, setAlert] = useContext(AlertContext)
+    const [alert, setAlert] = useContext(AlertContext) // Use alert context
 
     useEffect(() => {
         const handleKeyUp = e => {

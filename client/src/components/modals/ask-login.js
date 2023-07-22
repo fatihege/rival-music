@@ -7,7 +7,7 @@ import {AskLoginBackground, Logo} from '@/icons'
 import styles from '@/styles/modals.module.sass'
 
 export default function AskLoginModal() {
-    const [, setModal] = useContext(ModalContext)
+    const [, setModal] = useContext(ModalContext) // Use modal context
 
     return (
         <div className={styles.askLoginModal}>

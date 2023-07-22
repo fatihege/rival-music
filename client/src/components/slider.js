@@ -1,17 +1,36 @@
-import {useRouter} from 'next/router'
 import {useEffect, useRef, useState} from 'react'
 import Link from '@/components/custom-link'
 import {NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
 export default function Slider({title, items = []}) {
-    const router = useRouter() // Router hook
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const containerRef = useRef() // Slider container
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const sliderRef = useRef() // Slider wrapper
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const slidesRef = useRef() // Slides container
+    /**
+     * @type {React.MutableRefObject<HTMLButtonElement>}
+     */
     const prevButtonRef = useRef() // Previous button
+    /**
+     * @type {React.MutableRefObject<HTMLButtonElement>}
+     */
     const nextButtonRef = useRef() // Next button
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const referenceSlideRef = useRef() // Reference slide
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const fadingRef = useRef() // Fading overlay
     const [showAll, _setShowAll] = useState(false) // Show all state
     const showAllRef = useRef(showAll) // Show all state reference

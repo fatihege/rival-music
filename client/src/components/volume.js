@@ -6,6 +6,9 @@ import {VolumeHighIcon, VolumeLowIcon, VolumeMidIcon, VolumeMuteIcon} from '@/ic
 export default function Volume() {
     const {volume, handleVolumeUpdate} = useContext(AudioContext) // Audio controls context
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const trackRef = useRef() // Progress bar ref
     const [level, _setLevel] = useState(volume) // Volume level
     const levelRef = useRef(level) // Volume level ref
@@ -20,7 +23,7 @@ export default function Volume() {
         const percentage = Math.round(Math.max(Math.min(absValue / trackRef.current.clientWidth * 100, 100), 0)) // Get percentage
         setLevel(percentage) // Set volume level
         handleVolumeUpdate(percentage) // Update volume
-        if (save && percentage !== 0) localStorage.setItem('volumeLevel', percentage) // If save is true and volume level is not 0, save to the local storage
+        if (save && percentage !== 0) localStorage.setItem('volumeLevel', percentage.toString()) // If save is true and volume level is not 0, save to the local storage
     }
 
     const handleProgressDown = useCallback(e => {
@@ -33,7 +36,7 @@ export default function Volume() {
         e.preventDefault()
         e.stopPropagation()
         setIsDragging(false) // Set dragging to false
-        if (levelRef.current !== 0) localStorage.setItem('volumeLevel', levelRef.current) // If volume level not 0, save to the local storage when mouse is up
+        if (levelRef.current !== 0) localStorage.setItem('volumeLevel', levelRef.current.toString()) // If volume level not 0, save to the local storage when mouse is up
     }, [isDragging])
 
     const handleProgressMove = useCallback(e => {

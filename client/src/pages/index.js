@@ -5,10 +5,10 @@ import CustomScrollbar from '@/components/custom-scrollbar'
 import styles from '@/styles/home.module.sass'
 
 export default function HomePage() {
-    const [items, _setItems] = useState([])
-    const itemsRef = useRef(items)
+    const [items, _setItems] = useState([]) // State of slider items
+    const itemsRef = useRef(items) // Reference for the slider items state
 
-    const setItems = value => {
+    const setItems = value => { // Update the items state value
         itemsRef.current = value
         _setItems(value)
     }

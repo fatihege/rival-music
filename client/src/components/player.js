@@ -8,6 +8,9 @@ export default function Player({type = 'bar'}) {
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
     const [width, _setWidth] = useState(0) // Progress bar width
     const [dragTime, _setDragTime] = useState(null) // Temporary drag time state
+    /**
+     * @type {React.MutableRefObject<HTMLDivElement>}
+     */
     const trackRef = useRef() // Progress bar reference
     const widthRef = useRef(width) // Progress bar width reference
     const dragTimeRef = useRef(dragTime) // Temporary drag time reference

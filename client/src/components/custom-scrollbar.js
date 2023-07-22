@@ -3,6 +3,13 @@ import styles from '@/styles/scrollbars.module.sass'
 
 const MIN_THUMB_HEIGHT = 16 // Minimum thumb height
 
+/**
+ * @param {JSX.Element | HTMLElement} children
+ * @param {string} className
+ * @param {number} scrollbarPadding
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function CustomScrollbar({children, className = '', scrollbarPadding = 0}) {
     const contentRef = useRef() // Content ref
     const trackRef = useRef() // Track ref

@@ -20,8 +20,9 @@ const returnErrors = (errors, res) => {
 }
 
 const getFollowers = async (userId, count = true) => {
-    const query = {followedUsers: {$in: [userId]}}
-    return count ? await User.countDocuments(query) : await User.find(query)
+    const query = {followedUsers: {$in: [userId]}} // Prepare query for followers of the user
+    const projection = {name: 1, profileColor: 1, accentColor: 1, image: 1} // Get only name, profile color, accent color and image attributes
+    return count ? await User.countDocuments(query) : await User.find(query, projection) // If count is true, return the count of the followers. Otherwise, return the followers
 }
 
 export const getUser = async (req, res) => {
@@ -47,7 +48,7 @@ export const getUser = async (req, res) => {
             userId = decodedToken.userId
         } else userId = id
 
-        const user = await User.findById(userId) // Find user from the user id of the decoded token
+        const user = await User.findById(userId, {password: 0}).populate('followedUsers', 'name profileColor accentColor') // Find user from the user id of the decoded token
 
         if (!user || !user._id) return res.status(404).json({ // If there is no user, return 404 response
             status: 'ERROR',
@@ -214,48 +215,72 @@ export const postLoginUser = async (req, res) => {
 
 export const postUpdateProfile = async (req, res) => {
     try {
-        const {id} = req.params
-        const image = req.file
-        const {name, noImage} = req.body
+        const {id} = req.params // Get user ID from the request parameters
+        const image = req.file // Get image from the request files
+        const {name, noImage, profileColor, accentColor} = req.body // Get name, noImage, profileColor and accentColor data from the request body
 
-        console.log(id, image, name, noImage)
-
-        if (!id) return res.status(400).json({
+        if (!id) return res.status(400).json({ // If there is no ID, return an error
             status: 'ERROR',
             message: 'Bad request.',
         })
 
-        const user = await User.findById(id)
-        let newName = user.name
-        let newImage = user.image
+        const user = await User.findById(id) // Get user by ID
 
-        if (!user) return res.status(404).json({
+        if (!user) return res.status(404).json({ // If there is no user, return an error
             status: 'ERROR',
             message: 'User not found.',
         })
 
-        const currentImagePath = join(__dirname, '..', 'images', user.image || '_')
-        if (user.image && fs.existsSync(currentImagePath)) fs.unlinkSync(currentImagePath)
+        let newName = user.name
+        let newImage = user.image
+        let newProfileColor = user.profileColor
+        let newAccentColor = user.accentColor
 
-        if (name && name.length >= 4) newName = name
-        if (image) newImage = image.filename
-        if (noImage) newImage = null
+        const currentImagePath = join(__dirname, '..', 'images', user.image || '_') // Create current image path
+        if (user.image && fs.existsSync(currentImagePath)) fs.unlinkSync(currentImagePath) // If the user has an image and the current image path is exists, delete the image file
 
-        await User.updateOne({_id: id}, {
+        if (name && name.length >= 4) newName = name // If the name is defined and the length of the name is greater than 4, set new name
+        if (image) newImage = image.filename // If image is defined, set new image to the file name of the image
+        if (noImage) newImage = null // If noImage is true, set new image to null
+
+        if (profileColor && profileColor.split(',').length === 3 && profileColor?.match(/\d{1,3},\d{1,3},\d{1,3}/)) { // If profile color is defined and matches with the RGB pattern
+            newProfileColor = profileColor.split(',') // Set new profile color
+
+            for (let color of newProfileColor) // Loop all colors
+                if (isNaN(Number(color)) || Number(color) < 0 || Number(color) > 255) { // If any of the colors is not a number or not in range of 0-255
+                    newProfileColor = user.profileColor || [255, 255, 255] // Set new profile color to white
+                    break // And then break
+                }
+        }
+
+        if (accentColor && accentColor.split(',').length === 3 && accentColor?.match(/\d{1,3},\d{1,3},\d{1,3}/)) { // If accent color is defined and matches with the RGB pattern
+            newAccentColor = accentColor.split(',') // Set new profile color
+
+            for (let color of newAccentColor) // Loop all colors
+                if (isNaN(Number(color)) || Number(color) < 0 || Number(color) > 255) { // If any of the colors is not a number or not in range of 0-255
+                    newAccentColor = user.accentColor || [255, 255, 255] // Set new profile color to white
+                    break // And then break
+                }
+        }
+
+        await User.updateOne({_id: id}, { // Update the user with the new data
             $set: {
                 name: newName,
                 image: newImage,
+                profileColor: newProfileColor,
+                accentColor: newAccentColor,
             }
         })
 
-        return res.status(200).json({
+        return res.status(200).json({ // Return success response
             status: 'OK',
             message: 'User profile updated.',
             image: newImage,
             name: newName,
+            profileColor: newProfileColor,
+            accentColor: newAccentColor,
         })
     } catch (e) {
-        console.error(e)
         res.status(500).json({ // Return 500 response when an error occurs
             status: 'ERROR',
             message: 'An error occurred while updating user profile.',

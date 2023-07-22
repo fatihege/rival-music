@@ -24,6 +24,8 @@ export default async (email, password, isPasswordEncrypted = false, userRecord =
             admin: user.admin,
             dateOfBirth: user.dateOfBirth,
             createdAt: user.createdAt,
+            profileColor: user.profileColor,
+            accentColor: user.accentColor,
         }
     } catch (e) {
         return e

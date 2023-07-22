@@ -120,7 +120,7 @@ export default function SidePanel() {
         if (isMinimized && newWidth > MIN_WIDTH / 2 + 10) setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // If new width is greater than break point and side panel is minimized, maximize side panel
 
         setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of side panel
-        localStorage.setItem('sidePanelWidth', isMinimized ? -1 : widthRef.current) // Save width to local storage
+        localStorage.setItem('sidePanelWidth', (isMinimized ? -1 : widthRef.current).toString()) // Save width to local storage
     }, [isResizing, isMinimized])
 
     useEffect(() => {
@@ -139,10 +139,10 @@ export default function SidePanel() {
         if (!maximize) { // If minimize
             setIsMinimized(true) // Minimize side panel
             updateNavBarWidth(-1, true) // Update navigation bar width
-            localStorage.setItem('sidePanelWidth', -1) // Save width to local storage
+            localStorage.setItem('sidePanelWidth', '-1') // Save width to local storage
         } else { // If maximize
             setIsMinimized(false) // Maximize side panel
-            localStorage.setItem('sidePanelWidth', widthRef.current) // Save width to local storage
+            localStorage.setItem('sidePanelWidth', widthRef.current.toString()) // Save width to local storage
         }
     }
 

@@ -6,8 +6,8 @@ const AlertContext = createContext(null) // Create alert context
 const AlertProvider = ({children}) => {
     const [alert, setAlert] = useState({ // Active alert state
         active: false,
-        title: null,
-        description: null,
+        title: '',
+        description: '',
         button: 'OK',
         type: '',
     })

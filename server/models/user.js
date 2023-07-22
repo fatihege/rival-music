@@ -15,9 +15,13 @@ const UserSchema = new Schema({
         required: true,
     },
     dateOfBirth: Date,
-    profileBackground: {
-        type: String,
-        default: '#ffffff',
+    profileColor: {
+        type: Array,
+        default: [255, 255, 255],
+    },
+    accentColor: {
+        type: Array,
+        default: [28, 28, 28],
     },
     favouriteArtists: [{
         type: Schema.Types.ObjectId,

@@ -151,7 +151,7 @@
     transform: translateX(-50%)
 
 .changeProfile
-  padding-top: 4rem
+  padding: 4rem 0 2rem
   height: 100%
   position: relative
   display: flex
@@ -213,3 +213,89 @@
 
   .username
     margin-top: 1.5rem
+
+  .colorField
+    display: flex
+    justify-content: space-between
+    align-items: center
+    column-gap: .5rem
+    width: 300px
+
+    .colorPreview
+      .color
+        width: 2rem
+        height: 2rem
+        border-radius: 50%
+        border: 1px solid #262626
+        background-color: #ffffff
+
+    .inputGroup
+      display: grid
+      width: 100%
+      grid-template-columns: repeat(3, 1fr)
+
+      .colorInput
+        width: 100%
+        border-radius: 0
+
+        &:first-child
+          border-top-left-radius: 12px
+          border-bottom-left-radius: 12px
+
+        &:nth-child(n+2)
+          border-left: none
+
+        &:last-child
+          border-top-right-radius: 12px
+          border-bottom-right-radius: 12px
+
+.followers,
+.fellows,
+.favouriteArtists
+  padding: 4rem .5rem 2rem
+
+  .follower,
+  .fellow,
+  .artist
+    padding: .5rem 1rem
+    border-radius: 8px
+    display: flex
+    align-items: center
+    column-gap: .75rem
+    transition: background-color .15s ease-out
+    margin-bottom: .25rem
+    background-color: transparent
+
+    &:hover
+      background-color: rgba(100, 100, 100, .1)
+
+    .imageWrapper
+      .image
+        width: 2.5rem
+        height: 2.5rem
+        background-color: #ffffff
+        display: flex
+        justify-content: center
+        align-items: center
+        border-radius: 50%
+        border: 1px solid rgba(255, 255, 255, .1)
+
+        span
+          color: #ffffff
+          font-size: .9rem
+          font-weight: 500
+
+    .name
+      color: #ffffff
+      font-size: 1rem
+      font-weight: 500
+
+  .noFollowers,
+  .noFellows,
+  .noFavouriteArtists
+    font-size: .9rem
+    font-weight: 500
+    color: rgba(255, 255, 255, .8)
+    display: block
+    width: 100%
+    text-align: center

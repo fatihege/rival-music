@@ -7,6 +7,7 @@ import Link from '@/components/custom-link'
 import LoginModal from '@/components/modals/login'
 import SignupModal from '@/components/modals/signup'
 import AskLoginModal from '@/components/modals/ask-login'
+import {RGBtoString} from '@/utils/color-converter'
 import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
 
@@ -38,19 +39,21 @@ export default function NavigationBar() {
             <div className={styles.accountSection}>
                 {(user.loaded && !user.id) ? (
                     <div className={styles.buttons}>
-                        <button className={styles.login} onClick={() => setModal({...modal, active: <LoginModal/>})}>Log
-                            in
+                        <button className={styles.login} onClick={() => setModal({...modal, active: <LoginModal/>})}>
+                            Log in
                         </button>
-                        <button className={styles.signup}
-                                onClick={() => setModal({...modal, active: <SignupModal/>})}>Sign up
+                        <button className={styles.signup} onClick={() => setModal({...modal, active: <SignupModal/>})}>
+                            Sign up
                         </button>
                     </div>
                 ) : user.loaded && user.id ? (
                     <div className={styles.user}>
                         <div className={styles.info} onClick={handleShowMenu}>
-                                <div className={styles.image}>
-                                    {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`}/> : user?.name[0]?.toUpperCase()}
-                                </div>
+                            <div className={styles.image}
+                                 style={!user.image && user.accentColor ? {backgroundColor: RGBtoString(user.accentColor)} : {}}>
+                                {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`} alt={""}/> :
+                                    <span style={!user.image && user.profileColor ? {color: RGBtoString(user.profileColor)} : {}}>{user?.name[0]?.toUpperCase()}</span>}
+                            </div>
                             <div className={styles.name}>
                                 {user.name}
                             </div>
@@ -72,7 +75,7 @@ export default function NavigationBar() {
                                 </li>
                                 {user.admin ? (
                                     <li>
-                                        <Link href="/admin" onClick={() => setShowMenu(false)}>Admin Panel</Link>
+                                        <Link href={"/admin"} onClick={() => setShowMenu(false)}>Admin Panel</Link>
                                     </li>
                                 ) : ''}
                             </ul>

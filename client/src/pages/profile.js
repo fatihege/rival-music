@@ -1,35 +1,39 @@
 import {useRouter} from 'next/router'
 import Head from 'next/head'
 import {useContext, useEffect, useRef, useState} from 'react'
-import axios from 'axios'
 import {AuthContext} from '@/contexts/auth'
 import {ModalContext} from '@/contexts/modal'
 import Slider from '@/components/slider'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import ChangeProfileModal from '@/components/modals/change-profile'
-import {HEXtoHSL} from '@/utils/color-converter'
+import FollowersModal from '@/components/modals/followers'
+import FollowedUsersModal from '@/components/modals/followed-users'
+import {RGBtoHSL, RGBtoString} from '@/utils/color-converter'
+import getUserData from '@/utils/get-user-data'
 import {AddIcon} from '@/icons'
 import styles from '@/styles/profile.module.sass'
+import FavouriteArtistsModal from '@/components/modals/favourite-artists'
 
 export default function ProfilePage() {
-    const router = useRouter()
-    const [user] = useContext(AuthContext)
-    const [, setModal] = useContext(ModalContext)
-    const [profileBackground, setProfileBackground] = useState(null)
-    const [playlists, setPlaylists] = useState([])
-    const [favArtistCount, setFavArtistCount] = useState(0)
-    const [followedCount, setFollowedCount] = useState(0)
-    const [followerCount, setFollowerCount] = useState(0)
+    const router = useRouter() // Use router
+    const [user] = useContext(AuthContext) // Get user from auth context
+    const [, setModal] = useContext(ModalContext) // Use modal context
+    const [load, setLoad] = useState(false) // Is profile loaded
+    const [profileColor, setProfileColor] = useState(null) // User's profile color
+    const [accentColor, setAccentColor] = useState(null) // User's accent color
+    const [playlists, setPlaylists] = useState([]) // Playlists of the user
+    const [favArtistCount, setFavArtistCount] = useState(0) // User's favourite artists count
+    const [followedCount, setFollowedCount] = useState(0) // User's followed users count
+    const [followerCount, setFollowerCount] = useState(0) // User's followers count
+    const [topTracks, _setTopTracks] = useState([]) // Top tracks of the user
+    const topTracksRef = useRef(topTracks) // Reference for the top tracks
 
-    const [topTracks, _setTopTracks] = useState([])
-    const topTracksRef = useRef(topTracks)
-
-    const setTopTracks = value => {
+    const setTopTracks = value => { // Update top tracks state
         topTracksRef.current = value
         _setTopTracks(value)
     }
 
-    useEffect(() => {
+    useEffect(() => { // Fill top tracks array
         for (let i = 0; i < 2; i++)
             for (let id = 1; id <= 6; id++)
                 setTopTracks([...topTracksRef.current, {
@@ -41,26 +45,21 @@ export default function ProfilePage() {
     }, [])
 
     const getUserInfo = async () => {
-        try {
-            const response = await axios.get(`${process.env.API_URL}/user/?id=${user.id}&props=profileBackground,playlists,count:favouriteArtists,count:followedUsers,count:followers`)
-            if (!response.data || !response.data.user) return
-
-            const {user: userData} = response.data
-
-            if (userData.profileBackground) setProfileBackground(userData.profileBackground)
-            if (userData.playlists && userData.playlists.length) setPlaylists(userData.playlists)
-            if (userData.favouriteArtists) setFavArtistCount(userData.favouriteArtists)
-            if (userData.followedUsers) setFollowedCount(userData.followedUsers)
-            if (userData.followers) setFollowerCount(userData.followers)
-        } catch (e) {
-        }
+        const userData = await getUserData(user.id, 'profileColor,accentColor,playlists,count:favouriteArtists,count:followedUsers,count:followers') // Get user's profile properties from API
+        if (userData?.profileColor) setProfileColor(userData.profileColor) // If there is a profile color, update the profile color state
+        if (userData?.accentColor) setAccentColor(userData.accentColor) // If there is an accent color, update the accent color state
+        if (userData?.playlists && userData.playlists.length) setPlaylists(userData.playlists) // If the user has any playlist, update the playlists state
+        if (typeof userData?.favouriteArtists === 'number') setFavArtistCount(userData.favouriteArtists) // If the user is following any artists, get their count
+        if (typeof userData?.followedUsers === 'number') setFollowedCount(userData.followedUsers) // If the user is following any users, get their count
+        if (typeof userData?.followers === 'number') setFollowerCount(userData.followers) // If the user has any followers, get their count
+        setLoad(true) // Set load state to true
     }
 
     useEffect(() => {
-        if (!user.token || !user.id) return
-        if (user.loaded && !user.token) return router.push('/')
+        if (!user.token || !user.id) return // If token or id of the user is not defined, return
+        if (user.loaded && !user.token) return router.push('/') // If user data is retrieved and the user has no token, return to the home page
 
-        getUserInfo()
+        getUserInfo() // Otherwise, get user info from API
     }, [user])
 
     return (
@@ -71,22 +70,33 @@ export default function ProfilePage() {
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>
                     <div className={styles.content}>
-                        <div className={`${styles.userProfile} ${profileBackground && HEXtoHSL(profileBackground)[2] < 50 ? styles.white : ''}`} style={profileBackground ? {backgroundColor: profileBackground} : {}}>
-                            <div className={styles.image}>
-                                {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`}/> : user.name ? user?.name[0]?.toUpperCase() : ''}
-                                <div className={styles.imageOverlay} onClick={() => setModal({canClose: true, active: <ChangeProfileModal/>})}>
+                        <div
+                            className={`${!load ? styles.loading : ''} ${styles.userProfile} ${profileColor && RGBtoHSL(profileColor)[2] < 55 ? styles.white : ''}`}
+                            style={profileColor ? {backgroundColor: RGBtoString(profileColor)} : {}}>
+                            <div className={styles.image}
+                                 style={!user.image ? accentColor ? {backgroundColor: RGBtoString(accentColor)} : {} : {}}>
+                                {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`}/> : user.name ? <span
+                                    style={!user.image ? {color: RGBtoString(profileColor || [255, 255, 255])} : {}}>{user?.name[0]?.toUpperCase()}</span> : ''}
+                                <div className={styles.imageOverlay}
+                                     onClick={() => setModal({canClose: true, active: <ChangeProfileModal/>})}>
                                     <AddIcon/>
                                     <span>Upload Photo</span>
                                 </div>
                             </div>
-                            <div className={styles.userInfo}>
+                            <div className={styles.userInfo}
+                                 style={accentColor ? {color: RGBtoString(accentColor)} : {}}>
                                 <div className={styles.username}>
                                     <h3>{user?.name}</h3>
                                 </div>
                                 <div className={styles.fellows}>
-                                    <div className={styles.count}><span>{followerCount} </span>Followers</div>
-                                    <div className={styles.count}><span>{followedCount} </span>Following</div>
-                                    <div className={styles.count}><span>{favArtistCount} </span>Favorite Artists</div>
+                                    <div className={styles.count}
+                                         onClick={() => setModal({canClose: true, active: <FollowersModal/>})}>
+                                        <span>{followerCount} </span>Followers
+                                    </div>
+                                    <div className={styles.count}
+                                         onClick={() => setModal({canClose: true, active: <FollowedUsersModal/>})}><span>{followedCount} </span>Following</div>
+                                    <div className={styles.count}
+                                         onClick={() => setModal({canClose: true, active: <FavouriteArtistsModal/>})}><span>{favArtistCount} </span>Favorite Artists</div>
                                 </div>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
 import {createContext, useEffect, useState} from 'react'
 import axios from 'axios'
+import getUserData from '@/utils/get-user-data'
 
 const AuthContext = createContext(null) // Create auth context
 
@@ -8,13 +9,23 @@ const AuthProvider = ({children}) => {
         loaded: false,
     })
 
-    const getUserData = async () => {
+    const getUser = async () => {
         const token = localStorage.getItem('token') // Get token from local storage
 
         if (token?.length) { // If there is a token
             try {
+                let tmpUser = null
+
                 const response = await axios.get(`${process.env.API_URL}/user/${token}`) // Send a GET request for user info
-                if (response.data?.status === 'OK') setUser({loaded: true, token, ...response.data.user}) // If response is OK, update user state
+                if (response.data?.status === 'OK') {
+                    tmpUser = {loaded: true, token, ...response.data.user} // If response is OK, update user
+                    const colorData = await getUserData(response.data.user.id, 'profileColor,accentColor')
+
+                    if (colorData?.profileColor) tmpUser.profileColor = colorData.profileColor
+                    if (colorData?.accentColor) tmpUser.accentColor = colorData.accentColor
+
+                    setUser(tmpUser)
+                }
             } catch (e) {
                 setUser({loaded: true}) // User data is loaded
             }
@@ -23,7 +34,7 @@ const AuthProvider = ({children}) => {
 
     useEffect(() => {
         if (!localStorage) return // If localStorage is undefined, return
-        getUserData() // Get user data
+        getUser() // Get user data
     }, [])
 
     useEffect(() => { // If user state value changes
