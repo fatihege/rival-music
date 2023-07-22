@@ -59,6 +59,11 @@ export default function Slider({title, items = []}) {
     }
 
     useEffect(() => {
+        if (showAll) fadingRef.current?.classList.remove(styles.left, styles.right) // If show all is true, hide left and right fading
+        else checkFading() // Else, check fading
+    }, [showAll])
+
+    useEffect(() => {
         checkFading() // Check scroll amounts when items are changed
     }, [items])
 
