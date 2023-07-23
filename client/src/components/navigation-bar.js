@@ -64,7 +64,7 @@ export default function NavigationBar() {
                                     <Link href="/" onClick={() => setShowMenu(false)}>Account</Link>
                                 </li>
                                 <li>
-                                    <Link href="/profile" onClick={() => setShowMenu(false)}>Profile</Link>
+                                    <Link href="/profile/[id]" as={`/profile/${user.id}`} onClick={() => setShowMenu(false)}>Profile</Link>
                                 </li>
                                 <li>
                                     <Link href="/" onClick={() => setShowMenu(false)}>Settings</Link>

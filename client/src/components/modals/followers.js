@@ -6,38 +6,42 @@ import getUserData from '@/utils/get-user-data'
 import {RGBtoString} from '@/utils/color-converter'
 import styles from '@/styles/modals.module.sass'
 
-export default function FollowersModal() {
+export default function FollowersModal({id}) {
     const [user] = useContext(AuthContext) // Get user data from the auth context
     const [, setModal] = useContext(ModalContext) // Use modal context for updating modal
     const [load, setLoad] = useState(false) // Is response loaded
     const [followers, setFollowers] = useState([]) // Followers state
 
     const getFollowers = async () => {
-        const userData = await getUserData(user.id, 'followers') // Get the followers of the user
+        const userData = await getUserData(id, 'followers') // Get the followers of the user
         if (userData?.followers?.length) setFollowers(userData.followers) // If there is a data, update the state value
         setLoad(true) // Set the load state to true
     }
 
     useEffect(() => {
-        if (!user) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
+        if (!id) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
         getFollowers() // Otherwise, get followers from API
-    }, [user])
+    }, [])
 
     return (
         <div className={styles.followers}>
             {load ? (
                 followers.length ? followers.map((follower, i) => (
-                    <Link key={i} className={styles.follower} href={'/'}>
+                    <Link key={i} className={styles.follower} href="/profile/[id]" as={`/profile/${follower._id}`} onClick={() => setModal({canClose: true, active: null})}>
                         <div className={styles.imageWrapper}>
                             <div className={styles.image}
                                  style={!follower.image && follower.accentColor ? {backgroundColor: RGBtoString(follower.accentColor)} : {}}>
-                                {follower.image ? <img src={`${process.env.IMAGE_CDN}/${follower.image}`} alt={""}/> :
+                                {follower.image ? <img src={`${process.env.IMAGE_CDN}/${follower.image}`} alt={follower.name}/> :
                                     <span style={!follower.image && follower.profileColor ? {color: RGBtoString(follower.profileColor)} : {}}>{follower?.name[0]?.toUpperCase()}</span>}
                             </div>
                         </div>
                         <div className={styles.name}>{follower.name}</div>
                     </Link>
-                )) : <span className={styles.noFollowers}>No one is following you.</span>
+                )) : (
+                    <span className={styles.noFollowers}>
+                        {user.id === id ? 'No one is following you.' : 'No one is following this user.'}
+                    </span>
+                )
             ) : ''}
         </div>
     )

@@ -17,6 +17,7 @@ const nextConfig = {
     IMAGE_CDN: `${process.env.API_URL}/image`,
     PP_FILETYPES: ['image/png', 'image/jpg', 'image/jpeg'],
     PP_MAXSIZE: 5000000,
+    SHOW_ADMIN_BADGE: true,
   },
 }
 
