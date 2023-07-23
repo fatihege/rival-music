@@ -2,6 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {ModalContext} from '@/contexts/modal'
 import Link from '@/components/custom-link'
+import AskLoginModal from '@/components/modals/ask-login'
 import getUserData from '@/utils/get-user-data'
 import styles from '@/styles/modals.module.sass'
 
@@ -18,7 +19,7 @@ export default function FavouriteArtistsModal({id}) {
     }
 
     useEffect(() => {
-        if (!user) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
+        if (!user.id) return setModal({canClose: true, active: <AskLoginModal/>}) // If user is not signed in, ask for login
         getFavouriteArtists() // Otherwise, get favourite artists from API
     }, [user])
 

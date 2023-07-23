@@ -2,6 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {ModalContext} from '@/contexts/modal'
 import Link from '@/components/custom-link'
+import AskLoginModal from '@/components/modals/ask-login'
 import getUserData from '@/utils/get-user-data'
 import {RGBtoString} from '@/utils/color-converter'
 import styles from '@/styles/modals.module.sass'
@@ -22,6 +23,10 @@ export default function FollowersModal({id}) {
         if (!id) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
         getFollowers() // Otherwise, get followers from API
     }, [])
+
+    useEffect(() => {
+        if (!user.id) setModal({canClose: true, active: <AskLoginModal/>}) // If user is not signed in, ask for login
+    }, [user])
 
     return (
         <div className={styles.followers}>
