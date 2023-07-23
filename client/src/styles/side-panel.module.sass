@@ -165,10 +165,10 @@
           white-space: nowrap
 
           &:hover
-            background-color: rgba(56, 56, 56, 0.4)
+            background-color: rgba(32, 32, 32, .4)
 
           &:active
-            background-color: rgba(56, 56, 56, 0.2)
+            background-color: rgba(32, 32, 32, .7)
 
           .image
             border-radius: .5rem
@@ -177,10 +177,21 @@
             min-height: 3.5rem
             max-width: 3.5rem
             max-height: 3.5rem
-            border: 1px solid rgba(255, 255, 255, .05)
             display: flex
             justify-content: center
             align-items: center
+            position: relative
+
+            &::after
+              content: ""
+              position: absolute
+              top: 0
+              left: 0
+              width: calc(100% - 2px)
+              height: calc(100% - 2px)
+              border-radius: .5rem
+              border: 1px solid rgba(255, 255, 255, .1)
+              z-index: 1
 
             img
               width: 100%
@@ -209,7 +220,6 @@
             .creator
               font-size: .8rem
               opacity: .7
-              margin-top: .25rem
               overflow: hidden
               text-overflow: ellipsis
 
