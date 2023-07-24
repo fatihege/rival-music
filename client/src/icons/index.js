@@ -33,6 +33,8 @@ import PanelPrevTrackIcon from '@/icons/panel-prev-track'
 import PanelNextTrackIcon from '@/icons/panel-next-track'
 import OptionsIcon from '@/icons/options'
 import AskLoginBackground from '@/icons/ask-login'
+import DownArrowIcon from '@/icons/down-arrow'
+import UpArrowIcon from '@/icons/up-arrow'
 
 export {
     Logo,
@@ -70,4 +72,6 @@ export {
     PanelNextTrackIcon,
     OptionsIcon,
     AskLoginBackground,
+    DownArrowIcon,
+    UpArrowIcon,
 }

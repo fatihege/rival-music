@@ -6,7 +6,7 @@
   height: 250px
   left: -50px
   pointer-events: none
-  bottom: calc(80px + 2.25rem)
+  bottom: 116px
   border-radius: 16px
   opacity: 0
   overflow: hidden
@@ -21,7 +21,10 @@
     opacity: 1
 
   &.lower
-    bottom: 1.5rem
+    bottom: 24px
+
+  &.barOpened
+    bottom: 140px
 
   &.right
     left: 100vw
@@ -82,14 +85,84 @@
 
 .bar
   position: fixed
-  bottom: 1.5rem
+  bottom: 24px
   left: 50%
   transform: translateX(-50%)
   width: calc(100vw - 3rem)
   z-index: 5
   background: rgba(24, 24, 24, 0.4)
-  backdrop-filter: blur(84px) saturate(1.8)
   border-radius: 16px
+  transition: .15s ease-out
+  transition-property: width, bottom
+
+  &.minimized
+    bottom: -75px
+
+    .barWrapper
+      height: 100px
+
+      .track,
+      .trackControls,
+      .otherControls
+        opacity: 0
+        pointer-events: none
+
+      .layoutResizer
+        display: none
+
+    &:hover
+      bottom: -20px
+
+      .barWrapper
+        .track,
+        .trackControls,
+        .otherControls
+          opacity: 1
+          pointer-events: all
+          margin-top: -18px
+
+
+  .visibilityBar
+    height: 40px
+    position: absolute
+    width: 100%
+    top: -24px
+    border-top-left-radius: 14px
+    border-top-right-radius: 14px
+    background-color: rgba(33, 33, 33, .7)
+    backdrop-filter: blur(20px)
+    display: flex
+    justify-content: center
+    cursor: pointer
+    transition: top .1s ease-in-out
+
+    &::after
+      content: ""
+      width: calc(100% - 4px)
+      height: calc(100% - 4px)
+      position: absolute
+      top: 1px
+      left: 1px
+      border-top-left-radius: 13px
+      border-top-right-radius: 13px
+      border: 1px solid rgba(255, 255, 255, .07)
+
+    &:active
+      top: -23px
+
+    &.hide
+      top: 0
+      pointer-events: none
+
+    .icon
+      height: calc(100% - 16px)
+      position: absolute
+      top: 0
+      display: flex
+      align-items: center
+
+      svg
+        width: 14px
 
   .barWrapper
     position: relative
@@ -101,6 +174,7 @@
     padding: 0 10px
     border-radius: 16px
     box-shadow: 0 15px 20px 0 rgba(3, 3, 3, 0.5)
+    transition: height .2s ease-in-out
 
     &.breakpoint
       .track
@@ -154,10 +228,16 @@
         mix-blend-mode: overlay
         border-radius: 15px
 
+    .track,
+    .trackControls,
+    .otherControls
+      transition: .15s ease-out
+      transition-property: margin-top, opacity
+
     .track
       display: flex
       align-items: center
-      column-gap: 1rem
+      column-gap: 12px
       min-width: 100px
       width: 30%
       z-index: 1

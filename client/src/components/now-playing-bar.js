@@ -3,7 +3,7 @@ import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {AudioContext} from '@/contexts/audio'
 import {
-    CloseIcon,
+    CloseIcon, DownArrowIcon,
     LeftArrowIcon,
     LikeIcon,
     MicrophoneIcon,
@@ -13,7 +13,7 @@ import {
     QueueIcon,
     RepeatIcon, RepeatOneIcon,
     RightArrowIcon,
-    ShuffleIcon,
+    ShuffleIcon, UpArrowIcon,
 } from '@/icons'
 import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
@@ -21,52 +21,49 @@ import Volume from '@/components/volume'
 
 export default function NowPlayingBar() {
     const ALBUM_IMAGE = '/album_cover_6.jpg'
+    const BAR_BREAKPOINT = 850 // Hide some elements when width is less than this value
     const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle} = useContext(AudioContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
-    const [isResizing, setIsResizing] = useState(false) // Is now playing bar resizing
+    const [isResizing, _setIsResizing] = useState(false) // Is now playing bar resizing
     const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
-    const [showAlbumCover, _setShowAlbumCover] = useState(false) // Is album cover shown
-    const [albumCoverRight, _setAlbumCoverRight] = useState(false) // Album cover right position
-    const showAlbumCoverRef = useRef(showAlbumCover) // Ref for showAlbumCover
-    const albumCoverRightRef = useRef(albumCoverRight) // Ref for albumCoverRight
+    const [showAlbumCover, setShowAlbumCover] = useState(null) // Is album cover shown
+    const [albumCoverRight, setAlbumCoverRight] = useState(null) // Album cover right position
+    const [showVisibilityBar, setShowVisibilityBar] = useState(false)
+    const [minimizeBar, setMinimizeBar] = useState(false)
     const [animateAlbumCover, setAnimateAlbumCover] = useState(false) // Animate album cover
-    const [MAX_WIDTH, setMaxWidth] = useState(null) // Max width of now playing bar
     const [width, _setWidth] = useState(null) // Now playing bar width
+    const [maxWidth, setMaxWidth] = useState(null) // Max width of now playing bar
+    const minWidth = 700 // Min width of now playing bar
     const widthRef = useRef(width) // Ref for now playing bar width
-    const MIN_WIDTH = 700 // Min width of now playing bar
-    const BAR_BREAKPOINT = 850 // Hide some elements when width is less than this value
+    const isResizingRef = useRef(isResizing) // Reference for now playing bar resizing state
+    const mouseOverRef = useRef(false) // Is mouse over the bar
+    let visibilityBarTimeoutRef = useRef(null) // Timeout reference for visibility bar
 
-    const setShowAlbumCover = (value) => {
-        _setShowAlbumCover(value) // Set showAlbumCover
-        showAlbumCoverRef.current = value // Update ref
+    const setWidth = value => {
+        widthRef.current = value
+        _setWidth(value)
     }
 
-    const setAlbumCoverRight = (value) => {
-        _setAlbumCoverRight(value) // Set albumCoverRight
-        albumCoverRightRef.current = value // Update ref
-    }
-
-    const setWidth = (value) => {
-        _setWidth(value) // Set width
-        widthRef.current = value // Update ref
+    const setIsResizing = value => {
+        isResizingRef.current = value
+        _setIsResizing(value)
     }
 
     const updateAlbumCoverData = () => {
         localStorage.setItem('bigAlbumCover', JSON.stringify({ // Save showAlbumCover and albumCoverRight to local storage
-            showAlbumCover: showAlbumCoverRef.current,
-            albumCoverRight: albumCoverRightRef.current,
+            showAlbumCover: showAlbumCover,
+            albumCoverRight: albumCoverRight,
         }))
     }
 
-    const toggleAlbumCover = () => {
-        setShowAlbumCover(!showAlbumCover) // Toggle showAlbumCover
-        updateAlbumCoverData() // Update album cover data
-    }
+    const toggleAlbumCover = () => setShowAlbumCover(!showAlbumCover) // Toggle showAlbumCover
 
-    const toggleAlbumCoverRight = () => {
-        setAlbumCoverRight(!albumCoverRight) // Toggle albumCoverRight
-        updateAlbumCoverData() // Update album cover data
-    }
+    const toggleAlbumCoverRight = () => setAlbumCoverRight(!albumCoverRight) // Toggle albumCoverRight
+
+    useEffect(() => {
+        if (showAlbumCover === null || albumCoverRight === null) return // If the states are in default value, return
+        updateAlbumCoverData() // Otherwise, update the local album cover data
+    }, [showAlbumCover, albumCoverRight])
 
     useEffect(() => {
         setTimeout(() => setAnimateAlbumCover(true), 300) // Album cover can be animated after 300ms
@@ -94,6 +91,7 @@ export default function NowPlayingBar() {
     const handleResizeDown = useCallback((e, side) => {
         setIsResizing(true) // Set resizing to true
         setResizingSide(side) // Set resizing side
+        setShowVisibilityBar(false) // Hide visibility bar
     }, []) // Handle resizing down
 
     const handleResizeUp = useCallback(e => {
@@ -112,9 +110,23 @@ export default function NowPlayingBar() {
         e.stopPropagation()
 
         const newWidth = resizingSide === 1 ? window.innerWidth - e.clientX * 2 : window.innerWidth - (window.innerWidth - e.clientX) * 2 // Calculate new width of now playing bar
-        setWidth(Math.max(Math.min(newWidth, MAX_WIDTH), MIN_WIDTH)) // Set width of now playing bar
+        setWidth(Math.max(Math.min(newWidth, maxWidth), minWidth)) // Set width of now playing bar
         localStorage.setItem('nowPlayingBarWidth', newWidth) // Save width to local storage
-    }, [isResizing, MAX_WIDTH]) // Handle resizing
+    }, [isResizing, maxWidth]) // Handle resizing
+
+    const handleMouseOver = () => {
+        mouseOverRef.current = true // Set mouse over state to true
+        visibilityBarTimeoutRef.current = setTimeout(() => { // Initialize timeout for visibility bar
+            if (isResizingRef.current) return // Return if now playing bar is resizing
+            if (mouseOverRef.current) setShowVisibilityBar(true) // If mouse is over the now playing bar, show visibility bar
+        }, 500) // After 500 ms
+    }
+
+    const handleMouseLeave = () => {
+        mouseOverRef.current = false // Set mouse over state to false
+        setShowVisibilityBar(false) // Hide visibility bar
+        clearTimeout(visibilityBarTimeoutRef.current) // Clear visibility bar timeout
+    }
 
     useEffect(() => {
         document.addEventListener('mousemove', handleResize)
@@ -131,7 +143,7 @@ export default function NowPlayingBar() {
     return (
         <>
             <div
-                className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${albumCoverRight ? styles.right : ''} ${width < MAX_WIDTH - 516 ? styles.lower : ''}`}>
+                className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 516 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 516 || minimizeBar ? styles.lower : ''}`}>
                 <img src={ALBUM_IMAGE} alt="Album Cover"/>
                 <div className={styles.overlay}>
                     <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
@@ -142,10 +154,23 @@ export default function NowPlayingBar() {
                     </button>
                 </div>
             </div>
-            <div className={styles.bar}
-                 style={{width: `${Math.min(Math.max(widthRef.current, MIN_WIDTH), MAX_WIDTH)}px`}}>
+            <div className={`${styles.bar} ${minimizeBar ? styles.minimized : ''}`}
+                 style={{width: `${minimizeBar ? minWidth : Math.min(Math.max(widthRef.current, minWidth), maxWidth)}px`, transitionProperty: isResizing ? 'bottom' : 'width, bottom'}}
+                 onMouseEnter={() => handleMouseOver()}
+                 onMouseLeave={() => handleMouseLeave()}
+            >
+                <div className={`${styles.visibilityBar} ${!showVisibilityBar ? styles.hide : ''}`} onClick={() => {
+                    setMinimizeBar(!minimizeBar)
+                    setShowVisibilityBar(false)
+                }}>
+                    <div className={styles.icon}>
+                        {minimizeBar
+                            ? <UpArrowIcon strokeRate={1.25} stroke={'#a8a8a8'}/>
+                            : <DownArrowIcon strokeRate={1.25} stroke={'#a8a8a8'}/>}
+                    </div>
+                </div>
                 <div
-                    className={`${styles.barWrapper} ${width < BAR_BREAKPOINT ? styles.breakpoint : ''}`}>
+                    className={`${styles.barWrapper} ${width < BAR_BREAKPOINT || minimizeBar ? styles.breakpoint : ''}`}>
                     <div className={styles.blurryBackground}>
                         <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="100%">
                             <filter id="displacementFilter">
