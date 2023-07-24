@@ -55,7 +55,8 @@ export default function ChangeProfileModal() {
     }
 
     useEffect(() => { // On user state change
-        if (!user) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
+        if (!user.loaded) return
+        if (!user?.id) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
         setName(user.name) // Set name state to the user's name
         setImage(user.image) // Set image state to the user's profile image
         getUserProfileColors() // Get user's colors from API
@@ -84,7 +85,8 @@ export default function ChangeProfileModal() {
     }
 
     const handleSubmit = async () => {
-        if (!user || !user.id) return window.location.reload() // If there is no user, reload the page
+        if (!user?.loaded) return
+        if (!user?.id) return window.location.reload() // If there is no user, reload the page
 
         try {
             const formData = new FormData() // Initialize a form data

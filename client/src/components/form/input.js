@@ -8,7 +8,7 @@ import styles from '@/styles/inputs.module.sass'
  * @param {string} value
  * @param {string} className
  * @param {'on' | 'off'} autoComplete
- * @param {MutableRefObject<string>} set
+ * @param {React.MutableRefObject<string>} set
  * @param {string | null} alert
  * @param {Function: any} onChange
  * @param {Function: any} onBlur
@@ -22,7 +22,7 @@ export default function Input({
     placeholder = '',
     value = '',
     className = '',
-    autoComplete = 'on',
+    autoComplete = 'off',
     set = null,
     alert = null,
     onChange = () => {},

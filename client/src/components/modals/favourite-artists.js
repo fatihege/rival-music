@@ -19,7 +19,8 @@ export default function FavouriteArtistsModal({id}) {
     }
 
     useEffect(() => {
-        if (!user.id) return setModal({canClose: true, active: <AskLoginModal/>}) // If user is not signed in, ask for login
+        if (!user.loaded) return
+        if (!user?.id) return setModal({canClose: true, active: <AskLoginModal/>}) // If user is not signed in, ask for login
         getFavouriteArtists() // Otherwise, get favourite artists from API
     }, [user])
 

@@ -7,10 +7,11 @@ import styles from '@/styles/alert.module.sass'
  * @param {string} title
  * @param {string} description
  * @param {string} button
+ * @param {'' | 'primary'} type
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Alert({title = '', description = '', button = 'OK'}) {
+export default function Alert({title = '', description = '', button = 'OK', type = ''}) {
     const [alert, setAlert] = useContext(AlertContext) // Use alert context
 
     useEffect(() => {
@@ -32,7 +33,7 @@ export default function Alert({title = '', description = '', button = 'OK'}) {
                     <div className={styles.content}>
                         <h4 className={styles.title}>{title}</h4>
                         <p className={styles.description}>{description}</p>
-                        <Button value={button} type="" className={styles.button} onClick={() => setAlert({...alert, active: false})}/>
+                        <Button value={button} type={type} className={styles.button} onClick={() => setAlert({...alert, active: false})}/>
                     </div>
                 </div>
             </div>

@@ -51,7 +51,7 @@ export default function NavigationBar() {
                         <div className={styles.info} onClick={handleShowMenu}>
                             <div className={styles.image}
                                  style={!user.image && user.accentColor ? {backgroundColor: RGBtoString(user.accentColor)} : {}}>
-                                {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`} alt={""}/> :
+                                {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`} alt={''}/> :
                                     <span style={!user.image && user.profileColor ? {color: RGBtoString(user.profileColor)} : {}}>{user?.name[0]?.toUpperCase()}</span>}
                             </div>
                             <div className={styles.name}>
@@ -61,7 +61,7 @@ export default function NavigationBar() {
                         <div className={`${styles.menu} ${showMenu.current ? styles.show : ''}`} ref={menuRef}>
                             <ul>
                                 <li>
-                                    <Link href="/" onClick={() => setShowMenu(false)}>Account</Link>
+                                    <Link href="/account" onClick={() => setShowMenu(false)}>Account</Link>
                                 </li>
                                 <li>
                                     <Link href="/profile/[id]" as={`/profile/${user.id}`} onClick={() => setShowMenu(false)}>Profile</Link>
@@ -75,7 +75,7 @@ export default function NavigationBar() {
                                 </li>
                                 {user.admin ? (
                                     <li>
-                                        <Link href={"/admin"} onClick={() => setShowMenu(false)}>Admin Panel</Link>
+                                        <Link href={'/admin'} onClick={() => setShowMenu(false)}>Admin Panel</Link>
                                     </li>
                                 ) : ''}
                             </ul>

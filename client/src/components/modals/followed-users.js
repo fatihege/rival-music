@@ -20,12 +20,14 @@ export default function FollowedUsersModal({id}) {
     }
 
     useEffect(() => {
+        if (!user.loaded) return
         if (!id) return setModal({canClose: true, active: null}) // If there is no user, close the modal and return
         getFollowedUsers() // Otherwise, get followed users from API
     }, [])
 
     useEffect(() => {
-        if (!user.id) setModal({canClose: true, active: <AskLoginModal/>}) // If user is not signed in, ask for login
+        if (!user.loaded) return
+        if (!user?.id) setModal({canClose: true, active: <AskLoginModal/>}) // If user is not signed in, ask for login
     }, [user])
 
     return (

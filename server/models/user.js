@@ -14,7 +14,6 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    dateOfBirth: Date,
     profileColor: {
         type: Array,
         default: [255, 255, 255],

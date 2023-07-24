@@ -60,9 +60,9 @@ export default function LoginModal() {
             if (response.data?.status === 'OK') { // If response is OK
                 setUser({loaded: true, ...response.data.user}) // Update user from auth context
                 setModal({...modal, canClose: true, active: null}) // Enable modal closure and close modal
-            }
+            } else throw new Error()
         } catch (e) { // If there is an error
-            if (e.response && e.response.data.errors && Array.isArray(e.response.data.errors) && e.response.data.errors.length) // If the error from axios response
+            if (e.response && e.response.data.errors && Array.isArray(e.response.data.errors) && e.response.data.errors.length) // If there is an error from axios response
                 for (const error of e.response.data.errors) setAlert({ // Update alerts
                     ...alertRef.current,
                     [error.field]: error.message
@@ -91,10 +91,10 @@ export default function LoginModal() {
             <p className={styles.description}>Are you ready to explore your own music world?</p>
             <div className={styles.form}>
                 <div className={styles.inputGroup}>
-                    <Input type="text" placeholder="Your email" name="email" className={styles.input} autoComplete="off"
+                    <Input type="text" placeholder="Your email" className={styles.input} autoComplete="off"
                            set={email} alert={alert.email} onChange={checkEmailField}/>
-                    <Input type="password" placeholder="Your password" name="password" className={styles.input}
-                           autoComplete="off" set={password} alert={alert.password} onChange={checkPassword}/>
+                    <Input type="password" placeholder="Your password" className={styles.input} autoComplete="off"
+                           set={password} alert={alert.password} onChange={checkPassword}/>
                 </div>
                 <Button value="Sign in" icon={<NextIcon stroke={'#1c1c1c'}/>} onClick={handleSubmit}
                         disabled={disableSubmit ? disableSubmit : !modal.canClose}/>
