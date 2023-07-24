@@ -1,4 +1,4 @@
-export default function RightArrowIcon({stroke = '#fff', strokeWidth = 33}) {
+export default function RightArrowIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function RightArrowIcon({stroke = '#fff', strokeWidth = 33}) {
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${32 * strokeRate}px`,
                 }}
                 transform="matrix(.63955 0 0 .63955 77.585 46.137)"
             />

@@ -135,10 +135,10 @@ export default function NowPlayingBar() {
                 <img src={ALBUM_IMAGE} alt="Album Cover"/>
                 <div className={styles.overlay}>
                     <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
-                        {albumCoverRight ? <LeftArrowIcon stroke={'#c7c7c7'}/> : <RightArrowIcon stroke={'#c7c7c7'}/>}
+                        {albumCoverRight ? <LeftArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/> : <RightArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/>}
                     </button>
                     <button className={styles.button} onClick={() => toggleAlbumCover()}>
-                        <CloseIcon stroke={'#c7c7c7'} strokeRate={1.2}/>
+                        <CloseIcon stroke={'#f3f3f3'} strokeRate={1.5}/>
                     </button>
                 </div>
             </div>
@@ -167,7 +167,7 @@ export default function NowPlayingBar() {
                             <div className={styles.overlay}>
                                 <button className={styles.hideButton}
                                         onClick={() => toggleAlbumCover()}>
-                                    <LeftArrowIcon/>
+                                    <LeftArrowIcon strokeRate={1.2}/>
                                 </button>
                             </div>
                         </div>
