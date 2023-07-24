@@ -86,6 +86,9 @@ export default function NowPlayingBar() {
         const nowPlayingBarWidth = parseInt(localStorage.getItem('nowPlayingBarWidth')) // Get width from local storage
         if (nowPlayingBarWidth) setWidth(nowPlayingBarWidth) // Set width to local storage value if it exists
         else setWidth(window.innerWidth - 48) // Set width to max width when width is not set
+
+        if (localStorage.getItem('minimizeBar') === 'true') setMinimizeBar(true) // If minimizeBar value in local storage is equal to true, minimize bar
+        else localStorage.removeItem('minimizeBar') // Else, remove the key from local storage
     }, [])
 
     const handleResizeDown = useCallback((e, side) => {
@@ -128,6 +131,14 @@ export default function NowPlayingBar() {
         clearTimeout(visibilityBarTimeoutRef.current) // Clear visibility bar timeout
     }
 
+    const toggleMinimizeBar = () => {
+        setMinimizeBar(!minimizeBar) // Toggle minimize bar value
+        setShowVisibilityBar(false) // Hide visibility bar
+
+        if (!minimizeBar) localStorage.setItem('minimizeBar', 'true') // If the bar is minimized, set value to local storage
+        else localStorage.removeItem('minimizeBar') // Otherwise, remove the key from local storage
+    }
+
     useEffect(() => {
         document.addEventListener('mousemove', handleResize)
         document.addEventListener('mouseup', handleResizeUp)
@@ -159,10 +170,7 @@ export default function NowPlayingBar() {
                  onMouseEnter={() => handleMouseOver()}
                  onMouseLeave={() => handleMouseLeave()}
             >
-                <div className={`${styles.visibilityBar} ${!showVisibilityBar ? styles.hide : ''}`} onClick={() => {
-                    setMinimizeBar(!minimizeBar)
-                    setShowVisibilityBar(false)
-                }}>
+                <div className={`${styles.visibilityBar} ${!showVisibilityBar ? styles.hide : ''}`} onClick={() => toggleMinimizeBar()}>
                     <div className={styles.icon}>
                         {minimizeBar
                             ? <UpArrowIcon strokeRate={1.25} stroke={'#a8a8a8'}/>
