@@ -6,7 +6,7 @@
   height: 250px
   left: -50px
   pointer-events: none
-  bottom: calc(100px + 2.25rem)
+  bottom: calc(80px + 2.25rem)
   border-radius: 16px
   opacity: 0
   overflow: hidden
@@ -97,8 +97,8 @@
     justify-content: space-between
     align-items: center
     width: 100%
-    height: 90px
-    padding: 0 12px
+    height: 80px
+    padding: 0 10px
     border-radius: 16px
     box-shadow: 0 15px 20px 0 rgba(3, 3, 3, 0.5)
 
@@ -163,9 +163,9 @@
       z-index: 1
 
       .trackImage
-        min-width: calc(100px - 2rem)
-        width: calc(100px - 2rem)
-        height: calc(100px - 2rem)
+        min-width: calc(95px - 2rem)
+        width: calc(95px - 2rem)
+        height: calc(95px - 2rem)
         overflow: hidden
         border-radius: 8px
         position: relative
@@ -306,39 +306,26 @@
       .buttons
         display: flex
         align-items: center
-        gap: .75rem
-        margin-top: .5rem
+        gap: 12px
+        margin-top: 4px
 
         button
           background: none
           display: flex
           justify-content: center
           align-items: center
-          cursor: pointer
+          cursor: default
           border-radius: 50%
           border: none
-          transition: background-color .1s ease-out
           position: relative
-
-          svg
-            width: .9rem
-            height: .9rem
-            opacity: .7
-            transition: opacity .1s ease-out
-
-          &:hover
-            background-color: rgba(255, 255, 255, .06)
-
-            svg
-              opacity: .9
 
           &:active
             transform: scale(.9)
 
           &.repeat,
           &.shuffle
-            width: 1.75rem
-            height: 1.75rem
+            width: 28px
+            height: 28px
 
             &:hover
               background-color: transparent
@@ -350,7 +337,7 @@
               &::after
                 content: ""
                 position: absolute
-                top: 1.7rem
+                top: 26px
                 left: 50%
                 transform: translateX(-50%)
                 height: 4px
@@ -359,27 +346,36 @@
                 border-radius: 2px
 
             svg
-              width: 1.5rem
-              height: 1.5rem
-              opacity: .5
+              width: 22px
+              height: 22px
+              opacity: .6
 
             &:hover svg
-              opacity: .7
+              opacity: .8
 
           &.prevTrack,
           &.nextTrack
-            width: 2.25rem
-            height: 2.25rem
+            width: 36px
+            height: 36px
+            border: 1px solid transparent
+            transition: .1s ease-out
+            transition-property: background-color, border-color
 
             svg
               opacity: .5
+              width: 20px
+              height: 20px
 
-            &:hover svg
-              opacity: .7
+            &:hover
+              background-color: rgba(255, 255, 255, .1)
+              border-color: rgba(255, 255, 255, .2)
+
+              svg
+                opacity: .9
 
           &.play
-            width: 2.25rem
-            height: 2.25rem
+            width: 36px
+            height: 36px
             background-color: rgba(255, 255, 255)
             box-shadow: 0 4px 10px 0 rgba(0, 0, 0, .1)
             border-radius: 50%
@@ -387,6 +383,8 @@
 
             svg
               opacity: 1
+              width: 14px
+              height: 14px
 
             &:hover
               transform: scale(1.05)
@@ -442,7 +440,7 @@
     .layoutResizer
       position: absolute
       top: .75rem
-      height: calc(90px - 1.5rem)
+      height: calc(80px - 1.5rem)
       width: .75rem
       border-radius: .75rem
       cursor: col-resize
@@ -465,7 +463,7 @@
         position: absolute
         top: 0
         width: 2px
-        height: calc(90px - 1.5rem)
+        height: calc(80px - 1.5rem)
         background-color: transparent
         transition: background-color .15s ease-out
 

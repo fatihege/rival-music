@@ -190,19 +190,19 @@ export default function NowPlayingBar() {
                     <div className={styles.trackControls}>
                         <div className={styles.buttons}>
                             <button className={`no_focus ${styles.repeat} ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
-                                {loop === 2 ? <RepeatOneIcon/> : <RepeatIcon/>}
+                                {loop === 2 ? <RepeatOneIcon strokeRate={1.25}/> : <RepeatIcon strokeRate={1.25}/>}
                             </button>
                             <button className={`no_focus ${styles.prevTrack}`}>
-                                <PrevTrackIcon/>
+                                <PrevTrackIcon strokeRate={1.25}/>
                             </button>
                             <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
                                 {!isPlaying ? <PlayIcon fill={'#181818'}/> : <PauseIcon fill={'#181818'}/>}
                             </button>
                             <button className={`no_focus ${styles.nextTrack}`}>
-                                <NextTrackIcon/>
+                                <NextTrackIcon strokeRate={1.25}/>
                             </button>
                             <button className={`no_focus ${styles.shuffle} ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
-                                <ShuffleIcon/>
+                                <ShuffleIcon strokeRate={1.25}/>
                             </button>
                         </div>
                         <Player duration={300}/>
