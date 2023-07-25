@@ -218,7 +218,7 @@ export default function NowPlayingBar() {
                                 </Link>
                                 <TooltipHandler title={'Like'}>
                                     <button className={styles.trackLike}>
-                                        <LikeIcon strokeWidth={12}/>
+                                        <LikeIcon/>
                                     </button>
                                 </TooltipHandler>
                             </div>

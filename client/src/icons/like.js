@@ -1,4 +1,4 @@
-export default function LikeIcon({stroke = '#fff', strokeWidth = 11,  fill = 'none'}) {
+export default function LikeIcon({stroke = '#fff', strokeRate = 1,  fill = 'none'}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function LikeIcon({stroke = '#fff', strokeWidth = 11,  fill = 'no
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${12 * strokeRate}px`,
                 }}
                 transform="matrix(1.38184 0 0 1.3962 -58.64 -71.68)"
             />

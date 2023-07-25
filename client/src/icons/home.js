@@ -1,4 +1,4 @@
-export default function HomeIcon({filled = false, stroke = '#fff', strokeWidth = 15, fill = '#fff'}) {
+export default function HomeIcon({filled = false, stroke = '#fff', strokeRate = 1, fill = '#fff'}) {
     return !filled ? (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@ export default function HomeIcon({filled = false, stroke = '#fff', strokeWidth =
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${15 * strokeRate}px`,
                 }}
             />
         </svg>
@@ -39,7 +39,7 @@ export default function HomeIcon({filled = false, stroke = '#fff', strokeWidth =
                 style={{
                     fill,
                     stroke,
-                    strokeWidth: `${strokeWidth}px`,
+                    strokeWidth: `${15 * strokeRate}px`,
                 }}
             />
         </svg>
