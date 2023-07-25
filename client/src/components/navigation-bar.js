@@ -7,6 +7,7 @@ import Link from '@/components/custom-link'
 import LoginModal from '@/components/modals/login'
 import SignupModal from '@/components/modals/signup'
 import AskLoginModal from '@/components/modals/ask-login'
+import {TooltipHandler} from '@/components/tooltip'
 import {RGBtoString} from '@/utils/color-converter'
 import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
@@ -29,12 +30,16 @@ export default function NavigationBar() {
     return (
         <div className={styles.barContainer} style={{width: width ? `${width}px` : '100%'}}>
             <div className={styles.navButtons}>
-                <button onClick={() => goBack()}>
-                    <PrevIcon strokeRate={.75}/>
-                </button>
-                <button onClick={() => goForward()}>
-                    <NextIcon strokeRate={.75}/>
-                </button>
+                <TooltipHandler title={'Go back'}>
+                    <button onClick={() => goBack()}>
+                        <PrevIcon strokeRate={.75}/>
+                    </button>
+                </TooltipHandler>
+                <TooltipHandler title={'Go forward'}>
+                    <button onClick={() => goForward()}>
+                        <NextIcon strokeRate={.75}/>
+                    </button>
+                </TooltipHandler>
             </div>
             <div className={styles.accountSection}>
                 {(user.loaded && !user.id) ? (
@@ -48,16 +53,18 @@ export default function NavigationBar() {
                     </div>
                 ) : user.loaded && user.id ? (
                     <div className={styles.user}>
-                        <div className={styles.info} onClick={handleShowMenu}>
-                            <div className={styles.image}
-                                 style={!user.image && user.accentColor ? {backgroundColor: RGBtoString(user.accentColor)} : {}}>
-                                {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`} alt={''}/> :
-                                    <span style={!user.image && user.profileColor ? {color: RGBtoString(user.profileColor)} : {}}>{user?.name[0]?.toUpperCase()}</span>}
+                        <TooltipHandler title={user?.name}>
+                            <div className={styles.info} onClick={handleShowMenu}>
+                                <div className={styles.image}
+                                     style={!user.image && user.accentColor ? {backgroundColor: RGBtoString(user.accentColor)} : {}}>
+                                    {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`} alt={''}/> :
+                                        <span style={!user.image && user.profileColor ? {color: RGBtoString(user.profileColor)} : {}}>{user?.name[0]?.toUpperCase()}</span>}
+                                </div>
+                                <div className={styles.name}>
+                                    {user.name}
+                                </div>
                             </div>
-                            <div className={styles.name}>
-                                {user.name}
-                            </div>
-                        </div>
+                        </TooltipHandler>
                         <div className={`${styles.menu} ${showMenu.current ? styles.show : ''}`} ref={menuRef}>
                             <ul>
                                 <li>

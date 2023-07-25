@@ -7,6 +7,7 @@ import {TrackPanelProvider} from '@/contexts/track-panel'
 import {NavigationBarProvider} from '@/contexts/navigation-bar'
 import {ModalProvider} from '@/contexts/modal'
 import {AlertProvider} from '@/contexts/alert'
+import {TooltipProvider} from '@/contexts/tooltip'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
 import '@/styles/globals.sass'
@@ -55,19 +56,21 @@ export default function App({Component, pageProps}) {
         <AuthProvider>
             <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
                 <Wrapper load={load}>
-                    <AlertProvider>
-                        <AudioProvider>
-                            <TrackPanelProvider>
-                                <ModalProvider>
-                                    <NavigationBarProvider>
-                                        <Main>
-                                            <Component {...pageProps}/>
-                                        </Main>
-                                    </NavigationBarProvider>
-                                </ModalProvider>
-                            </TrackPanelProvider>
-                        </AudioProvider>
-                    </AlertProvider>
+                    <TooltipProvider>
+                        <AlertProvider>
+                            <AudioProvider>
+                                <TrackPanelProvider>
+                                    <ModalProvider>
+                                        <NavigationBarProvider>
+                                            <Main>
+                                                <Component {...pageProps}/>
+                                            </Main>
+                                        </NavigationBarProvider>
+                                    </ModalProvider>
+                                </TrackPanelProvider>
+                            </AudioProvider>
+                        </AlertProvider>
+                    </TooltipProvider>
                 </Wrapper>
             </SkeletonTheme>
         </AuthProvider>

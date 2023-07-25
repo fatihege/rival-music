@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import Link from '@/components/custom-link'
+import {TooltipHandler} from '@/components/tooltip'
 import {NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
@@ -162,14 +163,18 @@ export default function Slider({title, items = []}) {
                     {title}
                 </div>
                 <div className={styles.controls}>
-                    <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
-                            ref={prevButtonRef}>
-                        <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
-                    </button>
-                    <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
-                            ref={nextButtonRef}>
-                        <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
-                    </button>
+                    <TooltipHandler title={'Previous items'}>
+                        <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
+                                ref={prevButtonRef}>
+                            <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
+                        </button>
+                    </TooltipHandler>
+                    <TooltipHandler title={'Next items'}>
+                        <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
+                                ref={nextButtonRef}>
+                            <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
+                        </button>
+                    </TooltipHandler>
                     <span className={styles.control}
                           onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                 </div>

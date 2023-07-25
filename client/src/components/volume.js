@@ -1,7 +1,8 @@
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {AudioContext} from '@/contexts/audio'
-import styles from '@/styles/volume.module.sass'
+import {TooltipHandler} from '@/components/tooltip'
 import {VolumeHighIcon, VolumeLowIcon, VolumeMidIcon, VolumeMuteIcon} from '@/icons'
+import styles from '@/styles/volume.module.sass'
 
 export default function Volume() {
     const {volume, handleVolumeUpdate} = useContext(AudioContext) // Audio controls context
@@ -79,14 +80,16 @@ export default function Volume() {
     return (
         <div className={styles.volume}>
             <div className={styles.icon}>
-                <button className={styles.iconButton} onClick={() => toggleMute()}>
-                    {
-                        level >= 60 ? <VolumeHighIcon strokeRate={1.2}/> :
-                        level >= 30 ? <VolumeMidIcon strokeRate={1.2}/> :
-                        level > 0 ? <VolumeLowIcon strokeRate={1.2}/> :
-                        level === 0 ? <VolumeMuteIcon strokeRate={1.2}/> : <VolumeHighIcon strokeRate={1.2}/>
-                    }
-                </button>
+                <TooltipHandler title={levelRef.current ? 'Mute' : 'Unmute'}>
+                    <button className={styles.iconButton} onClick={() => toggleMute()}>
+                        {
+                            level >= 60 ? <VolumeHighIcon strokeRate={1.2}/> :
+                            level >= 30 ? <VolumeMidIcon strokeRate={1.2}/> :
+                            level > 0 ? <VolumeLowIcon strokeRate={1.2}/> :
+                            level === 0 ? <VolumeMuteIcon strokeRate={1.2}/> : <VolumeHighIcon strokeRate={1.2}/>
+                        }
+                    </button>
+                </TooltipHandler>
             </div>
             <div className={styles.trackWrapper} onMouseDown={handleProgressDown}>
                 <div className={styles.track} ref={trackRef}>

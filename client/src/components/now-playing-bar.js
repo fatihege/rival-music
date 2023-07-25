@@ -18,6 +18,7 @@ import {
 import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
 import Volume from '@/components/volume'
+import {TooltipHandler} from '@/components/tooltip'
 
 export default function NowPlayingBar() {
     const ALBUM_IMAGE = '/album_cover_6.jpg'
@@ -37,7 +38,7 @@ export default function NowPlayingBar() {
     const widthRef = useRef(width) // Ref for now playing bar width
     const isResizingRef = useRef(isResizing) // Reference for now playing bar resizing state
     const mouseOverRef = useRef(false) // Is mouse over the bar
-    let visibilityBarTimeoutRef = useRef(null) // Timeout reference for visibility bar
+    const visibilityBarTimeoutRef = useRef(null) // Timeout reference for visibility bar
 
     const setWidth = value => {
         widthRef.current = value
@@ -122,7 +123,7 @@ export default function NowPlayingBar() {
         visibilityBarTimeoutRef.current = setTimeout(() => { // Initialize timeout for visibility bar
             if (isResizingRef.current) return // Return if now playing bar is resizing
             if (mouseOverRef.current) setShowVisibilityBar(true) // If mouse is over the now playing bar, show visibility bar
-        }, 500) // After 500 ms
+        }, 500) // After 500ms
     }
 
     const handleMouseLeave = () => {
@@ -157,12 +158,16 @@ export default function NowPlayingBar() {
                 className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 516 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 516 || minimizeBar ? styles.lower : ''}`}>
                 <img src={ALBUM_IMAGE} alt="Album Cover"/>
                 <div className={styles.overlay}>
-                    <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
-                        {albumCoverRight ? <LeftArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/> : <RightArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/>}
-                    </button>
-                    <button className={styles.button} onClick={() => toggleAlbumCover()}>
-                        <CloseIcon stroke={'#f3f3f3'} strokeRate={1.5}/>
-                    </button>
+                    <TooltipHandler title={albumCoverRight ? 'Move left' : 'Move right'}>
+                        <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
+                            {albumCoverRight ? <LeftArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/> : <RightArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/>}
+                        </button>
+                    </TooltipHandler>
+                    <TooltipHandler title={'Hide big album cover'}>
+                        <button className={styles.button} onClick={() => toggleAlbumCover()}>
+                            <CloseIcon stroke={'#f3f3f3'} strokeRate={1.5}/>
+                        </button>
+                    </TooltipHandler>
                 </div>
             </div>
             <div className={`${styles.bar} ${minimizeBar ? styles.minimized : ''}`}
@@ -198,10 +203,12 @@ export default function NowPlayingBar() {
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
                             <img src={ALBUM_IMAGE} alt="Album Cover"/>
                             <div className={styles.overlay}>
-                                <button className={styles.hideButton}
-                                        onClick={() => toggleAlbumCover()}>
-                                    <LeftArrowIcon strokeRate={1.2}/>
-                                </button>
+                                <TooltipHandler title={'Show big album cover'}>
+                                    <button className={styles.hideButton}
+                                            onClick={() => toggleAlbumCover()}>
+                                        <LeftArrowIcon strokeRate={1.2}/>
+                                    </button>
+                                </TooltipHandler>
                             </div>
                         </div>
                         <div className={styles.trackInfo}>
@@ -209,9 +216,11 @@ export default function NowPlayingBar() {
                                 <Link href="/">
                                     Creeping Death - Remastered
                                 </Link>
-                                <button className={styles.trackLike}>
-                                    <LikeIcon strokeWidth={12}/>
-                                </button>
+                                <TooltipHandler title={'Like'}>
+                                    <button className={styles.trackLike}>
+                                        <LikeIcon strokeWidth={12}/>
+                                    </button>
+                                </TooltipHandler>
                             </div>
                             <div className={styles.trackArtist}>
                                 <Link href="/">
@@ -222,33 +231,47 @@ export default function NowPlayingBar() {
                     </div>
                     <div className={styles.trackControls}>
                         <div className={styles.buttons}>
-                            <button className={`no_focus ${styles.repeat} ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
-                                {loop === 2 ? <RepeatOneIcon strokeRate={1.25}/> : <RepeatIcon strokeRate={1.25}/>}
-                            </button>
-                            <button className={`no_focus ${styles.prevTrack}`}>
-                                <PrevTrackIcon strokeRate={1.25}/>
-                            </button>
-                            <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
-                                {!isPlaying ? <PlayIcon fill={'#181818'}/> : <PauseIcon fill={'#181818'}/>}
-                            </button>
-                            <button className={`no_focus ${styles.nextTrack}`}>
-                                <NextTrackIcon strokeRate={1.25}/>
-                            </button>
-                            <button className={`no_focus ${styles.shuffle} ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
-                                <ShuffleIcon strokeRate={1.25}/>
-                            </button>
+                            <TooltipHandler title={loop === 2 ? 'Disable repeat' : loop === 1 ? 'Enable repeat one' : 'Enable repeat'}>
+                                <button className={`no_focus ${styles.repeat} ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
+                                    {loop === 2 ? <RepeatOneIcon strokeRate={1.25}/> : <RepeatIcon strokeRate={1.25}/>}
+                                </button>
+                            </TooltipHandler>
+                            <TooltipHandler title={'Previous'}>
+                                <button className={`no_focus ${styles.prevTrack}`}>
+                                    <PrevTrackIcon strokeRate={1.25}/>
+                                </button>
+                            </TooltipHandler>
+                            <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
+                                <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
+                                    {isPlaying ? <PauseIcon fill={'#181818'}/> : <PlayIcon fill={'#181818'}/>}
+                                </button>
+                            </TooltipHandler>
+                            <TooltipHandler title={'Next'}>
+                                <button className={`no_focus ${styles.nextTrack}`}>
+                                    <NextTrackIcon strokeRate={1.25}/>
+                                </button>
+                            </TooltipHandler>
+                            <TooltipHandler title={shuffle ? 'Disable shuffle' : 'Enable shuffle'}>
+                                <button className={`no_focus ${styles.shuffle} ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
+                                    <ShuffleIcon strokeRate={1.25}/>
+                                </button>
+                            </TooltipHandler>
                         </div>
                         <Player duration={300}/>
                     </div>
                     <div className={styles.otherControls}>
                         <div className={styles.buttons}>
-                            <button className={styles.button}
-                                    onClick={() => setTrackPanel({...trackPanel, active: !trackPanel.active})}>
-                                <MicrophoneIcon strokeRate={1.2}/>
-                            </button>
-                            <button className={styles.button}>
-                                <QueueIcon strokeRate={1.2}/>
-                            </button>
+                            <TooltipHandler title={'Open lyrics panel'}>
+                                <button className={styles.button}
+                                        onClick={() => setTrackPanel({...trackPanel, active: !trackPanel.active})}>
+                                    <MicrophoneIcon strokeRate={1.2}/>
+                                </button>
+                            </TooltipHandler>
+                            <TooltipHandler title={'Show queue'}>
+                                <button className={styles.button}>
+                                    <QueueIcon strokeRate={1.2}/>
+                                </button>
+                            </TooltipHandler>
                             <div className={styles.volume}>
                                 <Volume/>
                             </div>
