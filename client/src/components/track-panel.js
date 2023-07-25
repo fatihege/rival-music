@@ -4,6 +4,8 @@ import {TrackPanelContext} from '@/contexts/track-panel'
 import {AudioContext} from '@/contexts/audio'
 import Link from '@/components/custom-link'
 import Player from '@/components/player'
+import Volume from '@/components/volume'
+import {TooltipHandler} from '@/components/tooltip'
 import {
     CloseIcon,
     PlayIcon,
@@ -50,7 +52,9 @@ export default function TrackPanel() {
                 </div>
                 <div className={styles.wrapper}>
                     <div className={styles.close} onClick={() => setTrackPanel({...trackPanel, active: false})}>
-                        <CloseIcon/>
+                        <TooltipHandler title={'Close panel'}>
+                            <CloseIcon/>
+                        </TooltipHandler>
                     </div>
                     <div className={styles.innerContainer}>
                         <div className={styles.controls}>
@@ -65,23 +69,36 @@ export default function TrackPanel() {
                             </div>
                             <div className={styles.player}>
                                 <div className={styles.playerControls}>
-                                    <button className={`no_focus ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
-                                        {loop === 2 ? <RepeatOneIcon strokeRate={1.5}/> : <RepeatIcon strokeRate={1.5}/>}
-                                    </button>
-                                    <button className="no_focus">
-                                        <PanelPrevTrackIcon/>
-                                    </button>
-                                    <button className="no_focus" onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
-                                        {!isPlaying ? <PlayIcon/> : <PauseIcon/>}
-                                    </button>
-                                    <button className="no_focus">
-                                        <PanelNextTrackIcon/>
-                                    </button>
-                                    <button className={`no_focus ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
-                                        <ShuffleIcon strokeRate={1.5}/>
-                                    </button>
+                                    <TooltipHandler title={loop === 2 ? 'Disable repeat' : loop === 1 ? 'Enable repeat one' : 'Enable repeat'}>
+                                        <button className={`no_focus ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
+                                            {loop === 2 ? <RepeatOneIcon strokeRate={1.5}/> : <RepeatIcon strokeRate={1.5}/>}
+                                        </button>
+                                    </TooltipHandler>
+                                    <TooltipHandler title={'Previous'}>
+                                        <button className="no_focus">
+                                            <PanelPrevTrackIcon/>
+                                        </button>
+                                    </TooltipHandler>
+                                    <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
+                                        <button className="no_focus" onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
+                                            {!isPlaying ? <PlayIcon/> : <PauseIcon/>}
+                                        </button>
+                                    </TooltipHandler>
+                                    <TooltipHandler title={'Next'}>
+                                        <button className="no_focus">
+                                            <PanelNextTrackIcon/>
+                                        </button>
+                                    </TooltipHandler>
+                                    <TooltipHandler title={shuffle ? 'Disable shuffle' : 'Enable shuffle'}>
+                                        <button className={`no_focus ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
+                                            <ShuffleIcon strokeRate={1.5}/>
+                                        </button>
+                                    </TooltipHandler>
                                 </div>
                                 <Player duration={6 * 60 + 36} type="full"/>
+                                <div className={styles.volumeBar}>
+                                    <Volume/>
+                                </div>
                             </div>
                         </div>
                         <div className={styles.lyrics}>

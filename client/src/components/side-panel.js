@@ -3,6 +3,7 @@ import Link from '@/components/custom-link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import CustomScrollbar from '@/components/custom-scrollbar'
+import {TooltipHandler} from '@/components/tooltip'
 import {AddIcon, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
@@ -189,12 +190,16 @@ export default function SidePanel() {
                         </Link>
                         {!isMinimized && (
                             <div className={styles.operations}>
-                                <button>
-                                    <AddIcon strokeRate={1.2} stroke="#aeaeae"/>
-                                </button>
-                                <button onClick={() => handleMinimize()}>
-                                    <PrevIcon strokeWidth={24} stroke="#aeaeae"/>
-                                </button>
+                                <TooltipHandler title={'Create playlist'}>
+                                    <button>
+                                        <AddIcon strokeRate={1.2} stroke={'#aeaeae'}/>
+                                    </button>
+                                </TooltipHandler>
+                                <TooltipHandler title={!isMinimized ? 'Minimize side panel' : ''}>
+                                    <button onClick={() => handleMinimize()}>
+                                        <PrevIcon strokeRate={1.2} stroke={'#aeaeae'}/>
+                                    </button>
+                                </TooltipHandler>
                             </div>
                         )}
                     </div>

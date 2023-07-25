@@ -3,6 +3,11 @@ import {AudioContext} from '@/contexts/audio'
 import formatTime from '@/utils/format-time'
 import styles from '@/styles/player.module.sass'
 
+/**
+ * @param {'bar' | 'full'} type
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function Player({type = 'bar'}) {
     const {handleSeek, currentTime, durationRef} = useContext(AudioContext) // Audio context controls
     const [isDragging, setIsDragging] = useState(false) // Is progress bar dragging
@@ -94,7 +99,7 @@ export default function Player({type = 'bar'}) {
             <div className={`${styles.timeline} ${styles.wide}`}>
                 <div className={styles.playerWrapper} onMouseDown={handleProgressDown}>
                     <div className={styles.player} ref={trackRef}>
-                        <div className={`${styles.progress} ${isDragging ? styles.active : ''}`} style={{width: `${widthRef.current}%`}}>
+                        <div className={styles.progress} style={{width: `${widthRef.current}%`}}>
                         </div>
                     </div>
                     <div className={`${styles.button} ${isDragging ? styles.active : ''}`} style={{left: `${widthRef.current}%`}}></div>

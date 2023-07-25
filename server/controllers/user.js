@@ -81,9 +81,9 @@ export const getUser = async (req, res) => {
             user: result,
         })
     } catch (e) {
-        res.status(500).json({ // Return 500 response when an error occurs
+        res.status(e.message === 'jwt expired' ? 404 : 500).json({ // Return 404 response if JWT token is expired, return 500 response if there is another problem
             status: 'ERROR',
-            message: 'An error occurred while retrieving user info.',
+            message: e?.message?.includes('jwt') ? 'JWT Token expired' : 'An error occurred while retrieving user info.',
             error: e.message,
         })
     }

@@ -19,6 +19,11 @@ export default function Volume() {
         levelRef.current = value
     }
 
+    useEffect(() => {
+        if (isDragging) return // If this bar is dragging, return
+        setLevel(volume * 100) // Otherwise, update volume level
+    }, [volume])
+
     const updateVolumeLevel = (e, save) => {
         const absValue = e.clientX - trackRef.current.getBoundingClientRect().left // Get absolute value
         const percentage = Math.round(Math.max(Math.min(absValue / trackRef.current.clientWidth * 100, 100), 0)) // Get percentage

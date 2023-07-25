@@ -28,8 +28,12 @@ const AuthProvider = ({children}) => {
                 }
             } catch (e) {
                 setUser({loaded: true}) // User data is loaded
+                localStorage.removeItem('token') // Remove token key from local storage
             }
-        } else setUser({loaded: true}) // User data is loaded
+        } else {
+            setUser({loaded: true}) // User data is loaded
+            localStorage.removeItem('token') // Remove token key from local storage
+        }
     }
 
     useEffect(() => {

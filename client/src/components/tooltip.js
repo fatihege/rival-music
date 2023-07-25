@@ -19,13 +19,14 @@ export function TooltipHandler({title, children}) {
 
     const handleMouseOver = () => {
         mouseOver.current = true // Set mouse over state to true
+        clearTimeout(tooltipTimeout.current)
         tooltipTimeout.current = setTimeout(() => {
             const rect = handlerRef?.current?.getBoundingClientRect() // Get client rectangle from handler span
             if (!rect?.x && !rect?.y && !rect?.width && !rect?.height) return // If dimensions are incorrect, return
             if (mouseOver.current) setTooltip({ // If mouse is over handler span, update tooltip data
                 title,
                 show: true,
-                x: rect.x + rect.width / 2,
+                x: rect.x + rect.width < window.innerWidth ? rect.x + rect.width / 2 + (rect.x < rect.width / 2 + 10 ? 16 : 0) : rect.x - 16,
                 y: rect.y - 36 < 30 ? rect.y + rect.height + 12 : rect.y - 36,
                 transformOrigin: rect.y - 36 < 30 ? '50% -250%' : '50% 250%'
             })
@@ -49,7 +50,8 @@ export function TooltipHandler({title, children}) {
     }, [title])
 
     return (
-        <span suppressHydrationWarning={true} ref={handlerRef} onMouseOver={() => handleMouseOver()} onMouseLeave={() => handleMouseLeave()}>
+        <span suppressHydrationWarning={true} ref={handlerRef}
+              onMouseOver={() => handleMouseOver()} onMouseLeave={() => handleMouseLeave()}>
             {children}
         </span>
     )
