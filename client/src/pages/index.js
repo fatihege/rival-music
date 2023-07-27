@@ -1,16 +1,27 @@
 import Head from 'next/head'
 import {useEffect, useRef, useState} from 'react'
+import axios from 'axios'
 import Slider from '@/components/slider'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import styles from '@/styles/home.module.sass'
 
 export default function HomePage() {
+    const [artists, setArtists] = useState([]) // State of artists
     const [items, _setItems] = useState([]) // State of slider items
     const itemsRef = useRef(items) // Reference for the slider items state
 
     const setItems = value => { // Update the items state value
         itemsRef.current = value
         _setItems(value)
+    }
+
+    const getArtists = async () => {
+        try {
+            const response = await axios.get(`${process.env.API_URL}/artist/genre/metal?limit=40&includes=in`) // Get artists from the API by genre
+            if (response.data.status === 'OK' && response.data.artists?.length) // If the response is OK and there are artists
+                setArtists(response.data.artists) // Update the artists state value
+        } catch (e) {
+        }
     }
 
     useEffect(() => {
@@ -22,6 +33,8 @@ export default function HomePage() {
                     artist: id === 5 ? 'Iron Maiden' : id === 4 ? 'AC/DC' : id === 3 ? 'Slipknot' : id === 2 ? 'Black Sabbath' : 'Metallica',
                     image: id === 6 ? '/album_cover_6.jpg' : id === 5 ? '/album_cover_5.jpg' : id === 4 ? '/album_cover_4.jpg' : id === 3 ? '/album_cover_3.jpg' : id === 2 ? '/album_cover_2.jpg' : '/album_cover_1.jpg',
                 }])
+
+        getArtists() // Get artists from the API
     }, [])
 
     return (
@@ -34,6 +47,7 @@ export default function HomePage() {
                     <div className={styles.content}>
                         <h1 className={styles.pageTitle}>Listen Now</h1>
                         <Slider title="Rhythm of Sounds" items={itemsRef.current}/>
+                        <Slider title="Gods of Metal" items={artists} type={'artists'}/>
                         <Slider title="Highlights of Your Music World" items={itemsRef.current}/>
                     </div>
                 </div>

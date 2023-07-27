@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router'
 import {useContext} from 'react'
 import {useHistory} from '@/pages/_app'
 import {AuthContext} from '@/contexts/auth'
@@ -13,6 +14,7 @@ import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
 
 export default function NavigationBar() {
+    const router = useRouter()
     const [user, setUser] = useContext(AuthContext) // Get user from auth context
     const [width, , menuRef, showMenu, setShowMenu] = useContext(NavigationBarContext) // Get navigation bar width from context
     const [modal, setModal] = useContext(ModalContext) // Use modal context
@@ -25,6 +27,7 @@ export default function NavigationBar() {
         setUser({loaded: true}) // Flush user data in the auth context
         setModal({canClose: true, active: <AskLoginModal/>}) // Show ask login modal
         setShowMenu(false) // Close account menu
+        router.push('/') // Return to home
     }
 
     return (

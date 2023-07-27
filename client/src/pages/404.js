@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router'
 import Head from 'next/head'
-import styles from '@/styles/error.module.sass'
 import Button from '@/components/form/button'
+import styles from '@/styles/error.module.sass'
 
 export default function NotFoundPage() {
     const router = useRouter()

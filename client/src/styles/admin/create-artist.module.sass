@@ -1,0 +1,128 @@
+@import "admin.module"
+
+$placeholderColor: rgba(13, 13, 13, .6)
+
+.mainContainer
+  .artistPreview
+    margin-top: 2rem
+    display: flex
+    flex-direction: column
+
+    .banner,
+    .profileSection .profileImage
+      position: relative
+      background-color: $placeholderColor
+      
+      &:hover
+        .overlay
+          display: flex
+
+      .overlay
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        display: none
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        row-gap: 4px
+        cursor: pointer
+        background-color: $placeholderColor
+        color: #ffffff
+        font-size: .9rem
+        font-weight: 500
+        line-height: 1
+
+        .icon
+          width: 60px
+          height: 60px
+
+          svg
+            width: 100%
+            height: auto
+
+    span.recommendation
+      line-height: 1.5
+      color: rgba(225, 225, 225, .7)
+      font-size: .9rem
+      font-weight: 500
+
+    .banner
+      width: 800px
+      height: 311px
+      border-radius: 8px
+      overflow: hidden
+
+      img
+        width: 100%
+        height: 100%
+        object-fit: cover
+
+    .profileSection
+      margin-top: 1rem
+      height: auto
+      display: flex
+      column-gap: 32px
+
+      .profileImage
+        width: 150px
+        height: 150px
+        border-radius: 50%
+        overflow: hidden
+        display: flex
+        justify-content: center
+        align-items: center
+
+        img
+          width: 100%
+          height: 100%
+          object-fit: cover
+
+      .artistInfo
+        display: flex
+        flex-direction: column
+        padding-top: 36px
+        row-gap: 8px
+
+        .artistName
+          width: 300px
+          height: 44px
+          border-radius: 8px
+          background-color: $placeholderColor
+          font-size: 40px
+          font-weight: 700
+          color: #eee
+
+        .artistDescription
+          width: 458px
+          height: 24px
+          border-radius: 8px
+          background-color: $placeholderColor
+          font-size: 1rem
+          font-weight: 500
+          color: rgba(225, 225, 225, .7)
+
+        .artistName,
+        .artistDescription
+          &.fill
+            width: max-content
+            max-width: 530px
+            height: auto
+            background: none
+
+  .form
+    margin-top: 80px
+
+    .formField
+      width: 600px
+
+    .submitButton
+      margin-top: 2.5rem
+
+    .genresTitle
+      font-size: 1rem
+      font-weight: 600
+      color: #eaeaea
+      margin: 2rem 0 1rem

@@ -1,5 +1,5 @@
 import {join} from 'path'
-import {createReadStream, existsSync} from 'fs'
+import {createReadStream, existsSync, statSync} from 'fs'
 import {promisify} from 'util'
 import {exec as execCmd} from 'child_process'
 import client from '../lib/redis.js'
@@ -14,7 +14,19 @@ export const getTrack = async (req, res) => {
     const trackPath = join(__dirname, '..', 'audio', 'manifest', track) // Create track path
 
     try {
-        const readStream = createReadStream(trackPath, (req.headers.range && !range.includes(NaN)) ? {start: range[0], end: range[1]} : {}) // Create read stream to track file. If range is set, read the range. If it is not, read whole file
+        const trackSize = statSync(trackPath)?.size // Get track file size
+        if (Array.isArray(range) && range?.length && !range.includes(NaN)) // If range is set
+            res.writeHead(206, { // Send partial content response to the client
+                'Content-Range': `bytes ${range[0]}-${range[1] + 1}/${trackSize}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': Math.abs(range[1] + 1 - range[0]),
+                'Content-Type': 'audio/mp4',
+            })
+        else res.writeHead(200, { // Send OK response to the client
+            'Content-Length': trackSize,
+            'Content-Type': 'audio/mp4',
+        })
+        const readStream = createReadStream(trackPath, (req.headers.range && !range.includes(NaN)) ? {start: range[0], end: range[1] + 1} : {}) // Create read stream to track file. If range is set, read the range. If it is not, read whole file
         readStream.pipe(res) // Pipe read stream to the response
     } catch (e) {
         res.status(500).json({ // Send error response to the client
@@ -34,7 +46,10 @@ export const getManifest = async (req, res) => {
     checkDir(manifestPath)
 
     const cacheValue = await client.get(`manifest:${trackFileName}`)
-    if (cacheValue) return res.status(200).set('Content-Type', 'application/vnd.apple.mpegurl').send(Buffer.from(cacheValue))
+    if (cacheValue) return res.status(200).set({ // If manifest file is cached return cached file
+        'Content-Type': 'application/vnd.apple.mpegurl',
+        'Cache-Control': 'public, max-age=86400',
+    }).send(Buffer.from(cacheValue))
 
     const isExists = existsSync(`${destination}.m3u8`) // Is manifest file exists
 
@@ -60,9 +75,12 @@ export const getManifest = async (req, res) => {
 
     readManifest.on('end', async () => {
         result = result.replaceAll(`${trackFileName}.ts`, `${process.env.API_URL}/track/${trackFileName}.ts`) // Replace segment file names with URL
-        res.status(200).set('Content-Type', 'application/vnd.apple.mpegurl').send(Buffer.from(result)) // Return response
-        await client.set(`manifest:${trackFileName}`, result, {
-            EX: 60 * 60,
+        res.status(200).set({ // Set response headers
+            'Content-Type': 'application/vnd.apple.mpegurl',
+            'Cache-Control': 'public, max-age=86400',
+        }).send(Buffer.from(result)) // Return response
+        await client.set(`manifest:${trackFileName}`, result, { // Cache manifest file for 24 hours
+            EX: 86400,
             NX: true,
         })
     })

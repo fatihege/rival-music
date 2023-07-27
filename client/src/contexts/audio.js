@@ -10,6 +10,7 @@ const REPEAT = { // Repeat value constants
 const EXCLUDED_ELEMENTS = [
     'BUTTON',
     'INPUT',
+    'TEXTAREA',
 ]
 
 const AudioContext = createContext(null) // Create audio context

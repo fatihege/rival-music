@@ -1,0 +1,76 @@
+.mainContainer
+  padding: 4rem 3rem 160px
+
+  .mainTitle
+    font-size: 1.75rem
+    font-weight: 700
+    color: #eee
+
+.adminContainer
+  .statistics
+    display: flex
+    margin-top: 1rem
+
+    .stat
+      font-size: 1rem
+      font-weight: 500
+      color: #eee
+      line-height: 1
+      position: relative
+      padding: 0 1.5rem 0 1rem
+      display: flex
+      align-items: center
+
+      &:first-child
+        padding-left: 0
+
+      &:last-child
+        padding-right: 0
+
+      &:not(:last-child)::after
+        content: ""
+        position: absolute
+        display: block
+        width: 4px
+        height: 4px
+        background-color: #eee
+        border-radius: 2px
+        transform: translateY(-50%)
+        top: 50%
+        right: 0
+
+      span.data
+        display: inline-block
+        margin-left: .5rem
+        min-width: 40px
+        text-align: center
+        font-size: .9rem
+        font-weight: 700
+        color: #1c1c1c
+        border-radius: 4px
+
+        &.loaded
+          padding: 4px 8px
+          background-color: #eee
+
+  .adminLinks
+    margin-top: 2rem
+    display: flex
+    column-gap: 1rem
+    flex-wrap: wrap
+
+    .link
+      display: inline-block
+      padding: 1rem 2rem
+      border-radius: 8px
+      border: 2px solid #eee
+      background-color: transparent
+      color: #eee
+      font-size: .9rem
+      font-weight: 500
+      transition: .15s ease-out
+      transition-property: background-color, color
+
+      &:hover
+        background-color: #eee
+        color: #1c1c1c

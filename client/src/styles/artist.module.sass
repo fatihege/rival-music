@@ -1,0 +1,122 @@
+@import "variables"
+@import "home.module"
+
+.container
+  padding: 0 0 150px 0
+
+  .content
+    .profileSection
+      position: relative
+      width: 100%
+      height: min-content
+      min-height: 400px
+
+      &.noBanner
+        min-height: auto
+        height: 200px
+        align-items: center
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, .5)
+
+      .banner
+        width: 100%
+
+        img
+          display: block
+          width: 100%
+          height: 100%
+          object-fit: cover
+          aspect-ratio: 800/311
+
+      .artistInfo
+        position: absolute
+        bottom: 0
+        left: 0
+        width: 100%
+        padding: 24px 40px
+        display: flex
+        align-items: flex-start
+        column-gap: 1rem
+
+        img
+            display: block
+            width: 100%
+            height: 100%
+            object-fit: cover
+
+        .playButton
+          width: 56px
+          height: 56px
+          padding: 18px
+          border-radius: 50%
+          border: none
+          background-color: rgba(35, 35, 35, .5)
+          display: flex
+          justify-content: center
+          align-items: center
+          cursor: pointer
+          backdrop-filter: blur(12px) saturate(1.5)
+          transition: .15s ease-out
+          transition-property: backdrop-filter, background-color
+
+          &:hover
+            backdrop-filter: blur(0) saturate(1)
+            background-color: $accentColor
+            transform: scale(1.1)
+
+            svg *
+              fill: $backgroundDark !important
+
+          svg
+            width: 100%
+            height: auto
+            opacity: .9
+
+          &:active
+            transform: scale(1)
+
+        .info
+          .name
+            font-size: 48px
+            font-weight: 700
+            color: #f1f1f1
+            text-shadow: 0 0 10px rgba(21, 21, 21, .8)
+            line-height: 1
+
+          .description
+            max-width: 600px
+            font-size: .9rem
+            font-weight: 500
+            color: rgba(243, 243, 243, .9)
+            text-shadow: 0 0 10px rgba(21, 21, 21, .6)
+
+            &.full
+              padding: 4px
+              background: rgba(12, 12, 12, .5)
+              backdrop-filter: blur(12px)
+              border-radius: 4px
+
+              span.showMore
+                backdrop-filter: none
+
+            span.showMore
+              display: inline-block
+              padding: 4px
+              background: rgba(23, 23, 23, .5)
+              border-radius: 4px
+              backdrop-filter: blur(12px)
+              cursor: pointer
+              line-height: 1
+
+    .profileShadowEffect
+      position: relative
+      width: 100%
+      height: 90px
+
+      .blurFilter
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        backdrop-filter: blur(24px)
+        background-image: linear-gradient(to bottom, transparentize($foregroundDark, .5), transparentize($foregroundDark, .2), transparentize($foregroundDark, 0))

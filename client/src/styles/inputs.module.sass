@@ -31,6 +31,7 @@
     .placeholder
       font-weight: 500
       opacity: .8
+      color: #252525
 
     input
       color: #252525
@@ -44,6 +45,7 @@
     transition: .1s ease-out
     transition-property: top, left, font-size
     opacity: .5
+    color: #ffffff
     font-weight: 400
 
   .alert
@@ -83,6 +85,24 @@
     line-height: 1
     border-radius: .9rem
     pointer-events: none
+
+  &.textarea
+    height: max-content
+    min-height: 56px
+    padding-bottom: 1.5rem
+
+    textarea
+      resize: vertical
+      background: none
+      border: none
+      width: 100%
+      outline: none
+      color: rgba(255, 255, 255, .9)
+      font-size: 1rem
+      font-weight: 400
+      position: relative
+      top: 1.3rem
+      padding: .25rem
 
   input
     position: absolute

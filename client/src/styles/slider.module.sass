@@ -21,7 +21,7 @@
       column-gap: .25rem
 
       .control
-        height: 2.5rem
+        height: 40px
         font-size: .8rem
         color: #b4b4b4
         font-weight: 400
@@ -36,17 +36,27 @@
 
         &:hover,
         &:focus-visible
-          background-color: rgba(255, 255, 255, .1)
+          background-color: rgba(255, 255, 255, .15)
 
         &:active,
         &:focus-visible
           transform: scale(.9)
 
       button.control
-        width: 2.5rem
-        background: transparent
-        border: 1px solid rgba(255, 255, 255, .4)
+        width: 40px
+        background: rgba(255, 255, 255, .05)
         border-radius: 50%
+        position: relative
+
+        &::after
+          content: ""
+          position: absolute
+          top: 1px
+          left: 1px
+          width: calc(100% - 4px)
+          height: calc(100% - 4px)
+          border-radius: 50%
+          border: 1px solid rgba(208, 208, 208, .4)
 
         &.disabled
           opacity: .5
@@ -115,6 +125,29 @@
           max-width: 100%
 
         .item
+          &.artist
+            .itemImage
+              border-radius: 50%
+              overflow: visible
+
+              img
+                border-radius: 50%
+
+              .overlay
+                border-radius: 50%
+
+                .button
+                  width: 56px
+                  height: 56px
+
+                  &.play
+                    bottom: 6px
+                    left: 6px
+
+                  svg
+                    width: 18px
+                    height: 18px
+
           .itemImage
             position: relative
             width: 200px
@@ -126,6 +159,7 @@
             align-items: center
             border: 1px solid #1c1c1c
             box-shadow: 0 0 6px 0 rgba(12, 12, 12, 0.3)
+            cursor: pointer
 
             &:hover
               .overlay
@@ -134,6 +168,11 @@
 
                 .button
                   backdrop-filter: blur(12px) saturate(1.5)
+
+            .noImage
+              font-size: 48px
+              font-weight: 800
+              color: #f5f5f5
 
             img
               width: auto
@@ -146,6 +185,7 @@
               left: 0
               width: 100%
               height: 100%
+              border-radius: 10px
               background-color: rgba(25, 25, 25, .35)
               padding: 2rem
               transition: opacity .12s ease-out
@@ -155,36 +195,31 @@
                 position: absolute
                 background-color: rgba(35, 35, 35, .5)
                 border: none
-                width: 2.5rem
-                height: 2.5rem
+                width: 44px
+                height: 44px
                 border-radius: 50%
                 display: flex
                 justify-content: center
                 align-items: center
-                padding: .8rem
                 cursor: pointer
                 backdrop-filter: blur(0) saturate(1)
-                transition: .15s ease-out
-                transition-property: backdrop-filter, background-color
+                transition: background-color .15s ease-out
 
                 &:hover
-                  backdrop-filter: blur(0) saturate(1)
+                  backdrop-filter: none
                   background-color: $accentColor
                   transform: scale(1.1)
 
                   svg *
-                    fill: $backgroundDark !important
+                      fill: $backgroundDark !important
 
                 &:active
                   transform: scale(1)
 
                 svg
-                  width: 100%
-                  height: auto
+                  width: 16px
+                  height: 16px
                   opacity: .9
-
-                  svg *
-                    transition: fill .15s ease-out
 
                 &.play
                   bottom: 16px
@@ -193,7 +228,10 @@
                 &.options
                   bottom: 16px
                   right: 16px
-                  padding: .6rem
+
+                  svg
+                    width: 18px
+                    height: 18px
 
           .itemInfo
             margin-top: .25rem

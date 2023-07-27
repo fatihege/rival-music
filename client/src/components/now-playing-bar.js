@@ -71,10 +71,10 @@ export default function NowPlayingBar() {
 
         try {
             const bigAlbumCover = JSON.parse(localStorage.getItem('bigAlbumCover')) // Get big album cover from local storage
-            setShowAlbumCover(bigAlbumCover.showAlbumCover || false) // Set showAlbumCover to local storage value if it exists
-            setAlbumCoverRight(bigAlbumCover.albumCoverRight || false) // Set albumCoverRight to local storage value if it exists
+            setShowAlbumCover(!!bigAlbumCover?.showAlbumCover) // Set showAlbumCover to local storage value if it exists
+            setAlbumCoverRight(!!bigAlbumCover?.albumCoverRight) // Set albumCoverRight to local storage value if it exists
         } catch (e) {
-            localStorage.removeItem('bigAlbumCover') // Remove big album cover from local storage if it is invalid
+            localStorage.removeItem('bigAlbumCover')
         }
 
         setMaxWidth(window.innerWidth - 48) // Max width of now playing bar is window width - 48

@@ -20,6 +20,8 @@ const storage = multer.diskStorage({ // Create multer storage
     }
 })
 
-export const upload = multer({storage, limits: { // Create upload function
+export const profilePhotoUpload = multer({storage, limits: { // Create upload function
     fileSize: parseInt(process.env.PP_MAXSIZE),
 }})
+
+export const multipleUpload = multer({storage})

@@ -21,10 +21,10 @@ export function getServerSideProps(context) {
     }
 }
 
-export default function ProfilePage({id}) {
+export default function UserProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user from auth context
-    const [activeUser, setActiveUser] = useState({})
     const [, setModal] = useContext(ModalContext) // Use modal context
+    const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
     const [topTracks, _setTopTracks] = useState([]) // Top tracks of the user
     const topTracksRef = useRef(topTracks) // Reference for the top tracks
@@ -46,9 +46,9 @@ export default function ProfilePage({id}) {
     }, [])
 
     const getUserInfo = async () => {
-        if (!id) return
+        if (!id) return // If ID property is not defined, return
         const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:favouriteArtists,count:followedUsers,count:followers') // Get user's profile properties from API
-        if (userData && userData.id) setActiveUser(userData)
+        if (userData?.id) setActiveUser(userData) // If user's id is defined, set active user
         setLoad(true) // Set load state to true
     }
 

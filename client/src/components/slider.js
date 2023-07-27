@@ -1,10 +1,20 @@
+import {useRouter} from 'next/router'
 import {useEffect, useRef, useState} from 'react'
 import Link from '@/components/custom-link'
 import {TooltipHandler} from '@/components/tooltip'
 import {NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
-export default function Slider({title, items = []}) {
+/**
+ * @param {'artists' | 'albums' | 'tracks'} type
+ * @param {string} title
+ * @param {Array} items
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function Slider({type = 'albums', title, items = []}) {
+    const router = useRouter() // Router instance
+    const isScrolling = useRef(false) // Is slider scrolling
     /**
      * @type {React.MutableRefObject<HTMLDivElement>}
      */
@@ -92,6 +102,7 @@ export default function Slider({title, items = []}) {
         }
 
         const handleMouseDown = (e) => {
+            e.stopPropagation() // Stop propagation
             slider.style.scrollBehavior = 'unset' // Disable smooth scroll
             isDown = true // Mouse is down
             startX = e.pageX - slides.offsetLeft // Mouse start X position
@@ -102,9 +113,10 @@ export default function Slider({title, items = []}) {
             isDown = false // Mouse is not down
         }
 
-        const handleMouseUp = () => {
+        const handleMouseUp = e => {
             isDown = false // Mouse is not down
             slider.style.scrollBehavior = 'smooth' // Enable smooth scroll
+            if (e.target.classList.contains(styles.slides)) isScrolling.current = false // If target is not slides, set is scrolling to true
 
             const referenceWidth = referenceSlideRef.current.getBoundingClientRect().width + 16 * 1.5 // Reference slide width + gap
             const scrollPos = walk < 0 ?
@@ -115,9 +127,10 @@ export default function Slider({title, items = []}) {
             walk = 0 // Reset walk
         }
 
-        const handleMouseMove = (e) => {
+        const handleMouseMove = e => {
             if (!isDown) return // If mouse is not down, do nothing
             e.preventDefault() // Prevent default action
+            if (!e.target.classList.contains(styles.slides)) isScrolling.current = true // If target is not slides, set is scrolling to true
             const x = e.pageX - slides.offsetLeft // Mouse X position
             walk = x - startX // Calculate walk
             slider.scrollLeft = scrollLeft - walk // Scroll to position
@@ -151,9 +164,19 @@ export default function Slider({title, items = []}) {
         }
     }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef, items])
 
-    const handlePlay = (e) => {
+    const handlePlay = e => {
         e.stopPropagation() // Prevent click on parent element
         // TODO: Play song
+    }
+
+    const handleOptions = e => {
+        e.stopPropagation() // Prevent click on parent element
+        // TODO: Show options
+    }
+
+    const handleItemMouseUp = (e, item) => {
+        if (!isScrolling.current) router.push(`/artist/${item._id}`) // If not scrolling, change route
+        else isScrolling.current = false // Set is scrolling to false
     }
 
     return (
@@ -163,6 +186,8 @@ export default function Slider({title, items = []}) {
                     {title}
                 </div>
                 <div className={styles.controls}>
+                    <span className={styles.control}
+                          onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                     <TooltipHandler title={'Previous items'}>
                         <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
                                 ref={prevButtonRef}>
@@ -175,40 +200,60 @@ export default function Slider({title, items = []}) {
                             <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
                         </button>
                     </TooltipHandler>
-                    <span className={styles.control}
-                          onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                 </div>
             </div>
             <div className={styles.fading} ref={fadingRef}>
                 <div className={styles.wrapper} ref={sliderRef}>
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
-                        {items.map((item, i) => (
-                            <div className={styles.item} key={item.id} ref={i === 0 ? referenceSlideRef : null}>
-                                <div className={styles.itemImage}>
-                                    <img src={item.image} alt={item.name}/>
-                                    <div className={styles.overlay}>
-                                        <button className={`${styles.button} ${styles.play}`} onClick={handlePlay}>
-                                            <PlayIcon/>
-                                        </button>
-                                        <button className={`${styles.button} ${styles.options}`}>
-                                            <OptionsIcon/>
-                                        </button>
+                        {items.map((item, i) =>
+                            type === 'albums' ? (
+                                <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
+                                        <img src={item.image} alt={item.name}/>
+                                        <div className={styles.overlay}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={handlePlay}>
+                                                <PlayIcon/>
+                                            </button>
+                                            <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
+                                                <OptionsIcon/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemName}>
+                                            <Link href="/">
+                                                {item.name}
+                                            </Link>
+                                        </div>
+                                        <div className={styles.itemArtist}>
+                                            <Link href="/">
+                                                {item.artist}
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={styles.itemInfo}>
-                                    <div className={styles.itemName}>
-                                        <Link href="/">
-                                            {item.name}
-                                        </Link>
+                            ) : type === 'artists' ? (
+                                <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
+                                        {item.image?.length ?
+                                            <img src={`${process.env.IMAGE_CDN}/${item.image}`} alt={item.name}/> :
+                                            <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>}
+                                        <div className={styles.overlay}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={handlePlay}>
+                                                <PlayIcon/>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className={styles.itemArtist}>
-                                        <Link href="/">
-                                            {item.artist}
-                                        </Link>
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemName}>
+                                            <Link href="/artist/[id]" as={`/artist/${item._id}`}>
+                                                {item.name}
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ) : ''
+                        )}
                     </div>
                 </div>
             </div>

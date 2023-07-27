@@ -6,8 +6,11 @@ import fs from 'fs'
 import {join} from 'path'
 import 'dotenv/config'
 import client from './lib/redis.js'
+import adminRoutes from './routes/admin.js'
 import userRoutes from './routes/user.js'
+import artistRoutes from './routes/artist.js'
 import trackRoutes from './routes/track.js'
+import adminMiddleware from './middlewares/admin.js'
 import checkDir from './utils/check-dir.js'
 import {__dirname} from './utils/dirname.js'
 import config from './config.js'
@@ -41,11 +44,14 @@ app.get('/image/:image', (req, res) => {
         status: 'NOT FOUND',
     })
 
+    res.setHeader('Cache-Control', 'public, max-age=86400') // Set cache control header
     const stream = fs.createReadStream(imagePath) // Create read stream for image
     stream.pipe(res) // Pipe read stream into response
 })
 
+app.use('/admin/:token', adminMiddleware, adminRoutes) // Use admin routes in /admin/:token endpoint
 app.use('/user', userRoutes) // Use user routes in /user endpoint
+app.use('/artist', artistRoutes) // Use artist routes in /artist endpoint
 app.use('/track', trackRoutes) // Use track routes in /track endpoint
 
 mongoose.connect(process.env.DB_URI) // Connect to the MongoDB server
