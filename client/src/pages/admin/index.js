@@ -21,6 +21,16 @@ export default function AdminPage() {
         tracks: 0,
         playlists: 0,
     })
+    const [links, setLinks] = useState([ // Links state
+        {
+            title: 'Create Artist',
+            href: '/admin/artist/create',
+        },
+        {
+            title: 'View Artists',
+            href: '/admin/artist/all',
+        }
+    ])
 
     const getStatistics = async () => {
         try {
@@ -98,7 +108,9 @@ export default function AdminPage() {
                     </div>
                 </div>
                 <div className={styles.adminLinks}>
-                    <Link href={'/admin/create-artist'} className={styles.link}>Create Artist</Link>
+                    {links.map((link, index) => (
+                        <Link key={index} href={link.href} className={styles.link}>{link.title}</Link>
+                    ))}
                 </div>
             </div>
         </>

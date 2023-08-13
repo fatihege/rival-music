@@ -91,7 +91,7 @@ export default function UserProfilePage({id}) {
                                         {activeUser?.name}
                                     </h3>
                                     {process.env.SHOW_ADMIN_BADGE && activeUser?.admin ? (
-                                        <span className={styles.badge}>Admin</span>
+                                        <span className={styles.badge}>{process.env.IS_DEV_BADGE ? 'Developer' : 'Admin'}</span>
                                     ) : ''}
                                 </div>
                                 <div className={styles.fellows}>

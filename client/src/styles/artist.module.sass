@@ -13,7 +13,7 @@
 
       &.noBanner
         min-height: auto
-        height: 200px
+        height: 260px
         align-items: center
         box-shadow: 0 0 20px 0 rgba(0, 0, 0, .5)
 
@@ -64,12 +64,13 @@
             transform: scale(1.1)
 
             svg *
-              fill: $backgroundDark !important
+                fill: $backgroundDark !important
 
           svg
-            width: 100%
-            height: auto
+            width: 20px
+            height: 20px
             opacity: .9
+            display: block
 
           &:active
             transform: scale(1)
@@ -79,15 +80,19 @@
             font-size: 48px
             font-weight: 700
             color: #f1f1f1
-            text-shadow: 0 0 10px rgba(21, 21, 21, .8)
+            text-shadow: 0 6px 10px rgba(21, 21, 21, .5)
             line-height: 1
 
           .description
-            max-width: 600px
+            max-width: 50%
+            width: 50% !important
+            min-width: 300px
+            max-height: 124px
+            overflow-y: auto
             font-size: .9rem
             font-weight: 500
             color: rgba(243, 243, 243, .9)
-            text-shadow: 0 0 10px rgba(21, 21, 21, .6)
+            text-shadow: 0 0 10px rgba(21, 21, 21, .4)
 
             &.full
               padding: 4px
@@ -97,20 +102,36 @@
 
               span.showMore
                 backdrop-filter: none
+                background-color: #efefef
+                color: #1c1c1c
 
             span.showMore
               display: inline-block
               padding: 4px
-              background: rgba(23, 23, 23, .5)
+              background: rgba(23, 23, 23, .3)
               border-radius: 4px
               backdrop-filter: blur(12px)
               cursor: pointer
               line-height: 1
 
+      .editButton
+        position: absolute
+        bottom: 24px
+        right: 24px
+        font-size: 1rem
+        font-weight: 500
+        color: #efefef
+        padding: .5rem 1rem
+        border-radius: 9999px
+        cursor: pointer
+        border: none
+        background: rgba(12, 12, 12, .5)
+        backdrop-filter: blur(12px) saturate(1.5)
+
     .profileShadowEffect
       position: relative
       width: 100%
-      height: 90px
+      height: 100px
 
       .blurFilter
         position: absolute
@@ -119,4 +140,4 @@
         width: 100%
         height: 100%
         backdrop-filter: blur(24px)
-        background-image: linear-gradient(to bottom, transparentize($foregroundDark, .5), transparentize($foregroundDark, .2), transparentize($foregroundDark, 0))
+        background-image: linear-gradient(to bottom, transparentize($foregroundDark, .5), transparentize($foregroundDark, 0))

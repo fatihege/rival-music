@@ -11,7 +11,7 @@ export const getArtist = async (req, res) => {
 
         const artist = await Artist.findById(id) // Find artist from the artist id
 
-        if (!artist || !artist._id) return res.status(404).json({ // If there is no artist, return 404 response
+        if (!artist) return res.status(404).json({ // If there is no artist, return 404 response
             status: 'ERROR',
             message: 'Artist not found.',
         })
@@ -55,6 +55,37 @@ export const getArtistByGenre = async (req, res) => {
         res.status(500).json({
             status: 'ERROR',
             message: 'An error occurred while retrieving artist info.',
+            error: e.message,
+        })
+    }
+}
+
+export const getArtists = async (req, res) => {
+    try {
+        const {cursor, limit, sorting, query} = req.query // Get cursor, limit and sorting from request query
+        const artists = await Artist.find(
+            query ? { // If there is a query, find artists with query
+                $or: [
+                    {name: {$regex: query, $options: 'i'}},
+                    {description: {$regex: query, $options: 'i'}},
+                    {genres: {$regex: query, $options: 'i'}},
+                ],
+            } : {} // Otherwise, find all artists
+        ).sort( // Find artists and sort them
+            sorting === 'last-created' ? {createdAt: -1} : // If sorting is last-created, sort by createdAt descending
+                sorting === 'first-created' ? {createdAt: 1} : // If sorting is first-created, sort by createdAt ascending
+                    null // Otherwise, do not sort
+        ).skip(parseInt(cursor)).limit(parseInt(limit)) // Skip cursor and limit results
+
+        return res.status(200).json({ // Return 200 response
+            status: 'OK',
+            message: 'Artists retrieved.',
+            artists,
+        })
+    } catch (e) {
+        return res.status(500).json({ // If there is an error, return 500 response
+            status: 'ERROR',
+            message: 'Error occurred while retrieving artists.',
             error: e.message,
         })
     }

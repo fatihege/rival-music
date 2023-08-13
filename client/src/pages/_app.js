@@ -7,6 +7,7 @@ import {TrackPanelProvider} from '@/contexts/track-panel'
 import {NavigationBarProvider} from '@/contexts/navigation-bar'
 import {ModalProvider} from '@/contexts/modal'
 import {AlertProvider} from '@/contexts/alert'
+import {DialogueProvider} from '@/contexts/dialogue'
 import {TooltipProvider} from '@/contexts/tooltip'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
@@ -58,17 +59,19 @@ export default function App({Component, pageProps}) {
                 <Wrapper load={load}>
                     <TooltipProvider>
                         <AlertProvider>
-                            <AudioProvider>
-                                <TrackPanelProvider>
-                                    <ModalProvider>
-                                        <NavigationBarProvider>
-                                            <Main>
-                                                <Component {...pageProps}/>
-                                            </Main>
-                                        </NavigationBarProvider>
-                                    </ModalProvider>
-                                </TrackPanelProvider>
-                            </AudioProvider>
+                            <DialogueProvider>
+                                <AudioProvider>
+                                    <TrackPanelProvider>
+                                        <ModalProvider>
+                                            <NavigationBarProvider>
+                                                <Main>
+                                                    <Component {...pageProps}/>
+                                                </Main>
+                                            </NavigationBarProvider>
+                                        </ModalProvider>
+                                    </TrackPanelProvider>
+                                </AudioProvider>
+                            </DialogueProvider>
                         </AlertProvider>
                     </TooltipProvider>
                 </Wrapper>

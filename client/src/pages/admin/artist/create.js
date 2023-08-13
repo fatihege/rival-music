@@ -131,10 +131,22 @@ export default function CreateArtistPage() {
                         {bannerImage ? <img src={bannerImage} alt={'Artist Banner Preview'}/> : ''}
                         <Overlay handler={() => bannerRef.current?.click()}/>
                     </div>
+                    {bannerImage ? <button onClick={() => {
+                        setArtist({...artist, banner: null})
+                        setBanner(null)
+                        setBannerImage(null)
+                    }} className={styles.removeButton}>Remove banner</button> : ''}
                     <div className={styles.profileSection}>
-                        <div className={styles.profileImage}>
-                            {profileImage ? <img src={profileImage} alt={'Artist Profile Photo Preview'}/> : ''}
-                            <Overlay handler={() => profileRef.current?.click()}/>
+                        <div>
+                            <div className={styles.profileImage}>
+                                {profileImage ? <img src={profileImage} alt={'Artist Profile Photo Preview'}/> : ''}
+                                <Overlay handler={() => profileRef.current?.click()}/>
+                            </div>
+                            {profileImage ? <button onClick={() => {
+                                setArtist({...artist, image: null})
+                                setProfile(null)
+                                setProfileImage(null)
+                            }} className={styles.removeButton}>Remove profile</button> : ''}
                         </div>
                         <div className={styles.artistInfo}>
                             <div className={`${styles.artistName} ${artist.name?.length ? styles.fill : ''}`}>{artist.name}</div>

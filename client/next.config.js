@@ -14,10 +14,11 @@ const nextConfig = {
   },
   env: {
     API_URL: process.env.API_URL,
-    IMAGE_CDN: `${process.env.API_URL}/image`,
+    IMAGE_CDN: `${process.env.API_URL}/uploads`,
     PP_FILETYPES: ['image/png', 'image/jpg', 'image/jpeg'],
     PP_MAXSIZE: 5000000,
     SHOW_ADMIN_BADGE: true,
+    IS_DEV_BADGE: true,
   },
 }
 

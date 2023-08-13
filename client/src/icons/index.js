@@ -35,6 +35,7 @@ import OptionsIcon from '@/icons/options'
 import AskLoginBackground from '@/icons/ask-login'
 import DownArrowIcon from '@/icons/down-arrow'
 import UpArrowIcon from '@/icons/up-arrow'
+import DeleteIcon from '@/icons/delete'
 
 export {
     Logo,
@@ -74,4 +75,5 @@ export {
     AskLoginBackground,
     DownArrowIcon,
     UpArrowIcon,
+    DeleteIcon,
 }

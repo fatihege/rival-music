@@ -5,7 +5,7 @@ import {__dirname} from '../utils/dirname.js'
 
 const storage = multer.diskStorage({ // Create multer storage
     destination: function (req, file, cb) {
-        const dir = join(__dirname, '..', 'images') // Get path to the images directory
+        const dir = join(__dirname, '..', 'public', 'uploads') // Get path to the uploads directory
         checkDir(dir) // Check directory and create if is not exist
         cb(null, dir)
     },

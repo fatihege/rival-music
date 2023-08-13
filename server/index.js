@@ -26,19 +26,12 @@ app.use((req, res, next) => {
     else return res.status(401).send() // Otherwise, return 401 response
 })
 
-app.get('/', (req, res) => {
-    res.status(200).json({
-        status: 'OK',
-        message: '',
-    })
-})
+app.get('/api/uploads/:file', (req, res) => {
+    const {file} = req.params // Get file name from request parameters
+    const dir = join(__dirname, '..', 'public', 'uploads') // Get path to the uploads directory
+    const imagePath = join(dir, file) // Get path to the file
 
-app.get('/image/:image', (req, res) => {
-    const {image} = req.params // Get file name from request parameters
-    const dir = join(__dirname, '..', 'images') // Get path to the images directory
-    const imagePath = join(dir, image) // Get path to the image
-
-    checkDir(dir) // If images directory is not exist, create it
+    checkDir(dir) // If uploads directory is not exist, create it
 
     if (!fs.existsSync(imagePath)) return res.status(404).json({ // If image is not exist, return 404 response
         status: 'NOT FOUND',
@@ -49,10 +42,17 @@ app.get('/image/:image', (req, res) => {
     stream.pipe(res) // Pipe read stream into response
 })
 
-app.use('/admin/:token', adminMiddleware, adminRoutes) // Use admin routes in /admin/:token endpoint
-app.use('/user', userRoutes) // Use user routes in /user endpoint
-app.use('/artist', artistRoutes) // Use artist routes in /artist endpoint
-app.use('/track', trackRoutes) // Use track routes in /track endpoint
+app.use('/api/admin/:token', adminMiddleware, adminRoutes) // Use admin routes in /admin/:token endpoint
+app.use('/api/user', userRoutes) // Use user routes in /user endpoint
+app.use('/api/artist', artistRoutes) // Use artist routes in /artist endpoint
+app.use('/api/track', trackRoutes) // Use track routes in /track endpoint
+
+app.get('/api', (req, res) => {
+    res.status(200).json({
+        status: 'OK',
+        message: '',
+    })
+})
 
 mongoose.connect(process.env.DB_URI) // Connect to the MongoDB server
     .then(() => {
@@ -63,6 +63,4 @@ mongoose.connect(process.env.DB_URI) // Connect to the MongoDB server
             await client.connect() // Start Redis client
         })
     })
-    .catch(err => {
-        console.error('Unable to connect MongoDB:', err.message)
-    })
+    .catch(err => console.error('Unable to connect MongoDB:', err.message))

@@ -7,7 +7,6 @@ import styles from '@/styles/inputs.module.sass'
  * @param {string} placeholder
  * @param {string} value
  * @param {string} className
- * @param {'on' | 'off'} autoComplete
  * @param {React.MutableRefObject<string>} set
  * @param {string | null} alert
  * @param {Function: any} onChange
@@ -21,7 +20,7 @@ export default function Textarea({
     placeholder = '',
     value = '',
     className = '',
-    rows = 4,
+    rows = 10,
     set = null,
     alert = null,
     onChange = () => {},

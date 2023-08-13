@@ -1,10 +1,13 @@
 import Head from 'next/head'
-import {useEffect, useState} from 'react'
+import {useRouter} from 'next/router'
+import {useContext, useEffect, useState} from 'react'
 import CustomScrollbar from '@/components/custom-scrollbar'
+import {AuthContext} from '@/contexts/auth'
 import NotFoundPage from '@/pages/404'
 import getArtistData from '@/utils/get-artist-data'
 import {PlayIcon} from '@/icons'
 import styles from '@/styles/artist.module.sass'
+import Link from 'next/link'
 
 export function getServerSideProps(context) {
     return {
@@ -14,15 +17,16 @@ export function getServerSideProps(context) {
     }
 }
 
-export default function UserProfilePage({id}) {
+export default function ArtistProfilePage({id}) {
     const [load, setLoad] = useState(false) // Is profile loaded
+    const [user] = useContext(AuthContext) // Get user data from AuthContext
     const [artist, setArtist] = useState({}) // Artist data
     const [showDescription, setShowDescription] = useState(false) // Show full description
 
     const getArtistInfo = async () => {
         if (!id) return // If ID property is not defined, return
         const artistData = await getArtistData(id) // Get artist data from API
-        if (artistData?._id) setArtist(artistData)
+        if (artistData?._id || artistData?.id) setArtist(artistData)
         setLoad(true) // Set load state to true
     }
 
@@ -31,7 +35,7 @@ export default function UserProfilePage({id}) {
         getArtistInfo() // Otherwise, get artist info from API
     }, [id])
 
-    return load && !artist?._id ? <NotFoundPage/> : (
+    return load && !artist?._id && !artist?.id ? <NotFoundPage/> : (
         <>
             <Head>
                 <title>{artist?.name ? `${artist.name} — ` : ''}Rival Music</title>
@@ -66,12 +70,15 @@ export default function UserProfilePage({id}) {
                                     </div> : ''}
                                 </div>
                             </div>
+                            {user?.id && user?.token && user?.admin && (
+                                <Link href={'/admin/artist/[id]'} as={`/admin/artist/${artist?._id || artist?.id}`} className={styles.editButton}>Edit artist</Link>
+                            )}
                         </div>
                         <div className={styles.profileShadowEffect}>
-                            {artist?.image ? (
+                            {artist?.banner ? (
                                 <>
                                     <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="90">
-                                        <image href={`${process.env.IMAGE_CDN}/${artist.banner}`} width="110%" height="600" x="-5%" y="-500" preserveAspectRatio="none"/>
+                                        <image href={`${process.env.IMAGE_CDN}/${artist.banner}`} width="110%" height="600" x="-5%" y="-530" preserveAspectRatio="none"/>
                                     </svg>
                                     <div className={styles.blurFilter}></div>
                                 </>

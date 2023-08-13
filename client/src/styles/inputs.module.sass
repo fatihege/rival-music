@@ -24,8 +24,8 @@
       font-size: .8rem
 
   &.danger
-    background-color: #ff5f5f
-    border-color: #ff3c3c
+    background-color: $dangerColorLight
+    border-color: $dangerColor
     color: #252525
 
     .placeholder
@@ -45,7 +45,7 @@
     transition: .1s ease-out
     transition-property: top, left, font-size
     opacity: .5
-    color: #ffffff
+    color: #efefef
     font-weight: 400
 
   .alert
@@ -90,6 +90,10 @@
     height: max-content
     min-height: 56px
     padding-bottom: 1.5rem
+
+    .alertMessage
+      bottom: unset
+      top: 16px
 
     textarea
       resize: vertical
@@ -146,6 +150,13 @@
 
     &:hover
       background-color: $accentColorDark
+
+  &.danger
+    background-color: $dangerColor
+    color: #1c1c1c
+
+    &:hover
+      background-color: $dangerColorDark
 
   &.noBackground
     background-color: transparent

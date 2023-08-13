@@ -7,7 +7,7 @@ import styles from '@/styles/alert.module.sass'
  * @param {string} title
  * @param {string} description
  * @param {string} button
- * @param {'' | 'primary'} type
+ * @param {'primary' | 'danger' | ''} type
  * @returns {JSX.Element}
  * @constructor
  */

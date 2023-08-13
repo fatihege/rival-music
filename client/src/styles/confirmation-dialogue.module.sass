@@ -1,0 +1,40 @@
+@import "variables"
+
+.dialogueContainer
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100vh
+  z-index: 15
+  display: flex
+  justify-content: center
+  align-items: center
+  background-color: rgba(12, 12, 12, .7)
+  backdrop-filter: blur(50px)
+
+  .dialogue
+    padding: 2rem
+    border-radius: 1rem
+    background: $backgroundDark
+    background: $foregroundDark
+    color: #efefef
+    max-width: 60vw
+
+  .dialogueHeader h3
+    font-size: 1.25rem
+    font-weight: 700
+
+  .dialogueBody p
+    font-size: .9rem
+    font-weight: 500
+    opacity: .9
+
+  .dialogueFooter
+    display: flex
+    justify-content: flex-end
+    column-gap: .5rem
+
+    .footerButton
+      width: max-content
+      padding: .75rem 1.25rem

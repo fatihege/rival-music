@@ -236,7 +236,7 @@ export const postUpdateProfile = async (req, res) => {
         let newProfileColor = user.profileColor
         let newAccentColor = user.accentColor
 
-        const currentImagePath = join(__dirname, '..', 'images', user.image || '_') // Create current image path
+        const currentImagePath = join(__dirname, '..', 'public', 'uploads', user.image || '_') // Create current image path
         if (user.image && fs.existsSync(currentImagePath)) fs.unlinkSync(currentImagePath) // If the user has an image and the current image path is exists, delete the image file
 
         if (checkUserName(name)) newName = name // If the name is defined and the length of the name is greater than 4, set new name
