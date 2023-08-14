@@ -5,7 +5,7 @@ export default function LibraryPage() {
     return (
         <>
             <Head>
-                <title>Rival Music — Library</title>
+                <title>Library — Rival Music</title>
             </Head>
             <div className={styles.container}>
                 <h1 className={styles.pageTitle}>LIBRARY PAGE</h1>
