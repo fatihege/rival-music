@@ -22,6 +22,8 @@ services:
       - redis
     ports:
       - "8000:8000"
+    networks:
+      - default
     volumes:
       - ./server:/server
       - /server/node_modules
@@ -33,6 +35,8 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    networks:
+      - default
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -43,3 +47,7 @@ services:
 volumes:
   cache:
   database:
+
+networks:
+  default:
+    driver: bridge

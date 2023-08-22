@@ -19,6 +19,10 @@ const AlbumSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Track',
     }],
+    genres: [{
+        type: String,
+        required: true,
+    }],
 }, {
     timestamps: true,
 })

@@ -1,4 +1,5 @@
 import Artist from '../models/artist.js'
+import escapeRegexp from '../utils/escape-regexp.js'
 
 export const getArtist = async (req, res) => {
     try {
@@ -42,9 +43,7 @@ export const getArtistByGenre = async (req, res) => {
         const findParam = {genres: {[includes === 'all' ? '$all' : '$in']: genre.split(',')}} // Create find param based on includes query string
         const sortParam = {createdAt: sort === 'desc' ? -1 : 1} // Create sort param based on sort query string
 
-        const artists = limit && !isNaN(Number(limit)) ? // If there is a limit query string, return artists with limit
-            await Artist.find(findParam).sort(sortParam).limit(Number(limit)) :
-            await Artist.find(findParam).sort(sortParam)
+        const artists = await Artist.find(findParam).sort(sortParam).limit(limit && !isNaN(Number(limit)) ? Number(limit) : 0) // Find artists from the artist genre
 
         res.status(200).json({ // Return artists
             status: 'OK',
@@ -63,19 +62,20 @@ export const getArtistByGenre = async (req, res) => {
 export const getArtists = async (req, res) => {
     try {
         const {cursor, limit, sorting, query} = req.query // Get cursor, limit and sorting from request query
+        const escapedQuery = query?.trim()?.length ? escapeRegexp(query?.trim()) : '' // Escape query string
         const artists = await Artist.find(
-            query ? { // If there is a query, find artists with query
+            escapedQuery ? { // If there is a query, find artists with query
                 $or: [
-                    {name: {$regex: query, $options: 'i'}},
-                    {description: {$regex: query, $options: 'i'}},
-                    {genres: {$regex: query, $options: 'i'}},
+                    {name: {$regex: escapedQuery, $options: 'i'}},
+                    {description: {$regex: escapedQuery, $options: 'i'}},
+                    {genres: {$regex: escapedQuery, $options: 'i'}},
                 ],
             } : {} // Otherwise, find all artists
         ).sort( // Find artists and sort them
             sorting === 'last-created' ? {createdAt: -1} : // If sorting is last-created, sort by createdAt descending
                 sorting === 'first-created' ? {createdAt: 1} : // If sorting is first-created, sort by createdAt ascending
-                    null // Otherwise, do not sort
-        ).skip(parseInt(cursor)).limit(parseInt(limit)) // Skip cursor and limit results
+                    sorting || null // Otherwise, do not sort
+        ).skip(!isNaN(Number(cursor)) ? cursor : 0).limit(!isNaN(Number(limit)) ? limit : 0) // Skip cursor and limit results
 
         return res.status(200).json({ // Return 200 response
             status: 'OK',

@@ -1,13 +1,14 @@
+import axios from 'axios'
 import Head from 'next/head'
-import {useRouter} from 'next/router'
+import Link from 'next/link'
 import {useContext, useEffect, useState} from 'react'
 import CustomScrollbar from '@/components/custom-scrollbar'
+import Slider from '@/components/slider'
 import {AuthContext} from '@/contexts/auth'
 import NotFoundPage from '@/pages/404'
 import getArtistData from '@/utils/get-artist-data'
 import {PlayIcon} from '@/icons'
 import styles from '@/styles/artist.module.sass'
-import Link from 'next/link'
 
 export function getServerSideProps(context) {
     return {
@@ -22,6 +23,7 @@ export default function ArtistProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user data from AuthContext
     const [artist, setArtist] = useState({}) // Artist data
     const [showDescription, setShowDescription] = useState(false) // Show full description
+    const [albums, setAlbums] = useState([]) // Artist albums
 
     const getArtistInfo = async () => {
         if (!id) return // If ID property is not defined, return
@@ -30,9 +32,25 @@ export default function ArtistProfilePage({id}) {
         setLoad(true) // Set load state to true
     }
 
+    const getArtistAlbums = async () => {
+        if (!id) return // If ID property is not defined, return
+
+        try {
+            const response = await axios.get(`${process.env.API_URL}/album/artist/${id}`) // Send GET request to the API
+            if (response.data?.albums) {
+                response.data.albums = response.data.albums.map(album => ({...album, type: 'album'})) // Add type property to each album
+                setAlbums(response.data.albums) // If there is albums data in the response, set albums state
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     useEffect(() => {
         if (!id) return // If query ID is not defined, return
-        getArtistInfo() // Otherwise, get artist info from API
+
+        getArtistInfo() // Get artist info from API
+        getArtistAlbums() // Get artist albums from API
     }, [id])
 
     return load && !artist?._id && !artist?.id ? <NotFoundPage/> : (
@@ -83,6 +101,9 @@ export default function ArtistProfilePage({id}) {
                                     <div className={styles.blurFilter}></div>
                                 </>
                             ) : ''}
+                        </div>
+                        <div className={styles.albums}>
+                            <Slider title="Latest Albums" items={albums}/>
                         </div>
                     </div>
                 </div>

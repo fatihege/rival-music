@@ -21,7 +21,7 @@ const TrackSchema = new Schema({
     },
     genres: [{
         type: String,
-        required: true
+        required: true,
     }],
 }, {
     timestamps: true,

@@ -24,4 +24,4 @@ export const profilePhotoUpload = multer({storage, limits: { // Create upload fu
     fileSize: parseInt(process.env.PP_MAXSIZE),
 }})
 
-export const multipleUpload = multer({storage})
+export const upload = multer({storage})

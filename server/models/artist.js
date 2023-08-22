@@ -5,16 +5,12 @@ const ArtistSchema = new Schema({
     banner: String,
     name: {
         type: String,
-        required: true
+        required: true,
     },
     description: String,
     genres: [{
         type: String,
-        required: true
-    }],
-    albums: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Album',
+        required: true,
     }],
 }, {
     timestamps: true,

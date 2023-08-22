@@ -105,7 +105,7 @@ export default function CreateArtistPage() {
             })
 
             if (response.data.status === 'OK' && response.data.id) // If response status is OK
-                return router.push(`/artist/${response.data.id}`) // Open artist profile
+                return router.push('/artist/[id]', `/artist/${response.data.id}`) // Open artist profile
         } catch (e) { // If there is an error
             setAlert({ // Show an alert
                 active: true,
@@ -132,9 +132,9 @@ export default function CreateArtistPage() {
                         <Overlay handler={() => bannerRef.current?.click()}/>
                     </div>
                     {bannerImage ? <button onClick={() => {
-                        setArtist({...artist, banner: null})
                         setBanner(null)
                         setBannerImage(null)
+                        bannerRef.current.value = null
                     }} className={styles.removeButton}>Remove banner</button> : ''}
                     <div className={styles.profileSection}>
                         <div>
@@ -143,9 +143,9 @@ export default function CreateArtistPage() {
                                 <Overlay handler={() => profileRef.current?.click()}/>
                             </div>
                             {profileImage ? <button onClick={() => {
-                                setArtist({...artist, image: null})
                                 setProfile(null)
                                 setProfileImage(null)
+                                profileRef.current.value = null
                             }} className={styles.removeButton}>Remove profile</button> : ''}
                         </div>
                         <div className={styles.artistInfo}>

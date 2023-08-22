@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/fatihege/rival-music#readme",
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^3.0.1"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
@@ -27,6 +27,7 @@
     "express": "^4.18.2",
     "ffmpeg-static": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
+    "mime": "^3.0.0",
     "mongoose": "^7.3.0",
     "multer": "^1.4.5-lts.1",
     "redis": "^4.6.7"

@@ -23,12 +23,31 @@ export default function AdminPage() {
     })
     const [links, setLinks] = useState([ // Links state
         {
+            title: 'Artist Management',
+            type: 'title',
+        },
+        {
             title: 'Create Artist',
             href: '/admin/artist/create',
         },
         {
             title: 'View Artists',
             href: '/admin/artist/all',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            title: 'Album & Track Management',
+            type: 'title',
+        },
+        {
+            title: 'Create Album',
+            href: '/admin/album/create',
+        },
+        {
+            title: 'View Albums',
+            href: '/admin/album/all',
         }
     ])
 
@@ -108,7 +127,11 @@ export default function AdminPage() {
                     </div>
                 </div>
                 <div className={styles.adminLinks}>
-                    {links.map((link, index) => (
+                    {links.map((link, index) => link.type === 'title' ? (
+                        <h2 key={index} className={styles.title}>{link.title}</h2>
+                    ) : link.type === 'separator' ? (
+                        <div key={index} className={styles.separator}/>
+                    ) : (
                         <Link key={index} href={link.href} className={styles.link}>{link.title}</Link>
                     ))}
                 </div>

@@ -1,10 +1,11 @@
+import axios from 'axios'
 import {useRouter} from 'next/router'
 import Link from '@/components/custom-link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
-import {AddIcon, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
+import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
 const MIN_WIDTH = 298, // Minimum width of the side panel
@@ -50,14 +51,17 @@ export default function SidePanel() {
         else setNavBarWidth(window.innerWidth - value - 12)
     }
 
+    const getAlbums = async () => {
+        try {
+            const response = await axios.get(`${process.env.API_URL}/album?limit=50&sorting=first-created`)
+            if (response.data?.albums) setLibraryItems(response.data?.albums)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     useEffect(() => {
-        if (!libraryItems.length) // Add library items if not added
-            for (let id = 1; id <= 6; id++) setLibraryItems(prevState => [...prevState, {
-                id: id,
-                name: id === 6 ? 'Ride The Lightning' : id === 5 ? 'Fear of the Dark (2015 Remaster)' : id === 4 ? 'Hells Bells' : id === 3 ? 'The Devil in I' : id === 2 ? 'Heaven and Hell - 2009 Remaster' : 'Seek & Destroy - Remastered',
-                artist: id === 5 ? 'Iron Maiden' : id === 4 ? 'AC/DC' : id === 3 ? 'Slipknot' : id === 2 ? 'Black Sabbath' : 'Metallica',
-                image: id === 6 ? '/album_cover_6.jpg' : id === 5 ? '/album_cover_5.jpg' : id === 4 ? '/album_cover_4.jpg' : id === 3 ? '/album_cover_3.jpg' : id === 2 ? '/album_cover_2.jpg' : '/album_cover_1.jpg',
-            }])
+        getAlbums()
 
         const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
         if (width && !isNaN(parseInt(width))) // If width is valid
@@ -205,19 +209,19 @@ export default function SidePanel() {
                     </div>
                     <CustomScrollbar>
                         <div className={styles.libraryList}>
-                            {libraryItems.map(({id, name, artist, image}) => (
-                                <Link href="/" key={id}>
+                            {libraryItems.map((album) => (
+                                <Link href={'/album/[id]'} as={`/album/${album?.id || album?._id}`} key={album?.id || album?._id}>
                                     <div className={styles.listItem}>
                                         <div className={styles.image}>
-                                            <img src={image} alt={name}/>
+                                            {album?.cover ? <img src={`${process.env.IMAGE_CDN}/${album?.cover}`} alt={album?.title}/> : <AlbumDefault/>}
                                         </div>
                                         {!isMinimized && (
                                             <div className={styles.info}>
                                                 <div className={styles.name}>
-                                                    {name}
+                                                    {album?.title}
                                                 </div>
                                                 <div className={styles.creator}>
-                                                    {artist}
+                                                    {album?.artist?.name}
                                                 </div>
                                             </div>
                                         )}

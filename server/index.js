@@ -3,12 +3,14 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import fs from 'fs'
+import mime from 'mime'
 import {join} from 'path'
 import 'dotenv/config'
 import client from './lib/redis.js'
 import adminRoutes from './routes/admin.js'
 import userRoutes from './routes/user.js'
 import artistRoutes from './routes/artist.js'
+import albumRoutes from './routes/album.js'
 import trackRoutes from './routes/track.js'
 import adminMiddleware from './middlewares/admin.js'
 import checkDir from './utils/check-dir.js'
@@ -17,9 +19,9 @@ import config from './config.js'
 
 const app = express() // Create Express server instance
 
-app.use(cors())
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+app.use(cors()) // Enable CORS
+app.use(bodyParser.urlencoded({extended: true})) // Parse URL-encoded body
+app.use(bodyParser.json()) // Parse JSON body
 
 app.use((req, res, next) => {
     if (req.ip && config.allowedIps.includes(req.ip)) next() // If the host IP is allowed, continue
@@ -30,6 +32,7 @@ app.get('/api/uploads/:file', (req, res) => {
     const {file} = req.params // Get file name from request parameters
     const dir = join(__dirname, '..', 'public', 'uploads') // Get path to the uploads directory
     const imagePath = join(dir, file) // Get path to the file
+    const mimeType = mime.getType(imagePath) // Get MIME type of the file
 
     checkDir(dir) // If uploads directory is not exist, create it
 
@@ -37,6 +40,7 @@ app.get('/api/uploads/:file', (req, res) => {
         status: 'NOT FOUND',
     })
 
+    if (mimeType) res.setHeader('Content-Type', mimeType) // Set content type header
     res.setHeader('Cache-Control', 'public, max-age=86400') // Set cache control header
     const stream = fs.createReadStream(imagePath) // Create read stream for image
     stream.pipe(res) // Pipe read stream into response
@@ -45,6 +49,7 @@ app.get('/api/uploads/:file', (req, res) => {
 app.use('/api/admin/:token', adminMiddleware, adminRoutes) // Use admin routes in /admin/:token endpoint
 app.use('/api/user', userRoutes) // Use user routes in /user endpoint
 app.use('/api/artist', artistRoutes) // Use artist routes in /artist endpoint
+app.use('/api/album', albumRoutes) // Use album routes in /album endpoint
 app.use('/api/track', trackRoutes) // Use track routes in /track endpoint
 
 app.get('/api', (req, res) => {

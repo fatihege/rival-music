@@ -148,7 +148,7 @@ export default function EditArtistPage({id}) {
             })
 
             if (response.data.status === 'OK' && response.data.id) // If response status is OK
-                return router.push(`/artist/${response.data.id}`) // Open artist profile
+                return router.push('/artist/[id]', `/artist/${response.data.id}`) // Open artist profile
         } catch (e) { // If there is an error
             setAlert({ // Show an alert
                 active: true,
@@ -207,6 +207,7 @@ export default function EditArtistPage({id}) {
                         setArtist({...artist, banner: null})
                         setBanner(null)
                         setBannerImage(null)
+                        bannerRef.current.value = null
                     }} className={styles.removeButton}>Remove banner</button> : ''}
                     <div className={styles.profileSection}>
                         <div>
@@ -218,6 +219,7 @@ export default function EditArtistPage({id}) {
                                 setArtist({...artist, image: null})
                                 setProfile(null)
                                 setProfileImage(null)
+                                profileRef.current.value = null
                             }} className={styles.removeButton}>Remove profile</button> : ''}
                         </div>
                         <div className={styles.artistInfo}>

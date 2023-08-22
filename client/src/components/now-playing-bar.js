@@ -21,7 +21,7 @@ import Volume from '@/components/volume'
 import {TooltipHandler} from '@/components/tooltip'
 
 export default function NowPlayingBar() {
-    const ALBUM_IMAGE = '/album_cover_6.jpg'
+    const ALBUM_IMAGE = `${process.env.IMAGE_CDN}/album_cover_6.jpg`
     const BAR_BREAKPOINT = 850 // Hide some elements when width is less than this value
     const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle} = useContext(AudioContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state

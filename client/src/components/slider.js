@@ -2,7 +2,7 @@ import {useRouter} from 'next/router'
 import {useEffect, useRef, useState} from 'react'
 import Link from '@/components/custom-link'
 import {TooltipHandler} from '@/components/tooltip'
-import {NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
+import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 
 /**
@@ -12,7 +12,7 @@ import styles from '@/styles/slider.module.sass'
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Slider({type = 'albums', title, items = []}) {
+export default function Slider({title, items = []}) {
     const router = useRouter() // Router instance
     const isScrolling = useRef(false) // Is slider scrolling
     /**
@@ -175,7 +175,11 @@ export default function Slider({type = 'albums', title, items = []}) {
     }
 
     const handleItemMouseUp = (e, item) => {
-        if (!isScrolling.current) router.push(`/artist/${item._id}`) // If not scrolling, change route
+        if (!isScrolling.current) { // If not scrolling, change route
+            if (item?.type === 'artist') router.push('/artist/[id]', `/artist/${item?._id || item?.id}`)
+            else if (item?.type === 'album') router.push('/album/[id]', `/album/${item?._id || item?.id}`)
+            else if (item?.type === 'track') router.push('/track/[id]', `/track/${item?._id || item?.id}`)
+        }
         else isScrolling.current = false // Set is scrolling to false
     }
 
@@ -206,10 +210,10 @@ export default function Slider({type = 'albums', title, items = []}) {
                 <div className={styles.wrapper} ref={sliderRef}>
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
                         {items.map((item, i) =>
-                            type === 'albums' ? (
+                            item?.type === 'album' || item?.type === 'track' ? (
                                 <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
-                                        <img src={item.image} alt={item.name}/>
+                                        {item?.cover ? <img src={`${process.env.IMAGE_CDN}/${item.cover}`} alt={item?.title}/> : <AlbumDefault/>}
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={handlePlay}>
                                                 <PlayIcon/>
@@ -221,18 +225,20 @@ export default function Slider({type = 'albums', title, items = []}) {
                                     </div>
                                     <div className={styles.itemInfo}>
                                         <div className={styles.itemName}>
-                                            <Link href="/">
-                                                {item.name}
+                                            <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`}>
+                                                <TooltipHandler title={item?.title}>
+                                                    {item?.title}
+                                                </TooltipHandler>
                                             </Link>
                                         </div>
                                         <div className={styles.itemArtist}>
-                                            <Link href="/">
-                                                {item.artist}
+                                            <Link href={'/artist/[id]'} as={`/artist/${item?.artist?._id || item?.artist?.id}`}>
+                                                {item?.artist?.name}
                                             </Link>
                                         </div>
                                     </div>
                                 </div>
-                            ) : type === 'artists' ? (
+                            ) : item.type === 'artist' ? (
                                 <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
                                         {item.image?.length ?
