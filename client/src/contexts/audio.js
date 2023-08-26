@@ -17,10 +17,10 @@ const AudioContext = createContext(null) // Create audio context
 
 const AudioProvider = ({children}) => {
     const audioRef = useRef(null) // Audio element
-    const [queue, setQueue] = useState([`${process.env.API_URL}/track/manifest/track_1.m4a`]) // Queue state
+    const [queue, setQueue] = useState([]) // Queue state
     const [queueIndex, setQueueIndex] = useState(0) // Queue index of active track
     const [shuffle, setShuffle] = useState(false) // Shuffle mode state
-    const [loop, setLoop] = useState(0) // Loop mode state
+    const [loop, setLoop] = useState(REPEAT.NO) // Loop mode state
     const [isPlaying, _setIsPlaying] = useState(false) // Is playing state
     const [duration, _setDuration] = useState(0) // Track duration
     const [currentTime, setCurrentTime] = useState(0) // Current time
@@ -40,10 +40,13 @@ const AudioProvider = ({children}) => {
     }
 
     useEffect(() => {
+        if (!queue?.length) return // If queue is empty, return
+
         const audio = audioRef.current // Get audio reference
         const track = queue[queueIndex] // Get track from queue
 
-        if (!audio) return // If audio element reference is not set, return
+        if (!audio || !track) return // If audio or track is not set, return
+        const url = `${process.env.API_URL}/track/manifest/${track?.audio}` // Create track URL
 
         if (Hls.isSupported()) { // If HLS is supported by browser
             if (!hlsRef.current) { // If HLS reference is not set
@@ -95,31 +98,57 @@ const AudioProvider = ({children}) => {
                         method: process.env.CRYPTO_ALGORITHM,
                     },
                 })
-                hls.loadSource(track) // Load track manifest
+                hls.loadSource(url) // Load track manifest
                 hls.attachMedia(audio) // Attach media to the audio
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     audio.currentTime = 0 // Start audio from 0
                 })
                 hls.on(Hls.Events.MEDIA_ATTACHED, () => {
                     setDuration(audio.duration) // Update track duration state when media is attached
+                    if (isPlayingRef.current) audio.play() // Play the track if it is playing
+                })
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    console.error(event, data)
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                hls.startLoad()
+                                break
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hls.recoverMediaError()
+                                break
+                            default:
+                                hls.destroy()
+                                break
+                        }
+                    }
                 })
                 hlsRef.current = hls // Update HLS instance reference to the hls instance
             } else {
-                audio.currentTime = currentTime // Update track's current time by state value
-                setDuration(audio.duration)
+                hlsRef.current.loadSource(url) // Load track manifest
             }
         } else if (audio.canPlayType('application/vnd.apple.mpegurl') && audio.src !== track) { // Otherwise, if browser supports mpeg files and audio element's source is not equals to track manifest URL
             audio.src = track // Set audio element's source to the track manifest URL
             audio.currentTime = 0 // Start audio from 0
+            setDuration(audio.duration) // Update track duration state
+            handlePlayPause(true) // Play the track
         }
+    }, [queue, queueIndex]);
 
-        const handleMetaData = () => setDuration(audioRef.current.duration) // Update the track duration state
-        const handleVolumeChange = () => setVolume(audioRef.current.volume) // Update the volume level
+    useEffect(() => {
+        const audio = audioRef.current // Get audio reference
+        if (!audio) return // If audio is not set, return
+
+        const handleMetaData = () => setDuration(audio.duration) // Update the track duration state
+        const handleVolumeChange = () => setVolume(audio.volume) // Update the volume level
         const handlePlay = () => handlePlayPause(true) // Play the track
         const handlePause = () => handlePlayPause(false) // Pause the track
 
         const handleKeyDown = e => {
-            if (!EXCLUDED_ELEMENTS.includes(e.target.tagName) && e.code === 'Space' || e.code === 'MediaPlayPause' || e.key === 'MediaPlayPause') handlePlayPause(!isPlayingRef.current) // Toggle play/pause if space or media play/pause key pressed
+            if (!EXCLUDED_ELEMENTS.includes(e.target.tagName) && e.code === 'Space' || e.code === 'MediaPlayPause' || e.key === 'MediaPlayPause') {
+                e.preventDefault()
+                handlePlayPause(!isPlayingRef.current) // Toggle play/pause if space or media play/pause key pressed
+            }
         }
 
         const localLoop = localStorage.getItem('loop') && !isNaN(parseInt(localStorage.getItem('loop'))) ? parseInt(localStorage.getItem('loop')) : REPEAT.NO // Get loop value from local storage
@@ -128,27 +157,21 @@ const AudioProvider = ({children}) => {
         const localShuffle = localStorage.getItem('shuffle') && !isNaN(Number(localStorage.getItem('shuffle'))) ? !!Number(localStorage.getItem('shuffle')) : false // Get shuffle value from local storage
         handleShuffle(localShuffle) // Handle shuffle by local value
 
-        audioRef.current.addEventListener('loadedmetadata', handleMetaData)
-        audioRef.current.addEventListener('volumechange', handleVolumeChange)
-        audioRef.current.addEventListener('play', handlePlay)
-        audioRef.current.addEventListener('pause', handlePause)
+        audio.addEventListener('loadedmetadata', handleMetaData)
+        audio.addEventListener('volumechange', handleVolumeChange)
+        audio.addEventListener('play', handlePlay)
+        audio.addEventListener('pause', handlePause)
         window.addEventListener('keydown', handleKeyDown)
 
         return () => {
-            audioRef.current.removeEventListener('loadedmetadata', handleMetaData)
-            audioRef.current.removeEventListener('volumechange', handleVolumeChange)
-            audioRef.current.removeEventListener('play', handlePlay)
-            audioRef.current.removeEventListener('pause', handlePause)
+            audio.removeEventListener('loadedmetadata', handleMetaData)
+            audio.removeEventListener('volumechange', handleVolumeChange)
+            audio.removeEventListener('play', handlePlay)
+            audio.removeEventListener('pause', handlePause)
             window.removeEventListener('keydown', handleKeyDown)
             if (hlsRef.current) hlsRef.current.destroy() // If there is an HLS instance, destroy it
         }
     }, [])
-
-    useEffect(() => {
-        const audio = audioRef.current // Get audio reference
-        if (isPlaying) audio.play() // If is playing state is true, play audio
-        else audio.pause() // Else, pause audio
-    }, [isPlayingRef.current])
 
     useEffect(() => {
         localStorage.setItem('loop', loop.toString()) // Update local storage value of loop mode state when it changes
@@ -159,24 +182,37 @@ const AudioProvider = ({children}) => {
     }, [shuffle])
 
     useEffect(() => {
-        if (!queue[queueIndex]) setQueueIndex(queueIndex - 1) // Rewind if there is no track at that index
+        handlePlayPause(true)
     }, [queueIndex])
 
     const handlePlayPause = state => {
         if (!durationRef.current) return
-        if (typeof state !== 'boolean') setIsPlaying(!isPlaying) // Toggle play/pause if state value type is not set
+        if (typeof state !== 'boolean') setIsPlaying(!isPlayingRef.current) // Toggle play/pause if state value type is not set
         else setIsPlaying(state) // Otherwise, set is playing value to state
+
+        const audio = audioRef.current // Get audio reference
+        if (!audio) return // If audio is not set, return
+        if (isPlayingRef.current) audio.play()
+        else audio.pause()
     }
 
     const handleTimeUpdate = () => setCurrentTime(audioRef.current.currentTime) // Update current time state to audio's current time
 
-    const handleEnded = () => {
+    const handleEnded = (next = false) => {
         handleSeek(0) // Seek current time to 0
 
-        if (loop !== REPEAT.NO) { // If loop is on
-            setQueueIndex(queueIndex + 1) // Switch to the next track
-            handlePlayPause(true) // Play the track
-        }
+        if (loop === REPEAT.ONE && !next) handlePlayPause(true) // If loop mode is set to one, play the track
+        else if (loop === REPEAT.QUEUE) { // If loop mode is set to queue
+            if (queueIndex + 1 < queue.length) setQueueIndex(queueIndex + 1) // If queue index is less than queue length, increase queue index by 1
+            else setQueueIndex(0) // Otherwise, set queue index to 0
+        } else if (shuffle) { // If shuffle mode is set
+            const tmpQueue = [...queue.filter(q => q?.id !== queue[queueIndex]?.id)] // Create temporary queue
+            const randomIndex = Math.floor(Math.random() * tmpQueue.length) // Get random index
+            const randomTrack = tmpQueue[randomIndex] // Get random track
+            if (randomIndex !== queueIndex) setQueueIndex(queue.findIndex(q => q?.id === randomTrack?.id)) // If random index is not equals to queue index, set queue index to random index
+            else handleEnded()
+        } else if (queueIndex + 1 < queue.length) setQueueIndex(queueIndex + 1) // If queue index is less than queue length, increase queue index by 1
+        else handlePlayPause(false) // Otherwise, pause the track
     }
 
     const handleSeek = time => {
@@ -202,9 +238,9 @@ const AudioProvider = ({children}) => {
     }
 
     return (
-        <AudioContext.Provider value={{handlePlayPause, isPlaying, handleSeek, currentTime, durationRef, volume, handleVolumeUpdate, loop, handleLoop, shuffle, handleShuffle}}>
+        <AudioContext.Provider value={{queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, isPlaying, handleSeek, handleEnded, currentTime, durationRef, volume, handleVolumeUpdate, loop, handleLoop, shuffle, handleShuffle}}>
             {children}
-            <audio ref={audioRef} controls onTimeUpdate={handleTimeUpdate} onEnded={handleEnded} style={{display: 'none'}}></audio>
+            <audio ref={audioRef} controls onTimeUpdate={handleTimeUpdate} onEnded={() => handleEnded()} style={{display: 'none'}}></audio>
         </AudioContext.Provider>
     )
 }

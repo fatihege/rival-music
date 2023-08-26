@@ -52,6 +52,26 @@ export default function Volume() {
         updateVolumeLevel(e) // Update volume level
     }, [isDragging, trackRef.current])
 
+    const handleKeyDown = useCallback(e => {
+        if (e.code === 'ArrowUp' && e.ctrlKey) { // If arrow up or arrow right is pressed
+            e.preventDefault()
+            e.stopPropagation()
+            if (levelRef.current < 100) { // If volume level is less than 100
+                setLevel(levelRef.current + 1) // Increase volume level by 1
+                handleVolumeUpdate(levelRef.current + 1) // Handle volume by 1
+                localStorage.setItem('volumeLevel', (levelRef.current + 1).toString()) // If volume level is not 0, save to the local storage
+            }
+        } else if (e.code === 'ArrowDown' && e.ctrlKey) { // If arrow down or arrow left is pressed
+            e.preventDefault()
+            e.stopPropagation()
+            if (levelRef.current > 0) { // If volume level is more than 0
+                setLevel(levelRef.current - 1) // Decrease volume level by 1
+                handleVolumeUpdate(levelRef.current - 1) // Handle volume by 1
+                localStorage.setItem('volumeLevel', (levelRef.current - 1).toString()) // If volume level is not 0, save to the local storage
+            }
+        }
+    })
+
     const toggleMute = () => {
         if (levelRef.current !== 0) { // If volume level is not 0
             setLevel(0) // Set volume level to 0
@@ -67,11 +87,13 @@ export default function Volume() {
     }
 
     useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown)
         document.addEventListener('mousemove', handleProgressMove)
         document.addEventListener('mouseup', handleProgressUp)
         document.addEventListener('mouseleave', handleProgressUp)
 
         return () => { // Remove event listeners
+            document.removeEventListener('keydown', handleKeyDown)
             document.removeEventListener('mousemove', handleProgressMove)
             document.removeEventListener('mouseup', handleProgressUp)
             document.removeEventListener('mouseleave', handleProgressUp)

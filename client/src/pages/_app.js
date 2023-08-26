@@ -2,6 +2,7 @@ import {useRouter} from 'next/router'
 import {useEffect, useRef, useState} from 'react'
 import {SkeletonTheme} from 'react-loading-skeleton'
 import {AuthProvider} from '@/contexts/auth'
+import {QueueProvider} from '@/contexts/queue'
 import {AudioProvider} from '@/contexts/audio'
 import {TrackPanelProvider} from '@/contexts/track-panel'
 import {NavigationBarProvider} from '@/contexts/navigation-bar'
@@ -61,15 +62,17 @@ export default function App({Component, pageProps}) {
                         <AlertProvider>
                             <DialogueProvider>
                                 <AudioProvider>
-                                    <TrackPanelProvider>
-                                        <ModalProvider>
-                                            <NavigationBarProvider>
-                                                <Main>
-                                                    <Component {...pageProps}/>
-                                                </Main>
-                                            </NavigationBarProvider>
-                                        </ModalProvider>
-                                    </TrackPanelProvider>
+                                    <QueueProvider>
+                                        <TrackPanelProvider>
+                                            <ModalProvider>
+                                                <NavigationBarProvider>
+                                                    <Main>
+                                                        <Component {...pageProps}/>
+                                                    </Main>
+                                                </NavigationBarProvider>
+                                            </ModalProvider>
+                                        </TrackPanelProvider>
+                                    </QueueProvider>
                                 </AudioProvider>
                             </DialogueProvider>
                         </AlertProvider>

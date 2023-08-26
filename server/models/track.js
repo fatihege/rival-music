@@ -22,6 +22,10 @@ const TrackSchema = new Schema({
         type: String,
         required: true,
     }],
+    explicit: {
+        type: Boolean,
+        default: false,
+    },
     lyrics: [Object],
 }, {
     timestamps: true,

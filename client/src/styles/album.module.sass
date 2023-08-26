@@ -1,6 +1,18 @@
 @import "variables"
 @import "home.module"
 
+@keyframes playingFade
+  0%
+    background-color: transparentize($accentColor, 1)
+    transform: scale(0)
+
+  50%
+    background-color: $accentColor
+
+  100%
+    background-color: transparentize($accentColor, 1)
+    transform: scale(1.25)
+
 .container
   padding: 0 0 150px 0
 
@@ -203,6 +215,26 @@
 
             span
               display: inline-block
+
+              &.playing
+                position: relative
+                left: -4px
+                width: 1rem
+                height: 1rem
+
+                > span
+                  position: absolute
+                  display: inline-block
+                  top: 0
+                  left: 0
+                  width: 1rem
+                  height: 1rem
+                  border-radius: 50%
+                  animation: playingFade 1.5s linear infinite
+                  z-index: 1
+
+                  &:last-child
+                    animation-delay: .75s
 
             button
               display: none

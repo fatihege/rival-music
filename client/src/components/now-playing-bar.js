@@ -1,8 +1,9 @@
 import Link from '@/components/custom-link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {TrackPanelContext} from '@/contexts/track-panel'
-import {AudioContext} from '@/contexts/audio'
+import {QueueContext} from '@/contexts/queue'
 import {
+    AlbumDefault,
     CloseIcon, DownArrowIcon,
     LeftArrowIcon,
     LikeIcon,
@@ -21,9 +22,20 @@ import Volume from '@/components/volume'
 import {TooltipHandler} from '@/components/tooltip'
 
 export default function NowPlayingBar() {
-    const ALBUM_IMAGE = `${process.env.IMAGE_CDN}/album_cover_6.jpg`
-    const BAR_BREAKPOINT = 850 // Hide some elements when width is less than this value
-    const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle} = useContext(AudioContext) // Audio controls context
+    const BAR_BREAKPOINT = 850 // Replace some elements when width is less than this value
+    const {
+        queueIndex,
+        setQueueIndex,
+        isPlaying,
+        handlePlayPause,
+        handleEnded,
+        loop,
+        handleLoop,
+        shuffle,
+        handleShuffle,
+        handleSeek,
+        track
+    } = useContext(QueueContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, _setIsResizing] = useState(false) // Is now playing bar resizing
     const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
@@ -152,15 +164,25 @@ export default function NowPlayingBar() {
         }
     }, [handleResize])
 
-    return (
+    const handlePrev = () => {
+        console.log('QUEUE INDEX', queueIndex)
+        if (queueIndex === 0) handleSeek(0) // If queue index is 0, seek to 0
+        else setQueueIndex(queueIndex - 1) // Otherwise, decrease queue index by 1
+    }
+
+    const handleNext = () => handleEnded(true) // Handle next track
+
+    return track && (
         <>
             <div
                 className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 516 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 516 || minimizeBar ? styles.lower : ''}`}>
-                <img src={ALBUM_IMAGE} alt="Album Cover"/>
+                {track?.album?.cover ?
+                    <img src={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} alt={track?.title}/> : <AlbumDefault/>}
                 <div className={styles.overlay}>
                     <TooltipHandler title={albumCoverRight ? 'Move left' : 'Move right'}>
                         <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
-                            {albumCoverRight ? <LeftArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/> : <RightArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/>}
+                            {albumCoverRight ? <LeftArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/> :
+                                <RightArrowIcon stroke={'#f3f3f3'} strokeRate={1.3}/>}
                         </button>
                     </TooltipHandler>
                     <TooltipHandler title={'Hide big album cover'}>
@@ -171,11 +193,15 @@ export default function NowPlayingBar() {
                 </div>
             </div>
             <div className={`${styles.bar} ${minimizeBar ? styles.minimized : ''}`}
-                 style={{width: `${minimizeBar ? minWidth : Math.min(Math.max(widthRef.current, minWidth), maxWidth)}px`, transitionProperty: isResizing ? 'bottom' : 'width, bottom'}}
+                 style={{
+                     width: `${minimizeBar ? minWidth : Math.min(Math.max(widthRef.current, minWidth), maxWidth)}px`,
+                     transitionProperty: isResizing ? 'bottom' : 'width, bottom'
+                 }}
                  onMouseEnter={() => handleMouseOver()}
                  onMouseLeave={() => handleMouseLeave()}
             >
-                <div className={`${styles.visibilityBar} ${!showVisibilityBar ? styles.hide : ''}`} onClick={() => toggleMinimizeBar()}>
+                <div className={`${styles.visibilityBar} ${!showVisibilityBar ? styles.hide : ''}`}
+                     onClick={() => toggleMinimizeBar()}>
                     <div className={styles.icon}>
                         {minimizeBar
                             ? <UpArrowIcon strokeRate={1.25} stroke={'#a8a8a8'}/>
@@ -185,23 +211,26 @@ export default function NowPlayingBar() {
                 <div
                     className={`${styles.barWrapper} ${width < BAR_BREAKPOINT || minimizeBar ? styles.breakpoint : ''}`}>
                     <div className={styles.blurryBackground}>
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="100%">
-                            <filter id="displacementFilter">
-                                <feTurbulence type="turbulence" baseFrequency=".01 .01"
-                                              numOctaves="3" result="turbulence" seed="10"/>
-                                <feDisplacementMap in2="turbulence" in="SourceGraphic"
-                                                   scale="40" xChannelSelector="R" yChannelSelector="B"/>
-                            </filter>
-                            <image href={ALBUM_IMAGE} width="110%" height="140" x="-5%" y="-25" preserveAspectRatio="none"
-                                   filter="url(#displacementFilter)"/>
-                        </svg>
+                        {track?.album?.cover ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="100%">
+                                <filter id="displacementFilter">
+                                    <feTurbulence type="turbulence" baseFrequency=".01 .01"
+                                                  numOctaves="3" result="turbulence" seed="10"/>
+                                    <feDisplacementMap in2="turbulence" in="SourceGraphic"
+                                                       scale="40" xChannelSelector="R" yChannelSelector="B"/>
+                                </filter>
+                                <image href={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} width="110%"
+                                       height="140" x="-5%" y="-25"
+                                       preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                            </svg>
+                        ) : ''}
                         <div className={styles.blurBorder}></div>
                     </div>
                     <div className={`${styles.layoutResizer} ${styles.left}`}
                          onMouseDown={e => handleResizeDown(e, 1)}></div>
                     <div className={styles.track}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
-                            <img src={ALBUM_IMAGE} alt="Album Cover"/>
+                            <img src={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} alt={track?.title}/>
                             <div className={styles.overlay}>
                                 <TooltipHandler title={'Show big album cover'}>
                                     <button className={styles.hideButton}
@@ -213,8 +242,8 @@ export default function NowPlayingBar() {
                         </div>
                         <div className={styles.trackInfo}>
                             <div className={styles.trackName}>
-                                <Link href="/">
-                                    Creeping Death - Remastered
+                                <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track?._id}`}>
+                                    {track?.title || ''}
                                 </Link>
                                 <TooltipHandler title={'Like'}>
                                     <button className={styles.trackLike}>
@@ -223,36 +252,40 @@ export default function NowPlayingBar() {
                                 </TooltipHandler>
                             </div>
                             <div className={styles.trackArtist}>
-                                <Link href="/">
-                                    Metallica
+                                <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}>
+                                    {track?.album?.artist?.name || ''}
                                 </Link>
                             </div>
                         </div>
                     </div>
                     <div className={styles.trackControls}>
                         <div className={styles.buttons}>
-                            <TooltipHandler title={loop === 2 ? 'Disable repeat' : loop === 1 ? 'Enable repeat one' : 'Enable repeat'}>
-                                <button className={`no_focus ${styles.repeat} ${loop > 0 ? styles.active : ''}`} onClick={() => handleLoop()}>
+                            <TooltipHandler
+                                title={loop === 2 ? 'Disable repeat' : loop === 1 ? 'Enable repeat one' : 'Enable repeat'}>
+                                <button className={`no_focus ${styles.repeat} ${loop > 0 ? styles.active : ''}`}
+                                        onClick={() => handleLoop()}>
                                     {loop === 2 ? <RepeatOneIcon strokeRate={1.25}/> : <RepeatIcon strokeRate={1.25}/>}
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={'Previous'}>
-                                <button className={`no_focus ${styles.prevTrack}`}>
+                                <button className={`no_focus ${styles.prevTrack}`} onClick={handlePrev}>
                                     <PrevTrackIcon strokeRate={1.25}/>
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
-                                <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()} onClick={() => handlePlayPause()}>
+                                <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()}
+                                        onClick={() => handlePlayPause()}>
                                     {isPlaying ? <PauseIcon fill={'#181818'}/> : <PlayIcon fill={'#181818'}/>}
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={'Next'}>
-                                <button className={`no_focus ${styles.nextTrack}`}>
+                                <button className={`no_focus ${styles.nextTrack}`} onClick={handleNext}>
                                     <NextTrackIcon strokeRate={1.25}/>
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={shuffle ? 'Disable shuffle' : 'Enable shuffle'}>
-                                <button className={`no_focus ${styles.shuffle} ${shuffle ? styles.active : ''}`} onClick={() => handleShuffle()}>
+                                <button className={`no_focus ${styles.shuffle} ${shuffle ? styles.active : ''}`}
+                                        onClick={() => handleShuffle()}>
                                     <ShuffleIcon strokeRate={1.25}/>
                                 </button>
                             </TooltipHandler>
