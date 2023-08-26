@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Head from 'next/head'
-import Link from 'next/link'
+import Link from '@/components/link'
 import {useContext, useEffect, useState} from 'react'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import Slider from '@/components/slider'

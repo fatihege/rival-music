@@ -1,4 +1,4 @@
-import Link from '@/components/custom-link'
+import Link from '@/components/link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'

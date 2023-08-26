@@ -38,11 +38,11 @@ export const getManifest = async (req, res) => {
     try {
         const {track} = req.params // Get track file name from request parameters
         const trackFileName = track.slice(0, track.lastIndexOf('.'))
-        const trackPath = join(__dirname, '..', 'audio', track) // Create track path
+        let trackPath = join(__dirname, '..', 'audio', track) // Create track path
         const manifestPath = join(__dirname, '..', 'audio', 'manifest') // Create manifest directory path
         const destination = join(manifestPath, trackFileName) // Create destination of track manifest
 
-        if (!existsSync(trackPath)) throw new Error('Track file is not exists') // If track file is not exists, throw an error
+        if (!existsSync(trackPath)) trackPath = join(__dirname, '..', 'audio', 'manifest', track.slice(0, track.lastIndexOf('.')) + '.ts') // If track file is not exists, try to find it in manifest directory
 
         try {
             checkDir(manifestPath) // Check if manifest directory exists

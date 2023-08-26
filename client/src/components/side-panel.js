@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {useRouter} from 'next/router'
-import Link from '@/components/custom-link'
+import Link from '@/components/link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import CustomScrollbar from '@/components/custom-scrollbar'

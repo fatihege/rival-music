@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router'
 import Head from 'next/head'
-import Link from 'next/link'
+import Link from '@/components/link'
 import {useContext, useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import {AuthContext} from '@/contexts/auth'

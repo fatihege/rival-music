@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {ModalContext} from '@/contexts/modal'
-import Link from '@/components/custom-link'
+import Link from '@/components/link'
 import AskLoginModal from '@/components/modals/ask-login'
 import getUserData from '@/utils/get-user-data'
 import {RGBtoString} from '@/utils/color-converter'

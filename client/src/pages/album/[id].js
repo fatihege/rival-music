@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Link from 'next/link'
+import Link from '@/components/link'
 import {useContext, useEffect, useState} from 'react'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {AuthContext} from '@/contexts/auth'
@@ -108,6 +108,12 @@ export default function AlbumPage({id}) {
                                         <PlayIcon fill={'#1c1c1c'} rounded={true}/> Play
                                     </button>
                                 </div>
+                                {user?.id && user?.token && user?.admin ? (
+                                    <div className={styles.adminControls}>
+                                        <Link href={'/admin/track/create'}>Add Track</Link>
+                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit Album</Link>
+                                    </div>
+                                ) : ''}
                             </div>
                         </div>
                         <div className={styles.tracksSection}>

@@ -5,7 +5,7 @@ import axios from 'axios'
 import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
 import {AlertContext} from '@/contexts/alert'
-import Link from '@/components/custom-link'
+import Link from '@/components/link'
 import styles from '@/styles/admin/admin.module.sass'
 import 'react-loading-skeleton/dist/skeleton.css'
 

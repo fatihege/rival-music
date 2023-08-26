@@ -1,7 +1,7 @@
-import Link from 'next/link'
+import NextLink from 'next/link'
 import {useHistory} from '@/pages/_app'
 
-export default function CustomLink(props) {
+export default function Link(props) {
     const [,, flushForward] = useHistory() // Get flushForward method from history hook
 
     const getProps = () => { // Filter props
@@ -19,8 +19,8 @@ export default function CustomLink(props) {
     }
 
     return (
-        <Link {...getProps()}>
+        <NextLink {...getProps()}>
             {props.children}
-        </Link>
+        </NextLink>
     )
 }

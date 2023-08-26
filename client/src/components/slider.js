@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router'
 import {useEffect, useRef, useState} from 'react'
-import Link from '@/components/custom-link'
+import Link from '@/components/link'
 import {TooltipHandler} from '@/components/tooltip'
 import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
