@@ -13,9 +13,7 @@ export default async (email, password, isPasswordEncrypted = false, userRecord =
         if (encryptedPassword !== user.password) return 3 // If the passwords do not match, return code 3
 
         return { // Otherwise, return token and user info
-            token: jwt.sign({userId: user._id}, process.env.JWT_KEY, {
-                expiresIn: '1d',
-            }),
+            token: jwt.sign({userId: user._id}, process.env.JWT_KEY),
             id: user._id,
             email: user.email,
             name: user.name,

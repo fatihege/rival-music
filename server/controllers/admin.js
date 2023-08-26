@@ -5,6 +5,8 @@ import Artist from '../models/artist.js'
 import Album from '../models/album.js'
 import Track from '../models/track.js'
 import Playlist from '../models/playlist.js'
+import convertDuration from '../utils/convert-duration.js'
+import createManifest from '../utils/create-manifest.js'
 import {__dirname} from '../utils/dirname.js'
 
 export const getStatistics = async (req, res) => {
@@ -279,6 +281,80 @@ export const deleteAlbum = async (req, res) => {
         return res.status(500).json({ // If there is an error, return 500 response
             status: 'ERROR',
             message: 'Error occurred while deleting album.',
+            error: e.message,
+        })
+    }
+}
+
+export const postCreateTrack = async (req, res) => {
+    try {
+        const audio = req?.file?.filename || null // Get audio filename
+        const {title, album, duration, order, genres: genresString, lyrics: lyricsString} = req.body // Get title, album, duration, order, genres and lyrics from request body
+
+        if (!title?.trim()?.length) return res.status(400).json({ // If title is empty, return 400 response
+            status: 'ERROR',
+            message: 'Track title is required.',
+        })
+
+        if (!album?.trim()?.length) return res.status(400).json({ // If album is empty, return 400 response
+            status: 'ERROR',
+            message: 'Track album ID is required.',
+        })
+
+        const foundAlbum = await Album.findById(album) // Find album by ID
+
+        if (!foundAlbum) return res.status(404).json({ // If album is not found, return 404 response
+            status: 'ERROR',
+            message: 'Album not found.',
+        })
+
+        const genres = genresString.split(',').filter(g => g?.trim() !== '').map(g => g?.toLowerCase()?.trim()) // Split genres string and remove empty genres
+        let lyrics = []
+
+        try {
+            lyrics = JSON.parse(lyricsString) // Parse lyrics string
+            if (!Array.isArray(lyrics)) throw new Error('Lyrics must be an array.') // If lyrics is not an array, throw error
+
+            lyrics = lyrics.map(l => ({ // Map lyrics
+                start: convertDuration(l.start),
+                text: l.text,
+            }))
+        } catch (e) {
+            return res.status(400).json({ // If there is an error, return 400 response
+                status: 'ERROR',
+                message: 'Lyrics must be an array.',
+                error: e.message,
+            })
+        }
+
+        const track = new Track({ // Create new track
+            audio,
+            title: title.trim(),
+            album,
+            duration: parseInt(duration),
+            order: parseInt(order),
+            genres,
+            lyrics,
+        })
+
+        await track.save() // Save track to database
+
+        if (audio) {
+            const audioPath = join(__dirname, '..', 'audio', audio)
+            const {err} = await createManifest(audioPath, join(__dirname, '..', 'audio', 'manifest', audio.slice(0, audio.lastIndexOf('.')))) // Create manifest file
+            if (!err) await unlink(audioPath, () => {}) // Delete audio file
+        }
+
+        return res.status(200).json({ // Return 200 response
+            status: 'OK',
+            message: 'Track created.',
+            id: track._id,
+            album: foundAlbum._id,
+        })
+    } catch (e) {
+        return res.status(500).json({ // If there is an error, return 500 response
+            status: 'ERROR',
+            message: 'Error occurred while creating track.',
             error: e.message,
         })
     }

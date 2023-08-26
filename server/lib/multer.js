@@ -20,8 +20,22 @@ const storage = multer.diskStorage({ // Create multer storage
     }
 })
 
+const audioStorage = multer.diskStorage({ // Create multer storage
+    destination: function (req, file, cb) {
+        const dir = join(__dirname, '..', 'audio') // Get path to the audio directory
+        checkDir(dir) // Check directory and create if is not exist
+        cb(null, dir)
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9) // Create random file name
+        cb(null, uniqueSuffix + file.originalname.slice(file.originalname.lastIndexOf('.')))
+    }
+})
+
 export const profilePhotoUpload = multer({storage, limits: { // Create upload function
     fileSize: parseInt(process.env.PP_MAXSIZE),
 }})
 
 export const upload = multer({storage})
+
+export const audio = multer({storage: audioStorage})

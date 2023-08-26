@@ -1,12 +1,9 @@
 import {join} from 'path'
 import {createReadStream, existsSync, statSync} from 'fs'
-import {promisify} from 'util'
-import {exec as execCmd} from 'child_process'
 import client from '../lib/redis.js'
 import checkDir from '../utils/check-dir.js'
 import {__dirname} from '../utils/dirname.js'
-
-const exec = promisify(execCmd) // Promisify exec function
+import createManifest from '../utils/create-manifest.js'
 
 export const getTrack = async (req, res) => {
     const {track} = req.params // Get track file name from request parameters
@@ -54,7 +51,7 @@ export const getManifest = async (req, res) => {
     const isExists = existsSync(`${destination}.m3u8`) // Is manifest file exists
 
     if (!isExists) { // If manifest file is not exists
-        const {err} = await exec(`ffmpeg -i ${trackPath} -c copy -level 3.0 -start_number 0 -hls_time 10 -hls_list_size 0 -hls_flags single_file -f hls ${destination}.m3u8`) // Execute FFmpeg command
+        const {err} = createManifest(trackPath, destination) // Create manifest file
 
         if (err) { // If there is an error
             console.error(err) // Write error to the console

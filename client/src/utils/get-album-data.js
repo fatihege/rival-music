@@ -7,7 +7,7 @@ import axios from 'axios'
  */
 export default async id => {
     try {
-        const response = await axios.get(`${process.env.API_URL}/album/${id}`) // Send GET request to the API
+        const response = await axios.get(`${process.env.API_URL}/album/${id}?tracks=1`) // Send GET request to the API
         if (!response.data || !response.data.album) return // If there is no data in the response, return
 
         return response.data.album // Return album data

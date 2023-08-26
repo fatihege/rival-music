@@ -1,28 +1,28 @@
 import {Schema, model} from 'mongoose'
 
 const TrackSchema = new Schema({
-    cover: String,
     title: {
         type: String,
         required: true,
     },
+    audio: String,
     duration: {
         type: Number,
-    },
-    artist: {
-        type: Schema.Types.ObjectId,
-        ref: 'Artist',
-        required: true,
     },
     album: {
         type: Schema.Types.ObjectId,
         ref: 'Album',
         required: true,
     },
+    order: {
+        type: Number,
+        default: 0,
+    },
     genres: [{
         type: String,
         required: true,
     }],
+    lyrics: [Object],
 }, {
     timestamps: true,
 })

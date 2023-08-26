@@ -6,9 +6,10 @@ import {
     deleteArtist,
     postCreateAlbum,
     postUpdateAlbum,
-    deleteAlbum
+    deleteAlbum,
+    postCreateTrack
 } from '../controllers/admin.js'
-import {upload} from '../lib/multer.js'
+import {upload, audio} from '../lib/multer.js'
 
 const router = express.Router() // Create Express router instance
 
@@ -25,5 +26,6 @@ router.delete('/artist/:id', deleteArtist)
 router.post('/album/create', upload.single('cover'), postCreateAlbum)
 router.post('/album/update/:id', upload.single('cover'), postUpdateAlbum)
 router.delete('/album/:id', deleteAlbum)
+router.post('/track/create', audio.single('audio'), postCreateTrack)
 
 export default router

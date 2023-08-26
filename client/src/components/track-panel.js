@@ -19,13 +19,13 @@ import {
 import styles from '@/styles/track-panel.module.sass'
 
 export default function TrackPanel() {
-    const ALBUM_IMAGE = '/album_cover_6.jpg'
+    const ALBUM_IMAGE = `${process.env.IMAGE_CDN}/album_cover_6.jpg`
     const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle} = useContext(AudioContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [fade, setFade] = useState(false) // Can the panel fade in
 
     useEffect(() => {
-        setFade(true) // Fade in panel
+        setFade(true) // Fade in pane
     }, [])
 
     return (

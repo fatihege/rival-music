@@ -114,6 +114,8 @@ export default function CreateAlbumPage() {
     const handleSubmit = async () => {
         if (!album.title?.trim().length && !album.releaseYear?.trim().length || !checkReleaseYear() || !album.artist) return // If any of the inputs are empty, return
 
+        setDisableSubmit(true)
+
         try {
             const formData = new FormData() // Initialize a form data
 
@@ -140,6 +142,8 @@ export default function CreateAlbumPage() {
                 type: '',
             })
             console.error(e)
+        } finally {
+            setDisableSubmit(false)
         }
     }
 

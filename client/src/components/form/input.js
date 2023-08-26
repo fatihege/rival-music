@@ -61,7 +61,7 @@ export default function Input({
             <span className={styles.placeholder}>{placeholder}</span>
             <input type={type} name={name} ref={inputRef} onChange={e => {
                 if (set) set.current = e.target.value
-                onChange(e.target.value)
+                onChange(e.target.value, e)
                 const validatorAlert = validator(e.target.value)
                 if (validatorAlert) setAlert(validatorAlert)
                 else setAlert(null)

@@ -1,0 +1,182 @@
+@import "admin.module"
+
+$placeholderColor: rgba(13, 13, 13, .6)
+
+.mainContainer
+  .form
+    margin-top: 20px
+
+    .albumsResult
+      position: absolute
+      z-index: 2
+      padding: .5rem
+      border-radius: 1rem
+      background: #1c1c1c
+      border: 1px solid #262626
+      width: 600px
+      max-height: 250px
+      overflow-y: auto
+      box-shadow: 0 0 10px rgba(12, 12, 12, .3)
+
+      .album
+        cursor: pointer
+
+        &:hover
+          background: #262626
+
+        &:active
+          background: #303030
+
+    .album
+      max-width: 600px
+      display: flex
+      align-items: center
+      padding: .5rem
+      border-radius: .75rem
+      column-gap: 1rem
+
+      &:not(:last-child)
+        margin-bottom: .25rem
+
+      .image
+        height: 40px
+        width: 40px
+        border-radius: 6px
+        overflow: hidden
+        border: 1px solid rgba(100, 100, 100, .5)
+        font-size: .8rem
+        font-weight: 500
+        color: #eee
+        display: flex
+        justify-content: center
+        align-items: center
+
+        img,
+        svg
+          display: block
+          width: 100%
+          height: 100%
+          object-fit: cover
+
+      .info
+        display: flex
+        flex-direction: column
+        justify-content: center
+
+        .title,
+        .artist
+          max-width: 480px
+          overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
+
+        .title
+          font-size: 1rem
+          font-weight: 600
+          color: #eee
+
+        .artist
+          font-size: .8rem
+          font-weight: 500
+          color: #aaa
+
+      .remove
+        width: 24px
+        height: 24px
+        background: none
+        border: none
+        cursor: pointer
+        margin-left: auto
+
+        svg
+          width: 100%
+          height: auto
+
+    .formField
+      width: 600px
+
+    .submitButton
+      margin-top: 2.5rem
+
+    .formTitle
+      font-size: 1rem
+      font-weight: 600
+      color: #eaeaea
+      margin: 2rem 0 1rem
+
+    .lyrics
+      .lyricForm
+        display: flex
+        flex-direction: column
+
+        .duration
+          width: 600px
+          display: flex
+          justify-content: space-between
+          align-items: center
+
+          .durationField
+            width: 200px
+            border-radius: 0
+            margin-bottom: 0
+            border-bottom: none
+
+            &:not(:first-child)
+              border-left: none
+
+            &:first-child
+              border-top-left-radius: 1rem
+
+            &:last-child
+              border-top-right-radius: 1rem
+
+        .lyricInput
+          border-top-left-radius: 0
+          border-top-right-radius: 0
+
+      .lyric
+        margin-top: 1rem
+        width: 600px
+        font-size: .9rem
+        color: #eee
+        display: flex
+        align-items: flex-start
+
+        .lyricNumber,
+        .lyricTime
+          font-size: .8rem
+          color: #aaa
+          background-color: #252525
+          display: inline-block
+          padding: .25rem .5rem
+          border-radius: 6px
+          margin-right: .5rem
+
+        .lyricText
+          white-space: pre-wrap
+          overflow-wrap: break-word
+          word-wrap: break-word
+          word-break: break-word
+          hyphens: auto
+          margin-top: 2px
+          max-width: 460px
+
+        .actions
+          margin-left: auto
+          height: 28px
+
+          button
+            width: 24px
+            height: 24px
+            border: none
+            background: none
+            cursor: pointer
+            opacity: .7
+
+            &:hover
+              opacity: 1
+
+            svg
+              width: 100%
+              height: auto
+              display: block

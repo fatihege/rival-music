@@ -89,6 +89,8 @@ export default function CreateArtistPage() {
     const handleSubmit = async () => {
         if (!artist.name?.trim().length) return // If the name input is empty, return
 
+        setDisableSubmit(true)
+
         try {
             const formData = new FormData() // Initialize a form data
 
@@ -115,6 +117,8 @@ export default function CreateArtistPage() {
                 type: '',
             })
             console.error(e)
+        } finally {
+            setDisableSubmit(false)
         }
     }
 

@@ -1,11 +1,12 @@
 import Album from '../models/album.js'
 import Artist from '../models/artist.js'
+import Track from '../models/track.js'
 import escapeRegexp from '../utils/escape-regexp.js'
 
 export const getAlbum = async (req, res) => {
     try {
         const {id} = req.params // Get album ID from request params
-        const {populate} = req.query // Get populate from request query
+        const {populate, tracks} = req.query // Get populate from request query
 
         if (!id) return res.status(400).json({ // If there is no album ID, return 400 response
             status: 'ERROR',
@@ -21,6 +22,11 @@ export const getAlbum = async (req, res) => {
             status: 'ERROR',
             message: 'Album not found.',
         })
+
+        if (tracks) {
+            album.tracks = await Track.find({album: album._id}) // If tracks query is set, get tracks of the album
+            if (album.tracks.length) album.tracks = album.tracks.sort((a, b) => a.order - b.order) // If there is tracks, sort them
+        }
 
         res.status(200).json({ // If there is an album, return album info
             status: 'OK',

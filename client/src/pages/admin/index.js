@@ -48,7 +48,15 @@ export default function AdminPage() {
         {
             title: 'View Albums',
             href: '/admin/album/all',
-        }
+        },
+        {
+            title: 'Create Track',
+            href: '/admin/track/create',
+        },
+        {
+            title: 'View Tracks',
+            href: '/admin/track/all',
+        },
     ])
 
     const getStatistics = async () => {
