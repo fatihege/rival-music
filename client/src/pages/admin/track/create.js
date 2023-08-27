@@ -239,6 +239,27 @@ export default function CreateTrackPage() {
     }
 
     useEffect(() => {
+        setTrack({
+            ...track,
+            lyrics: track.lyrics.sort((a, b) => {
+                const aTime = a.start.split(':').map((t, i) => {
+                    if (i === 0) return Number(t) * 60 * 1000
+                    if (i === 1) return Number(t) * 1000
+                    return Number(t)
+                })
+                const bTime = b.start.split(':').map((t, i) => {
+                    if (i === 0) return Number(t) * 60 * 1000
+                    if (i === 1) return Number(t) * 1000
+                    return Number(t)
+                })
+                if (aTime[0] > bTime[0]) return 1
+                if (aTime[0] < bTime[0]) return -1
+                return 0
+            })
+        })
+    }, [track.lyrics])
+
+    useEffect(() => {
         if (albumQuery.trim().length) getAlbums() // If the album query is not empty, get albums
         else setAlbumsResult([])
     }, [albumQuery])

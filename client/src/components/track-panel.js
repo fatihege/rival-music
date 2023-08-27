@@ -1,5 +1,6 @@
+import axios from 'axios'
 import Head from 'next/head'
-import {useContext, useEffect, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
@@ -19,13 +20,49 @@ import {
 import styles from '@/styles/track-panel.module.sass'
 
 export default function TrackPanel() {
-    const {queueIndex, setQueueIndex, isPlaying, handlePlayPause, handleSeek, handleEnded, loop, handleLoop, shuffle, handleShuffle, track} = useContext(QueueContext) // Audio controls context
+    const {
+        currentTime,
+        queueIndex,
+        setQueueIndex,
+        isPlaying,
+        handlePlayPause,
+        handleSeek,
+        handleEnded,
+        loop,
+        handleLoop,
+        shuffle,
+        handleShuffle,
+        track
+    } = useContext(QueueContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [fade, setFade] = useState(false) // Can the panel fade in
+    const [lyrics, setLyrics] = useState(null) // Lyrics state
+    const lyricsRef = useRef() // Lyrics ref
+    const activeRef = useRef() // Lyrics ref
+
+    const getLyrics = async () => {
+        const response = await axios.get(`${process.env.API_URL}/track/lyrics/${track._id}`)
+        if (response.data?.status === 'OK') setLyrics(response.data?.lyrics || null)
+    }
 
     useEffect(() => {
         setFade(true) // Fade in pane
     }, [])
+
+    useEffect(() => {
+        getLyrics() // Get lyrics
+    }, [track])
+
+    useEffect(() => {
+        if (activeRef.current) lyricsRef.current.scrollTo({
+            top: activeRef.current.offsetTop - lyricsRef.current.offsetTop - 40,
+            behavior: 'smooth'
+        })
+        else lyricsRef.current.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        })
+    }, [activeRef.current])
 
     const close = () => setTrackPanel({...trackPanel, active: false}) // Close track panel
 
@@ -79,9 +116,11 @@ export default function TrackPanel() {
                             <div className={styles.trackInfo}>
                                 <div className={styles.trackTitle}>{track?.title}</div>
                                 <div className={styles.trackArtistAndAlbum}>
-                                    <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`} onClick={close}>{track?.album?.artist?.name}</Link>
+                                    <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}
+                                          onClick={close}>{track?.album?.artist?.name}</Link>
                                     &nbsp;—&nbsp;
-                                    <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`} onClick={close}>{track?.album?.title}</Link>
+                                    <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`}
+                                          onClick={close}>{track?.album?.title}</Link>
                                 </div>
                             </div>
                             <div className={styles.player}>
@@ -123,8 +162,18 @@ export default function TrackPanel() {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles.lyrics}>
-                            <span className={styles.noLyrics}>No lyrics to display.</span>
+                        <div className={styles.lyrics} ref={lyricsRef}>
+                            {!lyrics?.length ? <span className={styles.noLyrics}>No lyrics to display.</span> : (
+                                <div className={styles.lyricsInner}>
+                                    {lyrics.map((l, i) => (
+                                        <div key={i}
+                                             className={`${styles.lyric} ${currentTime * 1000 >= l.start && (lyrics[i + 1]?.start || currentTime * 1000 + 1) > currentTime * 1000 ? styles.active : ''}`}
+                                             onClick={() => handleSeek(l.start / 1000)} ref={currentTime * 1000 >= l.start && (lyrics[i + 1]?.start || currentTime * 1000 + 1) > currentTime * 1000 ? activeRef : null}>
+                                            {l.text}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

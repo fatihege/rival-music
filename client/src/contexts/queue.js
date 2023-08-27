@@ -20,6 +20,7 @@ const QueueProvider = ({children}) => {
         shuffle,
         handleShuffle,
         handleSeek,
+        currentTime,
     } = useContext(AudioContext) // Get required functions and states from AudioContext
     const [track, setTrack] = useState(null) // Create track state
     const [isLiked, setIsLiked] = useState(false) // Create isLiked state
@@ -70,6 +71,7 @@ const QueueProvider = ({children}) => {
             shuffle,
             handleShuffle,
             handleSeek,
+            currentTime,
             track,
             setTrack,
             isLiked,

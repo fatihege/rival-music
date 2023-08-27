@@ -124,7 +124,7 @@ export const getManifest = async (req, res) => {
 export const getTrackInfo = async (req, res) => {
     try {
         const {id} = req.params // Get track ID from request parameters
-        const {populate = null, user: userId = null} = req.query // Get populate from request query
+        const {lyrics = null, populate = null, user: userId = null} = req.query // Get populate from request query
 
         if (!id) return res.status(400).json({ // If there is no track ID, return 400 response
             status: 'ERROR',
@@ -132,7 +132,9 @@ export const getTrackInfo = async (req, res) => {
         })
 
         // Get track and populate its album field and populate artist field in album field
-        const track = await Track.findById(id).populate({
+        const track = await Track.findById(id)
+            .select(Number(lyrics) !== 1 ?'-lyrics' : '')
+            .populate({
             path: 'album',
             select: `title cover ${populate === 'all' ? '' : ''}`,
             populate: {
@@ -165,6 +167,29 @@ export const getTrackInfo = async (req, res) => {
                 ...track._doc,
                 liked,
             },
+        })
+    } catch (e) {
+        res.status(500).json({ // Send error response to the client
+            status: 'ERROR',
+            message: e.message,
+        })
+    }
+}
+
+export const getLyrics = async (req, res) => {
+    try {
+        const {id} = req.params // Get track ID from request parameters
+        const track = await Track.findById(id) // Find track by ID
+
+        if (!track) return res.status(404).json({ // If track is not exists, return 404 response
+            status: 'ERROR',
+            message: 'Track is not exists',
+        })
+
+        return res.status(200).json({ // Send OK response to the client
+            status: 'OK',
+            message: 'Track lyrics are successfully fetched',
+            lyrics: track.lyrics || null,
         })
     } catch (e) {
         res.status(500).json({ // Send error response to the client

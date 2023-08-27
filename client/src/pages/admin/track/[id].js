@@ -70,7 +70,7 @@ export default function EditTrackPage({id}) {
 
     const getTrackData = async () => {
         try {
-            const response = await axios.get(`${process.env.API_URL}/track/info/${id}?populate=all`) // Get track from API
+            const response = await axios.get(`${process.env.API_URL}/track/info/${id}?populate=all&lyrics=1`) // Get track from API
 
             if (response.data?.status === 'OK' && response.data?.track) { // If response is OK
                 const track = response.data.track
@@ -262,6 +262,27 @@ export default function EditTrackPage({id}) {
             text: '',
         })
     }
+
+    useEffect(() => {
+        setTrack({
+            ...track,
+            lyrics: track.lyrics.sort((a, b) => {
+                const aTime = a.start.split(':').map((t, i) => {
+                    if (i === 0) return Number(t) * 60 * 1000
+                    if (i === 1) return Number(t) * 1000
+                    return Number(t)
+                })
+                const bTime = b.start.split(':').map((t, i) => {
+                    if (i === 0) return Number(t) * 60 * 1000
+                    if (i === 1) return Number(t) * 1000
+                    return Number(t)
+                })
+                if (aTime[0] > bTime[0]) return 1
+                if (aTime[0] < bTime[0]) return -1
+                return 0
+            })
+        })
+    }, [track.lyrics])
 
     const handleDeleteTrack = () => {
         setDialogue({
