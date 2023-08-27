@@ -11,7 +11,7 @@ import {TooltipHandler} from '@/components/tooltip'
 import NotFoundPage from '@/pages/404'
 import getAlbumData from '@/utils/get-album-data'
 import formatTime from '@/utils/format-time'
-import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon} from '@/icons'
+import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon} from '@/icons'
 import styles from '@/styles/album.module.sass'
 import 'react-loading-skeleton/dist/skeleton.css'
 
@@ -29,18 +29,30 @@ export default function AlbumPage({id}) {
     const router = useRouter() // Router instance
     const [load, setLoad] = useState(false) // Is profile loaded
     const [user] = useContext(AuthContext) // Get user data from AuthContext
-    const {queue, setQueue, queueIndex, setQueueIndex, isPlaying, handlePlayPause, track: contextTrack, setTrack} = useContext(QueueContext) // Get queue data from QueueContext
+    const {
+        queue,
+        setQueue,
+        queueIndex,
+        setQueueIndex,
+        isPlaying,
+        handlePlayPause,
+        track: contextTrack,
+        setTrack,
+        isLiked,
+        setIsLiked,
+    } = useContext(QueueContext) // Get queue data from QueueContext
     const [album, setAlbum] = useState(null) // Album data
     const [selectedTrack, setSelectedTrack] = useState(null) // Selected track ID
 
     const getAlbumInfo = async () => {
         if (!id) return // If ID property is not defined, return
-        const albumData = await getAlbumData(id) // Get album data from API
+        const albumData = await getAlbumData(id, user?.id) // Get album data from API
         if (albumData?._id || albumData?.id) setAlbum(albumData)
         setLoad(true) // Set load state to true
     }
 
     useEffect(() => {
+        if (!user?.loaded) return // If user is not loaded, return
         if (!id) return // If query ID is not defined, return
         getAlbumInfo() // Otherwise, get album info from API
 
@@ -48,7 +60,7 @@ export default function AlbumPage({id}) {
             setAlbum(null) // Reset album data
             setLoad(false) // Reset load state
         }
-    }, [id])
+    }, [id, user])
 
 
     const handlePlay = (id = null) => {
@@ -61,19 +73,39 @@ export default function AlbumPage({id}) {
 
         const filteredTracks = album?.tracks?.filter(t => !!t.audio) // Filter tracks that have audio
         const index = id ? filteredTracks?.findIndex(t => t._id === id) : 0
-        const track = filteredTracks[index]
 
         setQueue(filteredTracks?.map(t => ({id: t._id, audio: t.audio})) || []) // Set queue to the album tracks
         setQueueIndex(index) // Set queue index to the track index
         handlePlayPause(true)
+    }
 
+    const toggleLike = async (trackId) => {
+        if (!trackId || !user?.id || !user?.token) return // If track ID, user ID or user token is not defined, return
 
-        if (track?._id) {
-            axios.get(`${process.env.API_URL}/track/info/${track._id}`).then(res => {
-                if (res.data?.track) setTrack(res.data.track) // Set track data to the queue
-            })
+        const liked = album?.likes?.includes(trackId) // Check if track is liked
+        const response = await axios.post(`${process.env.API_URL}/track/like/${trackId}`, { // Send POST request to the API
+            user: user.id,
+            like: liked ? -1 : 1,
+        })
+
+        if (response.data?.status === 'OK') { // If there is a response
+            const updatedAlbum = {...album} // Create updated album data
+            if (response.data?.liked && !updatedAlbum.likes.includes(trackId)) updatedAlbum.likes.push(trackId) // If track is liked, push track ID to the likes array
+            else updatedAlbum.likes = updatedAlbum.likes.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
+            setAlbum(updatedAlbum) // Set album data to the updated album data
+
+            if (contextTrack && contextTrack._id === trackId) setIsLiked(response.data?.liked) // If track is defined and track ID is equal to the liked track ID, set isLiked state to the response data
         }
     }
+
+    useEffect(() => {
+        if (!contextTrack) return
+
+        if (album?.tracks?.find(t => t._id === contextTrack?._id)) {
+            if (isLiked && !album?.likes?.includes(contextTrack?._id)) setAlbum({...album, likes: [...album.likes, contextTrack?._id]}) // If track is not liked, push track ID to the likes array
+            else if (!isLiked && album?.likes?.includes(contextTrack?._id)) setAlbum({...album, likes: album.likes.filter(t => t !== contextTrack?._id)}) // Otherwise, remove track ID from the likes array
+        }
+    }, [isLiked, contextTrack]);
 
     useEffect(() => {
         const hash = router?.asPath?.split('#')[1]
@@ -106,8 +138,9 @@ export default function AlbumPage({id}) {
                             <div className={styles.coverWrapper}>
                                 <div className={styles.cover}>
                                     {!load ? <SkeletonBase style={{top: '-3px'}} height={300}/> :
-                                        album?.cover ? <img src={`${process.env.IMAGE_CDN}/${album.cover}`} alt={`${album?.title} Cover`}/> :
-                                        <AlbumDefault/>}
+                                        album?.cover ? <img src={`${process.env.IMAGE_CDN}/${album.cover}`}
+                                                            alt={`${album?.title} Cover`}/> :
+                                            <AlbumDefault/>}
                                 </div>
                                 <div className={styles.albumInfo}>
                                     <div className={styles.info}>
@@ -143,7 +176,8 @@ export default function AlbumPage({id}) {
                                 {user?.id && user?.token && user?.admin ? (
                                     <div className={styles.adminControls}>
                                         <Link href={`/admin/track/create#${album?._id || album?.id}`}>Add Track</Link>
-                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit Album</Link>
+                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit
+                                            Album</Link>
                                     </div>
                                 ) : ''}
                             </div>
@@ -157,7 +191,8 @@ export default function AlbumPage({id}) {
                                         <SkeletonBase width={'100%'} height={52} borderRadius={8}/>
                                     </>
                                 ) : album && album?.tracks?.length ? album?.tracks?.map((track, index) => (
-                                    <div key={index} id={track?._id} onClick={() => setSelectedTrack(selectedTrack === track?._id ? null : track?._id)}
+                                    <div key={index} id={track?._id}
+                                         onClick={() => setSelectedTrack(selectedTrack === track?._id ? null : track?._id)}
                                          className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTrack === track?._id ? styles.highlight : ''}`}>
                                         <div className={styles.id}>
                                             {contextTrack?._id === track?._id && isPlaying ? (
@@ -166,8 +201,12 @@ export default function AlbumPage({id}) {
                                                         <span></span>
                                                         <span></span>
                                                     </span>
-                                                    <button onClick={() => handlePlayPause(false)}>
-                                                        <PauseIcon fill={process.env.ACCENT_COLOR}/>
+                                                    <button onClick={e => {
+                                                        e.preventDefault()
+                                                        e.stopPropagation()
+                                                        handlePlayPause(false)
+                                                    }}>
+                                                        <PauseIcon fill={selectedTrack === track?._id ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
                                                     </button>
                                                 </>
                                             ) : (
@@ -175,8 +214,14 @@ export default function AlbumPage({id}) {
                                                     <span>
                                                         {index + 1}
                                                     </span>
-                                                    <button onClick={() => handlePlay(track?._id)}>
-                                                        <PlayIcon fill={process.env.ACCENT_COLOR} rounded={true}/>
+                                                    <button onClick={e => {
+                                                        e.preventDefault()
+                                                        e.stopPropagation()
+                                                        handlePlay(track?._id)
+                                                    }}>
+                                                        <PlayIcon
+                                                            fill={selectedTrack === track?._id ? '#1c1c1c' : process.env.ACCENT_COLOR}
+                                                            rounded={true}/>
                                                     </button>
                                                 </>
                                             )}
@@ -186,16 +231,26 @@ export default function AlbumPage({id}) {
                                             {track?.explicit ? (
                                                 <TooltipHandler title={'Explicit content'}>
                                                     <span className={styles.explicit}>
-                                                        <ExplicitIcon/>
+                                                        <ExplicitIcon fill={selectedTrack === track?._id ? '#1c1c1c' : '#eee'}/>
                                                     </span>
                                                 </TooltipHandler>
                                             ) : ''}
                                         </div>
                                         <div className={styles.lastColumn}>
+                                            <button className={styles.like} onClick={e => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                toggleLike(track?._id)
+                                            }}>
+                                                <LikeIcon
+                                                    fill={album?.likes?.includes(track?._id) ? (selectedTrack === track?._id ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
+                                                    stroke={album?.likes?.includes(track?._id) ? (selectedTrack === track?._id ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTrack === track?._id ? '#1c1c1c' : '#eee'}/>
+                                            </button>
                                             <div
                                                 className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
                                             <button>
-                                                <OptionsIcon fill={track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
+                                                <OptionsIcon
+                                                    fill={selectedTrack === track?._id ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
                                             </button>
                                         </div>
                                     </div>

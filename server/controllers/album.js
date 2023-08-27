@@ -1,12 +1,13 @@
 import Album from '../models/album.js'
 import Artist from '../models/artist.js'
 import Track from '../models/track.js'
+import User from '../models/user.js'
 import escapeRegexp from '../utils/escape-regexp.js'
 
 export const getAlbum = async (req, res) => {
     try {
         const {id} = req.params // Get album ID from request params
-        const {tracks, populate} = req.query // Get populate from request query
+        const {tracks, likes, user: userId, populate} = req.query // Get populate from request query
 
         if (!id) return res.status(400).json({ // If there is no album ID, return 400 response
             status: 'ERROR',
@@ -23,14 +24,29 @@ export const getAlbum = async (req, res) => {
             message: 'Album not found.',
         })
 
+        let likedTracks = []
+
         if (tracks) {
             album.tracks = await Track.find({album: album._id}) // If tracks query is set, get tracks of the album
             if (album.tracks.length) album.tracks = album.tracks.sort((a, b) => a.order - b.order) // If there is tracks, sort them
+
+            if (likes && userId) { // If likes query is set and there is a user ID
+                const user = await User.findById(userId) // Find user from the user ID
+                if (user) {
+                    album.tracks.forEach(track => { // Map tracks
+                        if (user.likedTracks.find(t => t.toString() === track._id.toString()) && !likedTracks.includes(track._id.toString()))
+                            likedTracks.push(track._id.toString()) // If user liked the track, push track ID to likedTracks array
+                    })
+                }
+            }
         }
 
         res.status(200).json({ // If there is an album, return album info
             status: 'OK',
-            album,
+            album: {
+                ...album._doc,
+                likes: likedTracks,
+            },
         })
     } catch (e) { // If there is an error, return 500 response
         res.status(500).json({
@@ -48,9 +64,9 @@ export const getAlbums = async (req, res) => {
         const keywords = escapedQuery ? escapedQuery.split(' ') : [] // Create keywords from escaped query string
         const sort = sorting === 'last-created' || !sorting ? {createdAt: -1} : // If sorting is last-created, sort by createdAt descending
             sorting === 'first-created' ? {createdAt: 1} : // If sorting is first-created, sort by createdAt ascending
-            sorting === 'last-released' ? {releaseYear: -1} : // If sorting is last-released, sort by releaseYear descending
-            sorting === 'first-released' ? {releaseYear: 1} : // If sorting is first-released, sort by releaseYear ascending
-            sorting // Otherwise, default sorting
+                sorting === 'last-released' ? {releaseYear: -1} : // If sorting is last-released, sort by releaseYear descending
+                    sorting === 'first-released' ? {releaseYear: 1} : // If sorting is first-released, sort by releaseYear ascending
+                        sorting // Otherwise, default sorting
         const albums = escapedQuery ? await Album.aggregate([
             {
                 $match: escapedQuery ? { // If there is a query, find album with query
