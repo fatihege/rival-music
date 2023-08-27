@@ -290,7 +290,7 @@ export const deleteAlbum = async (req, res) => {
 export const postCreateTrack = async (req, res) => {
     try {
         const audio = req?.file?.filename || null // Get audio filename
-        const {title, explicit, album, artists, duration, order, genres: genresString, lyrics: lyricsString} = req.body // Get title, album, duration, order, genres and lyrics from request body
+        const {title, explicit, album, artists: artistsString, duration, order, genres: genresString, lyrics: lyricsString} = req.body // Get title, album, duration, order, genres and lyrics from request body
 
         if (!title?.trim()?.length) return res.status(400).json({ // If title is empty, return 400 response
             status: 'ERROR',
@@ -302,10 +302,12 @@ export const postCreateTrack = async (req, res) => {
             message: 'Track album ID is required.',
         })
 
-        if (artists?.split(',')?.length) {
-            const foundArtists = await Artist.find({_id: {$in: artists.split(',')}}) // Find artists by ID
+        const artists = artistsString?.split(',')?.filter(a => a?.trim()?.length)?.length ? artistsString.split(',').filter(a => a?.trim()?.length) : null
 
-            if (foundArtists.length !== artists.split(',').length) return res.status(404).json({ // If artists are not found, return 404 response
+        if (artists?.length) {
+            const foundArtists = await Artist.find({_id: {$in: artists}}) // Find artists by ID
+
+            if (foundArtists.length !== artists.length) return res.status(404).json({ // If artists are not found, return 404 response
                 status: 'ERROR',
                 message: 'Artist not found.',
             })
@@ -342,7 +344,7 @@ export const postCreateTrack = async (req, res) => {
             title: title.trim(),
             explicit: explicit === '1',
             album,
-            artists: artists?.split(',') || [],
+            artists: artists || null,
             duration: parseInt(duration),
             order: parseInt(order),
             genres,
@@ -408,7 +410,7 @@ export const postUpdateTrack = async (req, res) => {
         if (artists?.length) {
             const foundArtists = await Artist.find({_id: {$in: artists}}) // Find artists by ID
 
-            if (foundArtists.length !== artists.split(',').length) return res.status(404).json({ // If artists are not found, return 404 response
+            if (foundArtists.length !== artists.length) return res.status(404).json({ // If artists are not found, return 404 response
                 status: 'ERROR',
                 message: 'Artist not found.',
             })
@@ -431,7 +433,7 @@ export const postUpdateTrack = async (req, res) => {
         if (title?.trim()?.length) track.title = title.trim() // Update title
         if (explicit === '1' || explicit === '0') track.explicit = explicit === '1' // Update explicit
         if (album?.trim()?.length) track.album = foundAlbum._id // Update album
-        track.artists = artists?.split(',')?.length ? artists.split(',') : null // Update artists
+        track.artists = artists || null // Update artists
         if (duration?.trim()?.length && !isNaN(Number(duration))) track.duration = Number(duration) // Update duration
         if (order?.trim()?.length && !isNaN(Number(order))) track.order = Number(order) // Update order
         if (genresString?.trim()?.length) track.genres = genresString.split(',').filter(g => g?.trim() !== '').map(g => g?.toLowerCase()?.trim()) // Update genres

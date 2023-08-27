@@ -110,17 +110,17 @@ const AudioProvider = ({children}) => {
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     console.error(event, data)
                     if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                hls.startLoad()
-                                break
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError()
-                                break
-                            default:
-                                hls.destroy()
-                                break
-                        }
+                        // switch (data.type) {
+                        //     case Hls.ErrorTypes.NETWORK_ERROR:
+                        //         hls.startLoad()
+                        //         break
+                        //     case Hls.ErrorTypes.MEDIA_ERROR:
+                        //         hls.recoverMediaError()
+                        //         break
+                        //     default:
+                        //         hls.destroy()
+                        //         break
+                        // }
                     }
                 })
                 hlsRef.current = hls // Update HLS instance reference to the hls instance
