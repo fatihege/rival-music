@@ -344,9 +344,9 @@ export default function CreateTrackPage() {
                                             e.preventDefault()
                                             setTrack({
                                                 ...track,
-                                                artists: [...track.artists, artist?._id || artist?.id],
+                                                artists: [...(track.artists || []), artist?._id || artist?.id],
                                             })
-                                            setArtists([...artists, artist])
+                                            setArtists([...(artists || []), artist])
                                             setArtistQuery('')
                                         }}>
                                             <div className={styles.image}>

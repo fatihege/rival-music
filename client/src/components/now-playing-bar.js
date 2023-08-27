@@ -1,28 +1,36 @@
-import Link from '@/components/link'
+import axios from 'axios'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import {AuthContext} from '@/contexts/auth'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'
+import Link from '@/components/link'
+import Player from '@/components/player'
+import Volume from '@/components/volume'
+import {TooltipHandler} from '@/components/tooltip'
 import {
     AlbumDefault,
-    CloseIcon, DownArrowIcon,
+    CloseIcon,
+    DownArrowIcon,
+    ExplicitIcon,
     LeftArrowIcon,
     LikeIcon,
     MicrophoneIcon,
-    NextTrackIcon, PauseIcon,
+    NextTrackIcon,
+    PauseIcon,
     PlayIcon,
     PrevTrackIcon,
     QueueIcon,
-    RepeatIcon, RepeatOneIcon,
+    RepeatIcon,
+    RepeatOneIcon,
     RightArrowIcon,
-    ShuffleIcon, UpArrowIcon,
+    ShuffleIcon,
+    UpArrowIcon,
 } from '@/icons'
-import Player from '@/components/player'
 import styles from '@/styles/now-playing-bar.module.sass'
-import Volume from '@/components/volume'
-import {TooltipHandler} from '@/components/tooltip'
 
 export default function NowPlayingBar() {
     const BAR_BREAKPOINT = 850 // Replace some elements when width is less than this value
+    const [user] = useContext(AuthContext) // Get user from AuthContext
     const {
         queueIndex,
         setQueueIndex,
@@ -34,7 +42,9 @@ export default function NowPlayingBar() {
         shuffle,
         handleShuffle,
         handleSeek,
-        track
+        track,
+        isLiked,
+        setIsLiked
     } = useContext(QueueContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, _setIsResizing] = useState(false) // Is now playing bar resizing
@@ -164,6 +174,22 @@ export default function NowPlayingBar() {
         }
     }, [handleResize])
 
+    const handleLike = async () => {
+        if (!user || !user?.token || !user?.id) return // Return if user is not logged in
+
+        try {
+            const response = await axios.post(`${process.env.API_URL}/track/like/${track?._id}`, { // Request to like track
+                user: user.id,
+                like: isLiked ? -1 : 1,
+            })
+
+            if (response.data?.status === 'OK') // If status is OK
+                if (response.data?.liked) setIsLiked(true) // If track is liked, set isLiked to true
+                else setIsLiked(false) // Otherwise, set isLiked to false
+        } catch (e) {
+        }
+    }
+
     const handlePrev = () => {
         if (queueIndex === 0) handleSeek(0) // If queue index is 0, seek to 0
         else setQueueIndex(queueIndex - 1) // Otherwise, decrease queue index by 1
@@ -242,23 +268,36 @@ export default function NowPlayingBar() {
                         <div className={styles.trackInfo}>
                             <div className={styles.trackName}>
                                 <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track?._id}`}>
-                                    {track?.title || ''}
+                                    <TooltipHandler title={track?.title || ''}>
+                                        {track?.title || ''}
+                                    </TooltipHandler>
+                                    {track?.explicit ? (
+                                        <TooltipHandler title={'Explicit content'}>
+                                            <span className={styles.explicit}>
+                                                <ExplicitIcon/>
+                                            </span>
+                                        </TooltipHandler>
+                                    ) : ''}
                                 </Link>
-                                <TooltipHandler title={'Like'}>
-                                    <button className={styles.trackLike}>
-                                        <LikeIcon/>
+                                <TooltipHandler title={isLiked ? 'Unlike' : 'Like'}>
+                                    <button className={styles.trackLike} onClick={handleLike}>
+                                        <LikeIcon fill={isLiked ? process.env.ACCENT_COLOR : 'none'} stroke={isLiked ? process.env.ACCENT_COLOR : '#fff'}/>
                                     </button>
                                 </TooltipHandler>
                             </div>
                             <div className={styles.trackArtist}>
                                 <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}>
-                                    {track?.album?.artist?.name || ''}
+                                    <TooltipHandler title={track?.album?.artist?.name || ''}>
+                                        {track?.album?.artist?.name || ''}
+                                    </TooltipHandler>
                                 </Link>
                                 {track?.artists?.length ? track.artists.map((a) => (
                                     <>
-                                    ,&nbsp;<Link href={'/artist/[id]'} as={`/artist/${a?._id}`}>
-                                        {a?.name || ''}
-                                    </Link>
+                                    ,&nbsp;<TooltipHandler title={a?.name}>
+                                        <Link href={'/artist/[id]'} as={`/artist/${a?._id}`}>
+                                            {a?.name || ''}
+                                        </Link>
+                                    </TooltipHandler>
                                     </>
                                 )) : ''}
                             </div>

@@ -12,7 +12,7 @@ export default async (id, props) => {
 
         return response.data.user // Return user data
     } catch (e) {
-        console.log(e.message)
+        console.error(e.message)
         return null
     }
 }

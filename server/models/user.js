@@ -30,9 +30,9 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
     }],
-    playlists: [{
+    likedTracks: [{
         type: Schema.Types.ObjectId,
-        ref: 'Playlist',
+        ref: 'Track',
     }],
     accepted: {
         type: Boolean,

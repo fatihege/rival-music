@@ -3,6 +3,7 @@ import {createReadStream, existsSync, statSync} from 'fs'
 import Track from '../models/track.js'
 import Artist from '../models/artist.js'
 import Album from '../models/album.js'
+import User from '../models/user.js'
 import client from '../lib/redis.js'
 import createManifest from '../utils/create-manifest.js'
 import escapeRegexp from '../utils/escape-regexp.js'
@@ -123,9 +124,12 @@ export const getManifest = async (req, res) => {
 export const getTrackInfo = async (req, res) => {
     try {
         const {id} = req.params // Get track ID from request parameters
-        const {populate = null} = req.query // Get populate from request query
+        const {populate = null, user: userId = null} = req.query // Get populate from request query
 
-        if (!id) throw new Error('ID is not defined') // If ID is not defined, throw an error
+        if (!id) return res.status(400).json({ // If there is no track ID, return 400 response
+            status: 'ERROR',
+            message: 'Track ID is required',
+        })
 
         // Get track and populate its album field and populate artist field in album field
         const track = await Track.findById(id).populate({
@@ -148,10 +152,19 @@ export const getTrackInfo = async (req, res) => {
             })
         }
 
+        let liked = false
+        if (userId) {
+            const user = await User.findById(userId)
+            if (user && user.likedTracks?.find(t => t.toString() === id)) liked = true
+        }
+
         return res.status(200).json({ // Send OK response to the client
             status: 'OK',
             message: 'Track info is successfully fetched',
-            track,
+            track: {
+                ...track._doc,
+                liked,
+            },
         })
     } catch (e) {
         res.status(500).json({ // Send error response to the client
@@ -169,9 +182,9 @@ export const getTracks = async (req, res) => {
 
         const sort = sorting === 'first-created' ? {createdAt: 1} :
             sorting === 'last-created' ? {createdAt: -1} :
-            sorting === 'first-released' ? {releaseDate: 1} :
-            sorting === 'last-released' ? {releaseDate: -1} :
-            {createdAt: -1} // Get sorting from request query
+                sorting === 'first-released' ? {releaseDate: 1} :
+                    sorting === 'last-released' ? {releaseDate: -1} :
+                        {createdAt: -1} // Get sorting from request query
 
         const tracks = escapedQuery ? await Track.aggregate([ // Get tracks from database
             {
@@ -261,6 +274,46 @@ export const getTracks = async (req, res) => {
             status: 'OK',
             message: 'Tracks are successfully fetched',
             tracks,
+        })
+    } catch (e) {
+        return res.status(500).json({ // Send error response to the client
+            status: 'ERROR',
+            message: e.message,
+        })
+    }
+}
+
+export const postLike = async (req, res) => {
+    try {
+        const {id} = req.params // Get track ID from request parameters
+        const {user: userId, like} = req.body // Get user ID from request body
+        const track = await Track.findById(id) // Find track by ID
+
+        if (!track) return res.status(404).json({ // If track is not exists, return 404 response
+            status: 'ERROR',
+            message: 'Track is not exists',
+        })
+
+        const user = await User.findById(userId) // Find user by ID
+
+        if (!user) return res.status(404).json({ // If user is not exists, return 404 response
+            status: 'ERROR',
+            message: 'User is not exists',
+        })
+
+        if (!user?.likedTracks) user.likedTracks = [] // If user's liked tracks is not exists, create empty array
+        user.likedTracks = user.likedTracks.filter((t, i) => user.likedTracks.findIndex(t2 => t2.toString() === t.toString()) === i) // Remove duplicate tracks from user's liked tracks
+
+
+        if (Number(like) === 1 && !user.likedTracks?.find(t => t.toString() === id)) user.likedTracks.push(track._id) // If track is not liked by user, push track to user's liked tracks
+        else if (Number(like) === -1 && user.likedTracks?.find(t => t.toString() === id)) user.likedTracks = user.likedTracks.filter(t => t.toString() !== id) // If track is liked by user, remove track from user's liked tracks
+
+        await user.save() // Save user
+
+        return res.status(200).json({ // Send OK response to the client
+            status: 'OK',
+            message: 'Track is successfully liked',
+            liked: !!user.likedTracks?.find(t => t.toString() === id),
         })
     } catch (e) {
         return res.status(500).json({ // Send error response to the client
