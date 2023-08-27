@@ -6,7 +6,8 @@ $placeholderColor: rgba(13, 13, 13, .6)
   .form
     margin-top: 20px
 
-    .albumsResult
+    .albumsResult,
+    .artistsResult
       position: absolute
       z-index: 2
       padding: .5rem
@@ -18,7 +19,8 @@ $placeholderColor: rgba(13, 13, 13, .6)
       overflow-y: auto
       box-shadow: 0 0 10px rgba(12, 12, 12, .3)
 
-      .album
+      .album,
+      .artist
         cursor: pointer
 
         &:hover
@@ -27,7 +29,8 @@ $placeholderColor: rgba(13, 13, 13, .6)
         &:active
           background: #303030
 
-    .album
+    .album,
+    .artist
       max-width: 600px
       display: flex
       align-items: center
@@ -64,7 +67,7 @@ $placeholderColor: rgba(13, 13, 13, .6)
         justify-content: center
 
         .title,
-        .artist
+        .artistName
           max-width: 480px
           overflow: hidden
           text-overflow: ellipsis
@@ -75,7 +78,7 @@ $placeholderColor: rgba(13, 13, 13, .6)
           font-weight: 600
           color: #eee
 
-        .artist
+        .artistName
           font-size: .8rem
           font-weight: 500
           color: #aaa
@@ -92,11 +95,29 @@ $placeholderColor: rgba(13, 13, 13, .6)
           width: 100%
           height: auto
 
+    .artist
+      .image
+        border-radius: 50%
+
     .formField
       width: 600px
 
     .submitButton
       margin-top: 2.5rem
+
+    .removeAudio
+      background: none
+      border: none
+      cursor: pointer
+      margin-top: .5rem
+      font-size: .9rem
+      font-weight: 500
+      color: #eeeeee
+      opacity: .8
+
+      &:hover
+        opacity: 1
+        text-decoration: underline
 
     .formTitle
       font-size: 1rem

@@ -30,7 +30,7 @@ export default function HomePage() {
 
     const getLatestAlbums = async () => {
         try {
-            const response = await axios.get(`${process.env.API_URL}/album?limit=50&sorting=-releaseYear&populate=artist`) // Get albums from the API
+            const response = await axios.get(`${process.env.API_URL}/album?limit=50&sorting=-releaseYear`) // Get albums from the API
             if (response.data.status === 'OK' && response.data.albums?.length) // If the response is OK and there are albums
                 setLatestAlbums(response.data.albums.map(a => {
                     a.type = 'album'

@@ -1,10 +1,13 @@
 import {join} from 'path'
 import {createReadStream, existsSync, statSync} from 'fs'
 import Track from '../models/track.js'
+import Artist from '../models/artist.js'
+import Album from '../models/album.js'
 import client from '../lib/redis.js'
+import createManifest from '../utils/create-manifest.js'
+import escapeRegexp from '../utils/escape-regexp.js'
 import checkDir from '../utils/check-dir.js'
 import {__dirname} from '../utils/dirname.js'
-import createManifest from '../utils/create-manifest.js'
 
 export const getTrack = async (req, res) => {
     const {track} = req.params // Get track file name from request parameters
@@ -24,7 +27,10 @@ export const getTrack = async (req, res) => {
             'Content-Length': trackSize,
             'Content-Type': 'audio/mp4',
         })
-        const readStream = createReadStream(trackPath, (req.headers.range && !range.includes(NaN)) ? {start: range[0], end: range[1] + 1} : {}) // Create read stream to track file. If range is set, read the range. If it is not, read whole file
+        const readStream = createReadStream(trackPath, (req.headers.range && !range.includes(NaN)) ? {
+            start: range[0],
+            end: range[1] + 1
+        } : {}) // Create read stream to track file. If range is set, read the range. If it is not, read whole file
         readStream.pipe(res) // Pipe read stream to the response
     } catch (e) {
         res.status(500).json({ // Send error response to the client
@@ -117,18 +123,30 @@ export const getManifest = async (req, res) => {
 export const getTrackInfo = async (req, res) => {
     try {
         const {id} = req.params // Get track ID from request parameters
+        const {populate = null} = req.query // Get populate from request query
 
         if (!id) throw new Error('ID is not defined') // If ID is not defined, throw an error
 
         // Get track and populate its album field and populate artist field in album field
         const track = await Track.findById(id).populate({
             path: 'album',
-            select: 'title cover',
+            select: `title cover ${populate === 'all' ? '' : ''}`,
             populate: {
                 path: 'artist',
                 select: 'name',
             },
+        }).populate({
+            path: 'artists',
+            select: `name ${populate === 'all' ? 'image' : ''}`,
         })
+
+        if (track?.lyrics?.length) {
+            track.lyrics = track.lyrics.map(lyric => {
+                // Convert ms to mm:ss:ms format manually
+                lyric.start = `${Math.floor(lyric.start / 60000)}:${Math.floor((lyric.start % 60000) / 1000)}:${lyric.start % 1000}`
+                return lyric
+            })
+        }
 
         return res.status(200).json({ // Send OK response to the client
             status: 'OK',
@@ -137,6 +155,115 @@ export const getTrackInfo = async (req, res) => {
         })
     } catch (e) {
         res.status(500).json({ // Send error response to the client
+            status: 'ERROR',
+            message: e.message,
+        })
+    }
+}
+
+export const getTracks = async (req, res) => {
+    try {
+        const {cursor, limit, sorting, query} = req.query // Get cursor, limit and sorting from request query
+        const escapedQuery = query?.trim()?.length ? escapeRegexp(query?.trim()) : '' // Escape query string
+        const keywords = escapedQuery ? escapedQuery?.split(' ') : '' // Split query string by space
+
+        const sort = sorting === 'first-created' ? {createdAt: 1} :
+            sorting === 'last-created' ? {createdAt: -1} :
+            sorting === 'first-released' ? {releaseDate: 1} :
+            sorting === 'last-released' ? {releaseDate: -1} :
+            {createdAt: -1} // Get sorting from request query
+
+        const tracks = escapedQuery ? await Track.aggregate([ // Get tracks from database
+            {
+                $match: escapedQuery ? {
+                    $or: [
+                        {title: {$regex: keywords.join('|'), $options: 'i'}},
+                        {genres: {$in: keywords}},
+                        {
+                            album: {
+                                $in: (await Album.find({
+                                    title: {$regex: keywords.join('|'), $options: 'i'},
+                                }))?.map(a => a._id)
+                            }
+                        },
+                        {
+                            album: {
+                                $in: (await Album.find({
+                                    artist: {
+                                        $in: (await Artist.find({
+                                            name: {$regex: keywords.join('|'), $options: 'i'},
+                                        }))?.map(a => a._id)
+                                    }
+                                }))?.map(a => a._id)
+                            }
+                        },
+                    ],
+                } : {},
+            },
+            {
+                $lookup: {
+                    from: 'albums',
+                    localField: 'album',
+                    foreignField: '_id',
+                    as: 'album',
+                }
+            },
+            {
+                $unwind: '$album',
+            },
+            {
+                $lookup: {
+                    from: 'artists',
+                    localField: 'album.artist',
+                    foreignField: '_id',
+                    as: 'album.artist',
+                }
+            },
+            {
+                $unwind: '$album.artist',
+            },
+            {
+                $project: {
+                    title: 1,
+                    album: {
+                        _id: '$album._id',
+                        title: '$album.title',
+                        cover: '$album.cover',
+                        artist: {
+                            _id: '$album.artist._id',
+                            name: '$album.artist.name',
+                        },
+                    },
+                },
+            },
+            {
+                $sort: sort,
+            },
+            {
+                $skip: cursor && !isNaN(Number(cursor)) ? Number(cursor) : 0,
+            },
+            {
+                $limit: limit && !isNaN(Number(limit)) ? Number(limit) : 0,
+            },
+        ]).exec() : await Track.find().sort(sort)
+            .skip(!isNaN(Number(cursor)) ? cursor : 0)
+            .limit(!isNaN(Number(limit)) ? limit : 0) // Skip cursor and limit results
+            .populate({ // Populate album
+                path: 'album',
+                select: 'title cover',
+                populate: { // Populate artist
+                    path: 'artist',
+                    select: 'name',
+                },
+            })
+
+        return res.status(200).json({ // Send OK response to the client
+            status: 'OK',
+            message: 'Tracks are successfully fetched',
+            tracks,
+        })
+    } catch (e) {
+        return res.status(500).json({ // Send error response to the client
             status: 'ERROR',
             message: e.message,
         })

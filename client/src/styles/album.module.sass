@@ -3,14 +3,14 @@
 
 @keyframes playingFade
   0%
-    background-color: transparentize($accentColor, 1)
+    opacity: 0
     transform: scale(0)
 
   50%
-    background-color: $accentColor
+    opacity: 1
 
   100%
-    background-color: transparentize($accentColor, 1)
+    opacity: 0
     transform: scale(1.25)
 
 .container
@@ -216,6 +216,8 @@
             background: #252525
 
             .id
+              opacity: 1
+
               span
                 display: none
 
@@ -225,6 +227,23 @@
           &.disabled
             opacity: .5
             pointer-events: none
+
+          &.highlight
+            background-color: $accentColor
+            color: #1c1c1c
+
+            .id
+              opacity: 1
+
+              .playing span
+                background-color: #1c1c1c
+
+              button svg *
+                fill: #1c1c1c !important
+
+            .title .explicit svg *,
+            .lastColumn button svg *
+              fill: #1c1c1c !important
 
           .id
             width: 2rem
@@ -238,7 +257,7 @@
 
               &.playing
                 position: relative
-                left: -4px
+                left: -2px
                 width: 1rem
                 height: 1rem
 
@@ -250,6 +269,8 @@
                   width: 1rem
                   height: 1rem
                   border-radius: 50%
+                  opacity: 0
+                  background-color: $accentColor
                   animation: playingFade 1.5s linear infinite
                   z-index: 1
 
@@ -278,6 +299,18 @@
             white-space: nowrap
             overflow: hidden
             text-overflow: ellipsis
+            display: flex
+            align-items: center
+            line-height: 1
+
+            .explicit
+              display: inline-flex
+              align-items: center
+              margin-left: 8px
+
+              svg
+                width: 14px
+                height: 14px
 
           .lastColumn
             display: flex

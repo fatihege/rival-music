@@ -7,7 +7,9 @@ import {
     postCreateAlbum,
     postUpdateAlbum,
     deleteAlbum,
-    postCreateTrack
+    postCreateTrack,
+    postUpdateTrack,
+    deleteTrack,
 } from '../controllers/admin.js'
 import {upload, audio} from '../lib/multer.js'
 
@@ -27,5 +29,7 @@ router.post('/album/create', upload.single('cover'), postCreateAlbum)
 router.post('/album/update/:id', upload.single('cover'), postUpdateAlbum)
 router.delete('/album/:id', deleteAlbum)
 router.post('/track/create', audio.single('audio'), postCreateTrack)
+router.post('/track/update/:id', audio.single('audio'), postUpdateTrack)
+router.delete('/track/:id', deleteTrack)
 
 export default router

@@ -19,7 +19,7 @@ import {
 import styles from '@/styles/track-panel.module.sass'
 
 export default function TrackPanel() {
-    const {isPlaying, handlePlayPause, loop, handleLoop, shuffle, handleShuffle, track} = useContext(QueueContext) // Audio controls context
+    const {queueIndex, setQueueIndex, isPlaying, handlePlayPause, handleSeek, handleEnded, loop, handleLoop, shuffle, handleShuffle, track} = useContext(QueueContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [fade, setFade] = useState(false) // Can the panel fade in
 
@@ -28,6 +28,13 @@ export default function TrackPanel() {
     }, [])
 
     const close = () => setTrackPanel({...trackPanel, active: false}) // Close track panel
+
+    const handlePrev = () => {
+        if (queueIndex === 0) handleSeek(0) // If queue index is 0, seek to 0
+        else setQueueIndex(queueIndex - 1) // Otherwise, decrease queue index by 1
+    }
+
+    const handleNext = () => handleEnded(true) // Handle next track
 
     return (
         <>
@@ -88,7 +95,7 @@ export default function TrackPanel() {
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={'Previous'}>
-                                        <button className="no_focus">
+                                        <button className="no_focus" onClick={handlePrev}>
                                             <PanelPrevTrackIcon/>
                                         </button>
                                     </TooltipHandler>
@@ -99,7 +106,7 @@ export default function TrackPanel() {
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={'Next'}>
-                                        <button className="no_focus">
+                                        <button className="no_focus" onClick={handleNext}>
                                             <PanelNextTrackIcon/>
                                         </button>
                                     </TooltipHandler>

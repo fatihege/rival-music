@@ -8,6 +8,7 @@ import Playlist from '../models/playlist.js'
 import convertDuration from '../utils/convert-duration.js'
 import createManifest from '../utils/create-manifest.js'
 import {__dirname} from '../utils/dirname.js'
+import deleteAudio from '../utils/delete-audio.js'
 
 export const getStatistics = async (req, res) => {
     try {
@@ -289,7 +290,7 @@ export const deleteAlbum = async (req, res) => {
 export const postCreateTrack = async (req, res) => {
     try {
         const audio = req?.file?.filename || null // Get audio filename
-        const {title, album, duration, order, genres: genresString, lyrics: lyricsString} = req.body // Get title, album, duration, order, genres and lyrics from request body
+        const {title, explicit, album, artists, duration, order, genres: genresString, lyrics: lyricsString} = req.body // Get title, album, duration, order, genres and lyrics from request body
 
         if (!title?.trim()?.length) return res.status(400).json({ // If title is empty, return 400 response
             status: 'ERROR',
@@ -300,6 +301,15 @@ export const postCreateTrack = async (req, res) => {
             status: 'ERROR',
             message: 'Track album ID is required.',
         })
+
+        if (artists?.split(',')?.length) {
+            const foundArtists = await Artist.find({_id: {$in: artists.split(',')}}) // Find artists by ID
+
+            if (foundArtists.length !== artists.split(',').length) return res.status(404).json({ // If artists are not found, return 404 response
+                status: 'ERROR',
+                message: 'Artist not found.',
+            })
+        }
 
         const foundAlbum = await Album.findById(album) // Find album by ID
 
@@ -330,7 +340,9 @@ export const postCreateTrack = async (req, res) => {
         const track = new Track({ // Create new track
             audio,
             title: title.trim(),
+            explicit: explicit === '1',
             album,
+            artists: artists?.split(',') || [],
             duration: parseInt(duration),
             order: parseInt(order),
             genres,
@@ -355,6 +367,159 @@ export const postCreateTrack = async (req, res) => {
         return res.status(500).json({ // If there is an error, return 500 response
             status: 'ERROR',
             message: 'Error occurred while creating track.',
+            error: e.message,
+        })
+    }
+}
+
+export const postUpdateTrack = async (req, res) => {
+    try {
+        const {id} = req.params // Get track ID from request params
+        const audio = req?.file?.filename || null // Get audio filename
+        const {
+            title,
+            explicit,
+            album,
+            artists: artistsString,
+            duration,
+            order,
+            genres: genresString,
+            lyrics: lyricsString,
+            noAudio
+        } = req.body // Get title, album, duration, order, genres and lyrics from request body
+
+        if (!id?.trim()?.length) return res.status(400).json({ // If ID is empty, return 400 response
+            status: 'ERROR',
+            message: 'Track ID is required.',
+        })
+
+        if (isNaN(Number(duration))) return res.status(400).json({ // If duration is not a number, return 400 response
+            status: 'ERROR',
+            message: 'Track duration must be a number.',
+        })
+
+        if (isNaN(Number(order))) return res.status(400).json({ // If order is not a number, return 400 response
+            status: 'ERROR',
+            message: 'Track order must be a number.',
+        })
+
+        const artists = artistsString?.split(',')?.filter(a => a?.trim()?.length)?.length ? artistsString.split(',').filter(a => a?.trim()?.length) : null
+
+        if (artists?.length) {
+            const foundArtists = await Artist.find({_id: {$in: artists}}) // Find artists by ID
+
+            if (foundArtists.length !== artists.split(',').length) return res.status(404).json({ // If artists are not found, return 404 response
+                status: 'ERROR',
+                message: 'Artist not found.',
+            })
+        }
+
+        const foundAlbum = await Album.findById(album) // Find album by ID
+
+        if (!foundAlbum) return res.status(404).json({ // If album is not found, return 404 response
+            status: 'ERROR',
+            message: 'Album not found.',
+        })
+
+        const track = await Track.findById(id) // Find track by ID
+
+        if (!track) return res.status(404).json({ // If track is not found, return 404 response
+            status: 'ERROR',
+            message: 'Track not found.',
+        })
+
+        if (title?.trim()?.length) track.title = title.trim() // Update title
+        if (explicit === '1' || explicit === '0') track.explicit = explicit === '1' // Update explicit
+        if (album?.trim()?.length) track.album = foundAlbum._id // Update album
+        track.artists = artists?.split(',')?.length ? artists.split(',') : null // Update artists
+        if (duration?.trim()?.length && !isNaN(Number(duration))) track.duration = Number(duration) // Update duration
+        if (order?.trim()?.length && !isNaN(Number(order))) track.order = Number(order) // Update order
+        if (genresString?.trim()?.length) track.genres = genresString.split(',').filter(g => g?.trim() !== '').map(g => g?.toLowerCase()?.trim()) // Update genres
+
+        let lyrics = []
+
+        try {
+            lyrics = JSON.parse(lyricsString) // Parse lyrics string
+            if (!Array.isArray(lyrics)) throw new Error('Lyrics must be an array.') // If lyrics is not an array, throw error
+
+            lyrics = lyrics.map(l => ({ // Map lyrics
+                start: convertDuration(l.start),
+                text: l.text,
+            }))
+        } catch (e) {
+            return res.status(400).json({ // If there is an error, return 400 response
+                status: 'ERROR',
+                message: 'Lyrics must be an array.',
+                error: e.message,
+            })
+        }
+
+        track.lyrics = lyrics // Update lyrics
+
+        if (audio) {
+            if (track.audio)
+                try {
+                    await deleteAudio(track.audio)
+                } catch (e) {}
+
+            const audioPath = join(__dirname, '..', 'audio', audio)
+            const {err} = await createManifest(audioPath, join(__dirname, '..', 'audio', 'manifest', audio.slice(0, audio.lastIndexOf('.')))) // Create manifest file
+            if (!err) await unlink(audioPath, () => {}) // Delete audio file
+            track.audio = audio
+        } else if (noAudio) {
+            try {
+                await deleteAudio(track.audio)
+            } catch (e) {}
+            track.audio = null
+        }
+
+        await track.save() // Save track to database
+
+        return res.status(200).json({ // Return 200 response
+            status: 'OK',
+            message: 'Track updated.',
+            id: track._id,
+            album: track.album._id,
+        })
+    } catch (e) {
+        return res.status(500).json({ // If there is an error, return 500 response
+            status: 'ERROR',
+            message: 'Error occurred while updating track.',
+            error: e.message,
+        })
+    }
+}
+
+export const deleteTrack = async (req, res) => {
+    try {
+        const {id} = req.params // Get track ID from request params
+
+        if (!id?.trim()?.length) return res.status(400).json({ // If ID is empty, return 400 response
+            status: 'ERROR',
+            message: 'Track ID is required.',
+        })
+
+        const track = await Track.findById(id) // Find track by ID
+
+        if (!track) return res.status(404).json({ // If track is not found, return 404 response
+            status: 'ERROR',
+            message: 'Track not found.',
+        })
+
+        try {
+            if (track.audio) await deleteAudio(track.audio)
+        } catch (e) {}
+
+        await track.deleteOne() // Delete track from database
+
+        return res.status(200).json({ // Return 200 response
+            status: 'OK',
+            message: 'Track deleted.',
+        })
+    } catch (e) {
+        return res.status(500).json({ // If there is an error, return 500 response
+            status: 'ERROR',
+            message: 'Error occurred while deleting track.',
             error: e.message,
         })
     }

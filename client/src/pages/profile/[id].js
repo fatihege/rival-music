@@ -56,6 +56,11 @@ export default function UserProfilePage({id}) {
     useEffect(() => {
         if (!id) return // If query ID is not defined, return
         getUserInfo() // Otherwise, get user info from API
+
+        return () => { // When component is unmounted
+            setLoad(false) // Set load state to false
+            setActiveUser({}) // Reset active user
+        }
     }, [id])
 
     useEffect(() => {

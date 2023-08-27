@@ -5,6 +5,10 @@ const TrackSchema = new Schema({
         type: String,
         required: true,
     },
+    explicit: {
+        type: Boolean,
+        default: false,
+    },
     audio: String,
     duration: {
         type: Number,
@@ -14,6 +18,10 @@ const TrackSchema = new Schema({
         ref: 'Album',
         required: true,
     },
+    artists: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Artist',
+    }],
     order: {
         type: Number,
         default: 0,
@@ -22,10 +30,6 @@ const TrackSchema = new Schema({
         type: String,
         required: true,
     }],
-    explicit: {
-        type: Boolean,
-        default: false,
-    },
     lyrics: [Object],
 }, {
     timestamps: true,

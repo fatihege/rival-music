@@ -171,3 +171,47 @@
     height: auto
 
 .checkbox
+  position: relative
+
+  input
+    position: absolute
+    appearance: none
+    top: 0
+    left: 0
+    height: 18px
+    width: 18px
+
+    &:checked ~ label .checkmark
+      background-color: #eeeeee
+
+      &:after
+        display: block
+
+  label
+    cursor: pointer
+    padding-left: 24px
+    color: #eeeeee
+    font-size: .9rem
+    font-weight: 500
+
+    .checkmark
+      position: absolute
+      top: 0
+      left: 0
+      height: 18px
+      width: 18px
+      background-color: #1c1c1c
+      border: 1px solid #262626
+      border-radius: 4px
+
+      &:after
+        content: ""
+        position: absolute
+        display: none
+        left: 5px
+        top: 2px
+        width: 4px
+        height: 8px
+        border: solid #1c1c1c
+        border-width: 0 2px 2px 0
+        transform: rotate(45deg)

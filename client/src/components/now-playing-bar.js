@@ -165,7 +165,6 @@ export default function NowPlayingBar() {
     }, [handleResize])
 
     const handlePrev = () => {
-        console.log('QUEUE INDEX', queueIndex)
         if (queueIndex === 0) handleSeek(0) // If queue index is 0, seek to 0
         else setQueueIndex(queueIndex - 1) // Otherwise, decrease queue index by 1
     }
@@ -255,6 +254,13 @@ export default function NowPlayingBar() {
                                 <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}>
                                     {track?.album?.artist?.name || ''}
                                 </Link>
+                                {track?.artists?.length ? track.artists.map((a) => (
+                                    <>
+                                    ,&nbsp;<Link href={'/artist/[id]'} as={`/artist/${a?._id}`}>
+                                        {a?.name || ''}
+                                    </Link>
+                                    </>
+                                )) : ''}
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,140 @@
+@import "../variables"
+@import "admin.module"
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+.mainContainer
+  height: 100%
+  overflow-y: auto
+
+  .actions
+    margin-top: 1rem
+    display: flex
+    column-gap: .5rem
+    flex-wrap: wrap
+
+    a,
+    button
+      cursor: pointer
+      border: none
+      display: inline-block
+      padding: .5rem 1rem
+      border-radius: .5rem
+      background-color: #252525
+      color: #efefef
+      font-size: .9rem
+      font-weight: 500
+      transition: .15s ease-out
+      transition-property: background-color, color
+
+      &:hover,
+      &.active
+        background-color: #efefef
+        color: #252525
+
+    a
+      border: 1px solid #efefef
+      margin-right: .5rem
+
+  .searchContainer
+    margin-top: 1rem
+
+    .search
+      width: 100%
+
+  .tracksContainer
+    margin-top: 2rem
+    position: relative
+    min-height: 101%
+
+    .tracks
+      display: flex
+      flex-wrap: wrap
+      gap: .5rem
+
+      .track
+        width: calc(100% / 3 - 2rem)
+        min-width: 300px
+        display: flex
+        align-items: center
+        column-gap: .5rem
+        margin-bottom: 1rem
+        padding: .5rem
+        border-radius: .5rem
+
+        &:hover
+          background-color: rgba(59, 59, 59, .2)
+
+        .profile
+          width: 3rem
+          height: 3rem
+          border-radius: 6px
+          border: 1px solid #252525
+          display: flex
+          justify-content: center
+          align-items: center
+          font-size: 1.5rem
+          font-weight: 600
+          color: #efefef
+          overflow: hidden
+
+          img,
+          svg
+            display: block
+            width: 100%
+            height: 100%
+            object-fit: cover
+
+        .info
+          width: calc(100% - 100px)
+
+          .name
+            font-size: 1rem
+            font-weight: 500
+            color: #efefef
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+
+          .artist
+            font-size: .9rem
+            font-weight: 500
+            color: #bfbfbf
+
+        .operation
+          .deleteButton
+            width: 36px
+            height: 36px
+            border-radius: 8px
+            border: 2px solid $dangerColor
+            background-color: transparent
+            padding: 6px
+            cursor: pointer
+
+            &:hover
+              background: $dangerColor
+
+              svg *
+                stroke: #efefef !important
+
+            svg *
+              stroke: $dangerColor !important
+
+  .loadingContainer
+    width: 100%
+    padding: 2rem 0
+    display: flex
+    align-items: center
+    justify-content: center
+
+    .loading
+      width: 2rem
+      height: 2rem
+      border-radius: 50%
+      border: 2px solid #efefef
+      border-top-color: transparent
+      animation: spin .5s linear infinite

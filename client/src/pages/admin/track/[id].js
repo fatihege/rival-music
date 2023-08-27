@@ -4,19 +4,31 @@ import Link from '@/components/link'
 import {useContext, useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import {AuthContext} from '@/contexts/auth'
+import {QueueContext} from '@/contexts/queue'
 import {AlertContext} from '@/contexts/alert'
+import {DialogueContext} from '@/contexts/dialogue'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
+import Checkbox from '@/components/form/checkbox'
 import {AddIcon, AlbumDefault, CloseIcon, EditIcon, NextIcon} from '@/icons'
 import styles from '@/styles/admin/create-track.module.sass'
-import Checkbox from '@/components/form/checkbox'
-import getAlbumData from '@/utils/get-album-data'
 
-export default function CreateTrackPage() {
+export function getServerSideProps(context) {
+    return {
+        props: {
+            id: context.params.id,
+        },
+    }
+}
+
+export default function EditTrackPage({id}) {
     const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get the user state from the auth context
+    const {setQueue, setQueueIndex} = useContext(QueueContext) // Get the queue state from the queue context
     const [, setAlert] = useContext(AlertContext) // Get the alert state from the alert context
+    const [, setDialogue] = useContext(DialogueContext) // Get the dialogue state from the dialogue context
     const [track, setTrack] = useState({ // Track state
+        audio: null,
         title: '',
         explicit: false,
         album: null,
@@ -53,23 +65,35 @@ export default function CreateTrackPage() {
 
     useEffect(() => {
         if (user.loaded && !user?.admin) router.push('/404') // If the user is not an admin, redirect to 404 page
+        if (user.loaded && user?.admin) getTrackData()
     }, [user])
 
-    useEffect(() => {
-        if (router.asPath.includes('#')) { // If the URL contains a hash
-            const id = router.asPath.split('#')[1] // Get the track ID from the URL
-            getAlbumData(id).then(album => { // Get the album data from the track ID
-                if (album) { // If there is an album
-                    setAlbum(album) // Set the album state
-                    setTrack({
-                        ...track,
-                        album: album?._id || album?.id,
-                    })
+    const getTrackData = async () => {
+        try {
+            const response = await axios.get(`${process.env.API_URL}/track/info/${id}?populate=all`) // Get track from API
 
-                }
+            if (response.data?.status === 'OK' && response.data?.track) { // If response is OK
+                const track = response.data.track
+                setTrack({
+                    ...track,
+                    album: track?.album?._id,
+                    artists: track?.artists?.map(a => a?._id),
+                    genres: track?.genres,
+                })
+                setAlbum(track?.album)
+                setArtists(track?.artists)
+            }
+        } catch (e) { // If an error occurred
+            setAlert({ // Show alert
+                active: true,
+                title: 'Cannot get track',
+                message: 'An error occurred while retrieving track.',
+                button: 'OK',
+                type: '',
             })
+            console.error(e)
         }
-    }, [router]);
+    }
 
     const handleAudioFile = e => {
         if (!e.target?.files?.length) return // If there is no file, return
@@ -147,16 +171,17 @@ export default function CreateTrackPage() {
             const formData = new FormData() // Create a new form data instance
 
             if (audioFile) formData.append('audio', audioFile) // Append the audio file to the form data
+            else if (!track.audio && !audioFile) formData.append('noAudio', '1') // If there is no audio file, append noAudio to the form data
             formData.append('title', track.title?.trim()) // Append the track title to the form data
             formData.append('explicit', track.explicit ? '1' : '0') // Append the track title to the form data
             formData.append('album', track.album) // Append the album ID to the form data
-            formData.append('artists', track?.artists?.toString()) // Append the artists to the form data
+            formData.append('artists', track?.artists?.length ? track.artists.toString() : '') // Append the artists to the form data
             formData.append('duration', track.duration) // Append the duration to the form data
             formData.append('order', track.order) // Append the order to the form data
             formData.append('genres', track.genres.toString()) // Append the genres to the form data
             formData.append('lyrics', JSON.stringify(track.lyrics)) // Append the lyrics to the form data
 
-            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/track/create`, formData, { // Send a POST request to the API
+            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/track/update/${id}`, formData, { // Send a POST request to the API
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
                 }
@@ -238,6 +263,35 @@ export default function CreateTrackPage() {
         })
     }
 
+    const handleDeleteTrack = () => {
+        setDialogue({
+            active: true,
+            title: 'Delete Track',
+            description: 'Are you sure you want to delete this track?',
+            button: 'Delete Album',
+            type: 'danger',
+            callback: () => {
+                try {
+                    axios.delete(`${process.env.API_URL}/admin/${user.token}/track/${track?.id || track?._id}`, {
+                        headers: {
+                            Authorization: `Bearer ${user?.token}`,
+                        },
+                    })
+                    router.push(`/admin/album/[id]`, `/admin/album/${track?.album?._id || track?.album}`)
+                } catch (e) {
+                    console.error(e)
+                    setAlert({
+                        active: true,
+                        title: 'Error occurred while deleting track.',
+                        description: 'An error occurred while deleting track. Please try again later.',
+                        button: 'OK',
+                        type: '',
+                    })
+                }
+            }
+        })
+    }
+
     useEffect(() => {
         if (albumQuery.trim().length) getAlbums() // If the album query is not empty, get albums
         else setAlbumsResult([])
@@ -269,7 +323,7 @@ export default function CreateTrackPage() {
                 <div className={styles.form}>
                     <h3 className={styles.formTitle}>Title</h3>
                     <Input placeholder="Track title" onChange={title => setTrack({...track, title})}
-                           className={styles.formField}/>
+                           className={styles.formField} value={track?.title}/>
                     <Checkbox label="Explicit Content" name="explicit" checked={track?.explicit}
                               onChange={() => setTrack({...track, explicit: !track.explicit})}/>
                     <div>
@@ -389,7 +443,12 @@ export default function CreateTrackPage() {
                         )) : ''}
                     </div>
                     <h3 className={styles.formTitle}>Audio</h3>
-                    {audio ? (
+                    {track?.audio && !audio ? (
+                        <Button type="primary" value="Play current" className={styles.formField} onClick={() => {
+                            setQueue([track])
+                            setQueueIndex(0)
+                        }}/>
+                    ) : audio ? (
                         <div className={styles.audio}>
                             <audio src={audio} controls ref={audioElement} onLoadedMetadata={e => {
                                 setTrack({
@@ -401,10 +460,22 @@ export default function CreateTrackPage() {
                     ) : ''}
                     <Button value="Select audio" type="" className={styles.formField}
                             onClick={() => audioRef.current?.click()}/>
+                    {track?.audio || audio ? (
+                        <button className={styles.removeAudio} onClick={() => {
+                            setTrack({
+                                ...track,
+                                audio: null,
+                            })
+                            setAudio(null)
+                            setAudioFile(null)
+                        }}>
+                            Remove audio
+                        </button>
+                    ) : ''}
                     <h3 className={styles.formTitle}>Genres</h3>
                     {track.genres.map((genre, i) => {
                         return <Input key={i} placeholder={`Genre ${i + 1}`} className={styles.formField}
-                                      onChange={value => updateGenre(value, i)}/>
+                                      onChange={value => updateGenre(value, i)} value={genre}/>
                     })}
                     <Button value="Add genre" type="" className={styles.formField} icon={<AddIcon stroke={'#1c1c1c'}/>}
                             onClick={() => handleAddGenre()}/>
@@ -457,9 +528,10 @@ export default function CreateTrackPage() {
                             )
                         })}
                     </div>
-                    <Button value="Create track" className={`${styles.formField} ${styles.submitButton}`}
+                    <Button value="Update track" className={`${styles.formField} ${styles.submitButton}`}
                             icon={<NextIcon stroke={'#1c1c1c'}/>} disabled={disableSubmit}
                             onClick={() => handleSubmit()}/>
+                    <Button value="Delete track" type="danger" className={styles.formField} onClick={() => handleDeleteTrack()}/>
                     <input type="file" accept="audio/*" ref={audioRef} onChange={handleAudioFile} className="hide"/>
                 </div>
             </div>

@@ -156,3 +156,57 @@ $placeholderColor: rgba(13, 13, 13, .6)
       font-weight: 600
       color: #eaeaea
       margin: 2rem 0 1rem
+
+    .tracks
+      .addLink
+        display: inline-block
+        font-size: 1rem
+        font-weight: 500
+        padding: .5rem 1rem
+        border-radius: .5rem
+        background: #eeeeee
+        color: #1c1c1c
+        margin-bottom: 1rem
+
+      .noTracks
+        font-size: .9rem
+        font-weight: 500
+        color: #eeeeee
+        opacity: .8
+
+      .track
+        width: 600px
+        padding: .5rem
+        display: flex
+        align-items: center
+        font-size: .9rem
+        font-weight: 500
+        color: #eeeeee
+        background-color: #1c1c1c
+        border-radius: .5rem
+        margin-bottom: .25rem
+
+        &:hover
+          background-color: #262626
+
+        &:active
+          background-color: #303030
+
+        .trackInfo
+          display: flex
+          align-items: center
+
+          .trackNumber
+            display: inline-block
+            width: 32px
+            text-align: center
+
+          .trackTitle
+            margin-left: .5rem
+            max-width: 400px
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+
+        .trackDuration
+          margin-left: auto

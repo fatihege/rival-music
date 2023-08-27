@@ -8,6 +8,7 @@ import {AlertContext} from '@/contexts/alert'
 import {DialogueContext} from '@/contexts/dialogue'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
+import formatTime from '@/utils/format-time'
 import {AddIcon, CloseIcon, NextIcon} from '@/icons'
 import styles from '@/styles/admin/create-album.module.sass'
 
@@ -36,10 +37,12 @@ export default function EditAlbumPage({id}) {
     const [, setDialogue] = useContext(DialogueContext) // Get the dialogue state from the dialogue context
     const [album, setAlbum] = useState({ // Album state
         id: null,
+        cover: null,
         title: '',
         releaseYear: '',
         artist: null,
         genres: [''],
+        tracks: [],
     })
     const [artist, setArtist] = useState(null) // Artist state
     const [artistQuery, setArtistQuery] = useState('') // Artist query state
@@ -57,13 +60,13 @@ export default function EditAlbumPage({id}) {
     }, [album])
 
     useEffect(() => {
-        if (user.loaded && !user?.admin) router.push('/404') // If the user is not an admin, redirect to 404 page
+        if (user?.loaded && !user?.admin) router.push('/404') // If the user is not an admin, redirect to 404 page
         if (user?.loaded && user?.admin) getAlbumData() // If the user is an admin, get album data
     }, [user])
 
     const getAlbumData = async () => {
         try {
-            const response = await axios.get(`${process.env.API_URL}/album/${id}`) // Get album data from API
+            const response = await axios.get(`${process.env.API_URL}/album/${id}?tracks=1`) // Get album data from API
 
             if (response.data?.status === 'OK' && response.data?.album) { // If response is OK
                 const {_id, cover, title, releaseYear, artist, genres} = response.data.album // Get album data
@@ -74,6 +77,7 @@ export default function EditAlbumPage({id}) {
                     releaseYear: releaseYear.toString(),
                     artist: artist?._id || artist?.id,
                     genres,
+                    tracks: response.data.album?.tracks,
                 })
                 setArtist(artist) // Set artist state
             }
@@ -315,6 +319,21 @@ export default function EditAlbumPage({id}) {
                     <Button value="Delete album" type="danger" className={styles.formField} onClick={() => handleDeleteAlbum()}/>
                     <input type="file" ref={coverRef} className="hide" onChange={handleCoverSelect}
                            accept=".png,.jpg,.jpeg"/>
+                    <div className={styles.tracks}>
+                        <h3 className={styles.formTitle}>Tracks</h3>
+                        <Link href={`/admin/track/create#${album?.id || album?._id}`} className={styles.addLink}>
+                            Add Track
+                        </Link>
+                        {album?.tracks?.length ? album.tracks.map((t, i) => (
+                            <Link href={'/admin/track/[id]'} as={`/admin/track/${t._id}`} key={i} className={styles.track}>
+                                <div className={styles.trackInfo}>
+                                    <div className={styles.trackNumber}>{i + 1}</div>
+                                    <div className={styles.trackTitle}>{t?.title}</div>
+                                </div>
+                                <div className={styles.trackDuration}>{formatTime(t?.duration)}</div>
+                            </Link>
+                        )) : <div className={styles.noTracks}>No tracks found.</div>}
+                    </div>
                 </div>
             </div>
         </>

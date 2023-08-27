@@ -51,6 +51,12 @@ export default function ArtistProfilePage({id}) {
 
         getArtistInfo() // Get artist info from API
         getArtistAlbums() // Get artist albums from API
+
+        return () => { // When component is unmounted
+            setLoad(false) // Set load state to false
+            setArtist({}) // Reset artist data
+            setAlbums([]) // Reset albums data
+        }
     }, [id])
 
     return load && !artist?._id && !artist?.id ? <NotFoundPage/> : (

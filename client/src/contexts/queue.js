@@ -27,7 +27,7 @@ const QueueProvider = ({children}) => {
 
     useEffect(() => {
         if (queue[queueIndex]) {
-            axios.get(`${process.env.API_URL}/track/info/${queue[queueIndex].id}`).then(res => {
+            axios.get(`${process.env.API_URL}/track/info/${queue[queueIndex]?.id || queue[queueIndex]?._id}`).then(res => {
                 if (res.data?.track) setTrack(res.data.track) // Set track data to the queue
             })
         }

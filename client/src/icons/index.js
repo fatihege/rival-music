@@ -38,6 +38,7 @@ import UpArrowIcon from '@/icons/up-arrow'
 import DeleteIcon from '@/icons/delete'
 import AlbumDefault from '@/icons/album-default'
 import EditIcon from '@/icons/edit'
+import ExplicitIcon from '@/icons/explicit'
 
 export {
     Logo,
@@ -80,4 +81,5 @@ export {
     DeleteIcon,
     AlbumDefault,
     EditIcon,
+    ExplicitIcon,
 }
