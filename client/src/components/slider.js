@@ -182,9 +182,9 @@ export default function Slider({title, items = []}) {
 
     const handleItemMouseUp = (e, item) => {
         if (!isScrolling.current) { // If not scrolling, change route
-            if (item?.type === 'artist') router.push('/artist/[id]', `/artist/${item?._id || item?.id}`)
-            else if (item?.type === 'album') router.push('/album/[id]', `/album/${item?._id || item?.id}`)
-            else if (item?.type === 'track') router.push('/track/[id]', `/track/${item?._id || item?.id}`)
+            if (item?.type === 'artist') router.push('/artist/[id]', `/artist/${item?._id}`)
+            else if (item?.type === 'album') router.push('/album/[id]', `/album/${item?._id}`)
+            else if (item?.type === 'track') router.push('/album/[id]', `/album/${item?.album?._id}#${item?._id}`)
         }
         else isScrolling.current = false // Set is scrolling to false
     }
