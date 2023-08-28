@@ -196,8 +196,10 @@ export default function Slider({title, items = []}) {
                     {title}
                 </div>
                 <div className={styles.controls}>
-                    <span className={styles.control}
-                          onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
+                    {items?.length ? (
+                        <span className={styles.control}
+                              onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
+                    ) : ''}
                     <TooltipHandler title={'Previous items'}>
                         <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
                                 ref={prevButtonRef}>
@@ -215,7 +217,7 @@ export default function Slider({title, items = []}) {
             <div className={styles.fading} ref={fadingRef}>
                 <div className={styles.wrapper} ref={sliderRef}>
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
-                        {items.map((item, i) =>
+                        {items?.length ? items.map((item, i) =>
                             item?.type === 'album' ? (
                                 <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
@@ -286,13 +288,17 @@ export default function Slider({title, items = []}) {
                                     </div>
                                     <div className={styles.itemInfo}>
                                         <div className={styles.itemName}>
-                                            <Link href="/artist/[id]" as={`/artist/${item._id}`}>
+                                            <Link href={'/artist/[id]'} as={`/artist/${item._id}`}>
                                                 {item.name}
                                             </Link>
                                         </div>
                                     </div>
                                 </div>
                             ) : ''
+                        ) : (
+                            <div className={styles.noItems}>
+                                No tracks, albums or artists found
+                            </div>
                         )}
                     </div>
                 </div>

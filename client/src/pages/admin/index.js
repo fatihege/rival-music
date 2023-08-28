@@ -19,6 +19,7 @@ export default function AdminPage() {
         artists: 0,
         albums: 0,
         tracks: 0,
+        nonAudioTracks: 0,
         playlists: 0,
     })
     const [links, setLinks] = useState([ // Links state
@@ -125,6 +126,12 @@ export default function AdminPage() {
                         <span>Tracks</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
                             {statistics.loaded ? statistics.tracks : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                        </span>
+                    </div>
+                    <div className={styles.stat}>
+                        <span>Non-Audio Tracks</span>
+                        <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
+                            {statistics.loaded ? statistics.nonAudioTracks : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>

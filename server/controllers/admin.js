@@ -26,6 +26,7 @@ export const getStatistics = async (req, res) => {
                 artists,
                 albums,
                 tracks,
+                nonAudioTracks: tracks - (await Track.count({audio: {$ne: null}})), // Count all tracks without audio
                 playlists,
             },
         })
