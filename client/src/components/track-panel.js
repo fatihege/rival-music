@@ -155,18 +155,18 @@ export default function TrackPanel() {
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={'Previous'}>
-                                        <button className="no_focus" onClick={handlePrev}>
+                                        <button className={`no_focus ${styles.bigger}`} onClick={handlePrev}>
                                             <PanelPrevTrackIcon/>
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
-                                        <button className="no_focus" onKeyDown={e => e.preventDefault()}
+                                        <button className={`no_focus ${styles.bigger}`} onKeyDown={e => e.preventDefault()}
                                                 onClick={() => handlePlayPause()} ref={playButton}>
                                             {!isPlaying ? <PlayIcon/> : <PauseIcon/>}
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={'Next'}>
-                                        <button className="no_focus" onClick={handleNext}>
+                                        <button className={`no_focus ${styles.bigger}`} onClick={handleNext}>
                                             <PanelNextTrackIcon/>
                                         </button>
                                     </TooltipHandler>
