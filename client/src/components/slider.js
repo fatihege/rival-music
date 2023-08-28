@@ -1,5 +1,6 @@
 import {useRouter} from 'next/router'
-import {useEffect, useRef, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
+import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
 import {TooltipHandler} from '@/components/tooltip'
 import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
@@ -13,6 +14,7 @@ import styles from '@/styles/slider.module.sass'
  * @constructor
  */
 export default function Slider({title, items = []}) {
+    const {setQueue, setQueueIndex} = useContext(QueueContext) // Queue context
     const router = useRouter() // Router instance
     const isScrolling = useRef(false) // Is slider scrolling
     /**
@@ -164,9 +166,13 @@ export default function Slider({title, items = []}) {
         }
     }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef, items])
 
-    const handlePlay = e => {
+    const handlePlay = (e, type, index) => {
         e.stopPropagation() // Prevent click on parent element
-        // TODO: Play song
+        if (!type) return // If type is not defined, return
+        if (type === 'track') {
+            setQueue(items.filter(i => i?.type === 'track').map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with tracks
+            setQueueIndex(index || 0) // Set queue index to 0
+        }
     }
 
     const handleOptions = e => {
@@ -210,12 +216,12 @@ export default function Slider({title, items = []}) {
                 <div className={styles.wrapper} ref={sliderRef}>
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
                         {items.map((item, i) =>
-                            item?.type === 'album' || item?.type === 'track' ? (
+                            item?.type === 'album' ? (
                                 <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
                                         {item?.cover ? <img src={`${process.env.IMAGE_CDN}/${item.cover}`} alt={item?.title}/> : <AlbumDefault/>}
                                         <div className={styles.overlay}>
-                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={handlePlay}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album')}>
                                                 <PlayIcon/>
                                             </button>
                                             <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
@@ -238,6 +244,34 @@ export default function Slider({title, items = []}) {
                                         </div>
                                     </div>
                                 </div>
+                            ) : item?.type === 'track' ? (
+                                <div className={`${styles.item} ${styles.track}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
+                                        {item?.album?.cover ? <img src={`${process.env.IMAGE_CDN}/${item?.album?.cover}`} alt={item?.title}/> : <AlbumDefault/>}
+                                        <div className={styles.overlay}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'track', i)}>
+                                                <PlayIcon/>
+                                            </button>
+                                            <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
+                                                <OptionsIcon/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemName}>
+                                            <Link href={'/album/[id]'} as={`/album/${item?.album?._id}#${item?._id}`}>
+                                                <TooltipHandler title={item?.title}>
+                                                    {item?.title}
+                                                </TooltipHandler>
+                                            </Link>
+                                        </div>
+                                        <div className={styles.itemArtist}>
+                                            <Link href={'/artist/[id]'} as={`/artist/${item?.album?.artist?._id}`}>
+                                                {item?.album?.artist?.name}
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             ) : item.type === 'artist' ? (
                                 <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
@@ -245,7 +279,7 @@ export default function Slider({title, items = []}) {
                                             <img src={`${process.env.IMAGE_CDN}/${item.image}`} alt={item.name}/> :
                                             <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>}
                                         <div className={styles.overlay}>
-                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={handlePlay}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist')}>
                                                 <PlayIcon/>
                                             </button>
                                         </div>

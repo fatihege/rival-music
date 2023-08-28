@@ -26,29 +26,17 @@ export default function UserProfilePage({id}) {
     const [, setModal] = useContext(ModalContext) // Use modal context
     const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
-    const [topTracks, _setTopTracks] = useState([]) // Top tracks of the user
-    const topTracksRef = useRef(topTracks) // Reference for the top tracks
-
-    const setTopTracks = value => { // Update top tracks state
-        topTracksRef.current = value
-        _setTopTracks(value)
-    }
-
-    useEffect(() => { // Fill top tracks array
-        for (let i = 0; i < 2; i++)
-            for (let id = 1; id <= 6; id++)
-                setTopTracks([...topTracksRef.current, {
-                    id: id + i * 6,
-                    title: id === 6 ? 'Ride The Lightning' : id === 5 ? 'Fear of the Dark (2015 Remaster)' : id === 4 ? 'Hells Bells' : id === 3 ? 'The Devil in I' : id === 2 ? 'Heaven and Hell - 2009 Remaster' : 'Seek & Destroy - Remastered',
-                    artist: {name: id === 5 ? 'Iron Maiden' : id === 4 ? 'AC/DC' : id === 3 ? 'Slipknot' : id === 2 ? 'Black Sabbath' : 'Metallica'},
-                    cover: id === 6 ? 'album_cover_6.jpg' : id === 5 ? 'album_cover_5.jpg' : id === 4 ? 'album_cover_4.jpg' : id === 3 ? 'album_cover_3.jpg' : id === 2 ? 'album_cover_2.jpg' : 'album_cover_1.jpg',
-                    type: 'track',
-                }])
-    }, [])
 
     const getUserInfo = async () => {
         if (!id) return // If ID property is not defined, return
-        const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:favouriteArtists,count:followedUsers,count:followers') // Get user's profile properties from API
+        const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:favouriteArtists,count:followedUsers,count:followers,populate:likedTracks') // Get user's profile properties from API
+        if (userData?.likedTracks?.length) { // If user has liked tracks
+            userData.likedTracks = userData.likedTracks.map(t => {
+                t.type = 'track'
+                return t
+            }) // Add type property to each track
+        }
+
         if (userData?.id) setActiveUser(userData) // If user's id is defined, set active user
         setLoad(true) // Set load state to true
     }
@@ -117,7 +105,7 @@ export default function UserProfilePage({id}) {
                             </div>
                         </div>
                         <div className={styles.innerContent}>
-                            <Slider title="Top Tracks" items={topTracksRef.current}/>
+                            <Slider title="Liked tracks" items={activeUser?.likedTracks || []} />
                         </div>
                     </div>
                 </div>

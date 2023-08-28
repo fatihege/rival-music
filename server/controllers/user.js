@@ -49,7 +49,18 @@ export const getUser = async (req, res) => {
             userId = decodedToken.userId
         } else userId = id
 
-        const user = await User.findById(userId, {password: 0}).populate('followedUsers', 'name profileColor accentColor') // Find user from the user id of the decoded token
+        const user = await User.findById(userId, {password: 0}).populate('followedUsers') // Get user by ID and populate followed users
+            .populate(props && props?.includes('populate:likedTracks') ? {
+                path: 'likedTracks',
+                populate: {
+                    path: 'album',
+                    select: 'title cover',
+                    populate: {
+                        path: 'artist',
+                        select: 'name',
+                    },
+                },
+            } : null)
 
         if (!user || !user._id) return res.status(404).json({ // If there is no user, return 404 response
             status: 'ERROR',
@@ -60,10 +71,12 @@ export const getUser = async (req, res) => {
 
         if (props && props.split(',').length) { // If properties are not empty
             for (let prop of props.split(',')) { // Split and loop all properties
-                const propName = prop.trim().startsWith('count:') ? prop.trim().slice('count:'.length).trim() : prop.trim() // Get property name
-                if (propName === 'followers') { // If property name is 'followers'
+                const propName = prop.trim().startsWith('count:') ? prop.trim().slice('count:'.length).trim() : prop.trim().startsWith('populate:') ? prop.trim().slice('populate:'.length).trim() : prop.trim() // Get property name
+                if (propName === 'followers') // If property name is 'followers'
                     result[propName] = await getFollowers(user._id, prop.trim().startsWith('count:')) // Get followers
-                } else if (typeof user[propName] !== 'undefined' && !prop.includes('password')) // Else, if user has the property and the name of the property is not 'password'
+                else if (propName === 'likedTracks')
+                    result[propName] = prop.startsWith('populate:') ? (user?.likedTracks?.reverse() || []) : (user?.likedTracks?.reverse() || []) // Get liked tracks
+                else if (typeof user[propName] !== 'undefined' && !prop.includes('password')) // Else, if user has the property and the name of the property is not 'password'
                     result[propName] = prop.startsWith('count:') ? user[propName]?.length : user[propName] // Update result by property
             }
         } else result = {
