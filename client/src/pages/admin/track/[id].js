@@ -10,6 +10,7 @@ import {DialogueContext} from '@/contexts/dialogue'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
 import Checkbox from '@/components/form/checkbox'
+import convertDuration from '@/utils/convert-duration'
 import {AddIcon, AlbumDefault, CloseIcon, EditIcon, NextIcon} from '@/icons'
 import styles from '@/styles/admin/create-track.module.sass'
 
@@ -267,18 +268,8 @@ export default function EditTrackPage({id}) {
         setTrack({
             ...track,
             lyrics: track.lyrics.sort((a, b) => {
-                const aTime = a.start.split(':').map((t, i) => {
-                    if (i === 0) return Number(t) * 60 * 1000
-                    if (i === 1) return Number(t) * 1000
-                    return Number(t)
-                })
-                const bTime = b.start.split(':').map((t, i) => {
-                    if (i === 0) return Number(t) * 60 * 1000
-                    if (i === 1) return Number(t) * 1000
-                    return Number(t)
-                })
-                if (aTime[0] > bTime[0]) return 1
-                if (aTime[0] < bTime[0]) return -1
+                if (convertDuration(a.start) > convertDuration(b.start)) return 1
+                else if (convertDuration(a.start) < convertDuration(b.start)) return -1
                 return 0
             })
         })

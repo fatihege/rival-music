@@ -38,11 +38,15 @@ export default function TrackPanel() {
     const [fade, setFade] = useState(false) // Can the panel fade in
     const [lyrics, setLyrics] = useState(null) // Lyrics state
     const lyricsRef = useRef() // Lyrics ref
+    const lyricsInnerRef = useRef() // Lyrics inner ref
     const activeRef = useRef() // Lyrics ref
+    const playButton = useRef() // Play button ref
 
     const getLyrics = async () => {
         const response = await axios.get(`${process.env.API_URL}/track/lyrics/${track._id}`)
-        if (response.data?.status === 'OK') setLyrics(response.data?.lyrics || null)
+        if (response.data?.status === 'OK') {
+            setLyrics(response.data?.lyrics || [])
+        } else setLyrics([])
     }
 
     useEffect(() => {
@@ -54,15 +58,30 @@ export default function TrackPanel() {
     }, [track])
 
     useEffect(() => {
-        if (activeRef.current) lyricsRef.current.scrollTo({
-            top: activeRef.current.offsetTop - lyricsRef.current.offsetTop - 40,
-            behavior: 'smooth'
-        })
-        else lyricsRef.current.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        })
+        if (lyrics?.length) scrollToActiveLyric(false) // Scroll to active lyric when lyrics are loaded
+    }, [lyrics])
+
+    useEffect(() => {
+        scrollToActiveLyric() // Scroll to active lyric
     }, [activeRef.current])
+
+    useEffect(() => {
+        if (playButton.current && !playButton.current?.focused) {
+            playButton.current.focus() // Focus on play button when track panel is opened
+            playButton.current.focused = true // Set focused to true
+        }
+    }, [playButton.current])
+
+    const scrollToActiveLyric = (smooth = true) => {
+        if (activeRef.current) lyricsRef.current.scrollTo({ // If there is active lyric, scroll to it
+            top: activeRef.current.offsetTop - (lyricsRef.current.clientHeight / 2 - activeRef.current.clientHeight / 2), // Calculate scroll position to center active lyric
+            behavior: smooth ? 'smooth' : 'auto' // If smooth is true, scroll smoothly
+        })
+        else lyricsRef.current.scrollTo({ // Otherwise, Scroll to top
+            top: 0,
+            behavior: smooth ? 'smooth' : 'auto'
+        })
+    }
 
     const close = () => setTrackPanel({...trackPanel, active: false}) // Close track panel
 
@@ -72,6 +91,8 @@ export default function TrackPanel() {
     }
 
     const handleNext = () => handleEnded(true) // Handle next track
+
+    const isActive = (l, i) => currentTime * 1000 >= l.start && (lyrics[i + 1]?.start || currentTime * 1000 + 1) > currentTime * 1000
 
     return (
         <>
@@ -140,7 +161,7 @@ export default function TrackPanel() {
                                     </TooltipHandler>
                                     <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
                                         <button className="no_focus" onKeyDown={e => e.preventDefault()}
-                                                onClick={() => handlePlayPause()}>
+                                                onClick={() => handlePlayPause()} ref={playButton}>
                                             {!isPlaying ? <PlayIcon/> : <PauseIcon/>}
                                         </button>
                                     </TooltipHandler>
@@ -163,12 +184,12 @@ export default function TrackPanel() {
                             </div>
                         </div>
                         <div className={styles.lyrics} ref={lyricsRef}>
-                            {!lyrics?.length ? <span className={styles.noLyrics}>No lyrics to display.</span> : (
-                                <div className={styles.lyricsInner}>
+                            {!lyrics?.length ? <span className={styles.noLyrics}>{lyrics === null ? 'Loading lyrics...' : 'No lyrics to display.'}</span> : (
+                                <div className={styles.lyricsInner} ref={lyricsInnerRef}>
                                     {lyrics.map((l, i) => (
                                         <div key={i}
-                                             className={`${styles.lyric} ${currentTime * 1000 >= l.start && (lyrics[i + 1]?.start || currentTime * 1000 + 1) > currentTime * 1000 ? styles.active : ''}`}
-                                             onClick={() => handleSeek(l.start / 1000)} ref={currentTime * 1000 >= l.start && (lyrics[i + 1]?.start || currentTime * 1000 + 1) > currentTime * 1000 ? activeRef : null}>
+                                             className={`${styles.lyric} ${isActive(l, i) ? styles.active : ''}`}
+                                             onClick={() => handleSeek(l.start / 1000)} ref={isActive(l, i) ? activeRef : null}>
                                             {l.text}
                                         </div>
                                     ))}

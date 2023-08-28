@@ -38,8 +38,8 @@ export function TooltipHandler({title, children}) {
         setTooltip({ // Reset tooltip data
             title: '',
             show: false,
-            x: 0,
-            y: 0,
+            x: -100,
+            y: -100,
             transformOrigin: '',
         })
         clearTimeout(tooltipTimeout.current) // Clear the tooltip timeout

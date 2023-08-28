@@ -7,8 +7,8 @@ const TooltipProvider = ({children}) => {
     const [tooltip, setTooltip] = useState({ // Properties of tooltip
         title: '',
         show: false,
-        x: 0,
-        y: 0,
+        x: -100,
+        y: -100,
         transformOrigin: '',
     })
 

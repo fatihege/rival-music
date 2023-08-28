@@ -145,7 +145,9 @@ const AudioProvider = ({children}) => {
         const handlePause = () => handlePlayPause(false) // Pause the track
 
         const handleKeyDown = e => {
-            if (!EXCLUDED_ELEMENTS.includes(e.target.tagName) && e.code === 'Space' || e.code === 'MediaPlayPause' || e.key === 'MediaPlayPause') {
+            if (EXCLUDED_ELEMENTS.includes(e.target.tagName)) return // If target element is excluded, return
+
+            if (e.code === 'Space' || e.code === 'MediaPlayPause' || e.key === 'MediaPlayPause') {
                 e.preventDefault()
                 handlePlayPause(!isPlayingRef.current) // Toggle play/pause if space or media play/pause key pressed
             }
