@@ -49,6 +49,20 @@ export function TooltipHandler({title, children}) {
         if (mouseOver.current) setTooltip({...tooltip, title}) // If mouse is over this handler span, update title
     }, [title])
 
+    useEffect(() => {
+        return () => { // When component is unmounted
+            mouseOver.current = false // Set mouse over state to false
+            setTooltip({ // Reset tooltip data
+                title: '',
+                show: false,
+                x: -100,
+                y: -100,
+                transformOrigin: '',
+            })
+            clearTimeout(tooltipTimeout.current) // Clear the tooltip timeout
+        }
+    }, [])
+
     return (
         <span suppressHydrationWarning={true} ref={handlerRef}
               onMouseOver={() => handleMouseOver()} onMouseLeave={() => handleMouseLeave()}>

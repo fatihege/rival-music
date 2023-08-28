@@ -194,6 +194,21 @@
         -webkit-mask-image: linear-gradient(180deg, transparent, #000 80px, #000 50%, transparent)
         mask-image: linear-gradient(180deg, transparent, #000 80px, #000 50%, transparent)
 
+        &.notSynced
+          -webkit-mask-image: linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent)
+          mask-image: linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent)
+
+          .lyricsInner
+            padding: 40px 0
+
+            .lyric
+              opacity: 1
+              padding-bottom: 32px
+              pointer-events: none
+
+              &.active
+                text-shadow: none
+
         .noLyrics
           position: absolute
           left: 50%

@@ -37,6 +37,7 @@ export default function TrackPanel() {
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [fade, setFade] = useState(false) // Can the panel fade in
     const [lyrics, setLyrics] = useState(null) // Lyrics state
+    const [notSynced, setNotSynced] = useState(true) // Not synced state
     const lyricsRef = useRef() // Lyrics ref
     const lyricsInnerRef = useRef() // Lyrics inner ref
     const activeRef = useRef() // Lyrics ref
@@ -58,7 +59,11 @@ export default function TrackPanel() {
     }, [track])
 
     useEffect(() => {
-        if (lyrics?.length) scrollToActiveLyric(false) // Scroll to active lyric when lyrics are loaded
+        if (lyrics?.length) {
+            scrollToActiveLyric(false) // Scroll to active lyric when lyrics are loaded
+            if (lyrics.filter((l, i) => lyrics.findIndex(l2 => l2.start === l.start) !== i).length) setNotSynced(true)
+            else setNotSynced(false)
+        }
     }, [lyrics])
 
     useEffect(() => {
@@ -73,6 +78,8 @@ export default function TrackPanel() {
     }, [playButton.current])
 
     const scrollToActiveLyric = (smooth = true) => {
+        if (notSynced) return
+
         if (activeRef.current) lyricsRef.current.scrollTo({ // If there is active lyric, scroll to it
             top: activeRef.current.offsetTop - (lyricsRef.current.clientHeight / 2 - activeRef.current.clientHeight / 2), // Calculate scroll position to center active lyric
             behavior: smooth ? 'smooth' : 'auto' // If smooth is true, scroll smoothly
@@ -183,7 +190,7 @@ export default function TrackPanel() {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles.lyrics} ref={lyricsRef}>
+                        <div className={`${styles.lyrics} ${notSynced ? styles.notSynced : ''}`} ref={lyricsRef}>
                             {!lyrics?.length ? <span className={styles.noLyrics}>{lyrics === null ? 'Loading lyrics...' : 'No lyrics to display.'}</span> : (
                                 <div className={styles.lyricsInner} ref={lyricsInnerRef}>
                                     {lyrics.map((l, i) => (
