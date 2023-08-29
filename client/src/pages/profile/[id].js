@@ -24,7 +24,7 @@ export function getServerSideProps(context) {
 
 export default function UserProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user from auth context
-    const [library] = useContext(LibraryContext) // Get library from library context
+    const [library, , getUserLibrary] = useContext(LibraryContext) // Get library from library context
     const [, setModal] = useContext(ModalContext) // Use modal context
     const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
@@ -48,7 +48,10 @@ export default function UserProfilePage({id}) {
     }, [id])
 
     useEffect(() => {
-        if (user && user.id === id) setActiveUser({...activeUser, ...user}) // If the current user's id is equal to active user's id, merge them
+        if (user && user.id === id) {
+            getUserLibrary() // Get user library
+            setActiveUser({...activeUser, ...user}) // If the current user's id is equal to active user's id, merge them
+        }
     }, [user])
 
     return (
