@@ -34,6 +34,14 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Track',
     }],
+    likedAlbums: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Album',
+    }],
+    lastListenedTracks: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Track',
+    }],
     accepted: {
         type: Boolean,
         default: false,

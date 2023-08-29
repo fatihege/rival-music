@@ -1,8 +1,9 @@
-import axios from 'axios'
 import {useRouter} from 'next/router'
 import Link from '@/components/link'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import {AuthContext} from '@/contexts/auth'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
+import {LibraryContext} from '@/contexts/library'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
 import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
@@ -12,12 +13,12 @@ const MIN_WIDTH = 298, // Minimum width of the side panel
     DEFAULT_WIDTH = 320, // Default width of the side panel
     MAX_WIDTH = 598 // Maximum width of the side panel
 
-const ACCENT_COLOR = '#00ff78'
-
 export default function SidePanel() {
     const resizerRef = useRef() // Reference to the resizer element
     const router = useRouter() // Router instance
-    const [, setNavBarWidth] = useContext(NavigationBarContext)
+    const [user] = useContext(AuthContext) // Get user from AuthContext
+    const [, setNavBarWidth] = useContext(NavigationBarContext) // Navigation bar width
+    const [library, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [activeLink, setActiveLink] = useState(router.pathname || '/') // Active link
     const [isResizing, setIsResizing] = useState(false) // Is resizing active
     const [offset, setOffset] = useState(0) // Offset of mouse from layout resizer
@@ -28,17 +29,16 @@ export default function SidePanel() {
         {
             href: '/',
             icon: <HomeIcon/>,
-            activeIcon: <HomeIcon filled={true} fill={ACCENT_COLOR} stroke={ACCENT_COLOR}/>,
+            activeIcon: <HomeIcon filled={true} fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
             label: 'Home',
         },
         {
             href: '/explore',
             icon: <SearchIcon/>,
-            activeIcon: <SearchIcon filled={true} fill={ACCENT_COLOR} stroke={ACCENT_COLOR}/>,
+            activeIcon: <SearchIcon filled={true} fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
             label: 'Explore',
         },
     ]
-    const [libraryItems, setLibraryItems] = useState([]) // Library items
 
     const setWidth = value => { // Set width of the side panel
         widthRef.current = value
@@ -51,18 +51,7 @@ export default function SidePanel() {
         else setNavBarWidth(window.innerWidth - value - 12)
     }
 
-    const getAlbums = async () => {
-        try {
-            const response = await axios.get(`${process.env.API_URL}/album?limit=50&sorting=first-created`)
-            if (response.data?.albums) setLibraryItems(response.data?.albums)
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
     useEffect(() => {
-        getAlbums()
-
         const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
         if (width && !isNaN(parseInt(width))) // If width is valid
             if (parseInt(width) === -1) {
@@ -89,6 +78,11 @@ export default function SidePanel() {
     useEffect(() => {
         setActiveLink(router.pathname) // Update active link
     }, [router.pathname]) // On route change
+
+    useEffect(() => {
+        if (!user?.loaded || !user?.id || !user?.token) return // If user is not logged in, return
+        getUserLibrary()
+    }, [user])
 
     const handleResizeDown = useCallback(e => {
         setIsResizing(true) // Set resizing to true
@@ -153,7 +147,7 @@ export default function SidePanel() {
 
     return (
         <>
-            <div className={`${styles.sidePanel} ${isMinimized ? styles.minimized : ''}`}
+            <div className={`${styles.sidePanel} ${isMinimized ? styles.minimized : ''} ${!user?.loaded || !user?.id || !user?.token ? styles.notLoggedIn : ''}`}
                  style={!isMinimized ? {width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`} : {}}>
                 <div className={`${styles.section} ${styles.linksSection}`}>
                     <div className={styles.logo}>
@@ -176,61 +170,63 @@ export default function SidePanel() {
                         )
                     )}
                 </div>
-                <div className={`${styles.section} ${styles.librarySection}`}>
-                    <div className={styles.header}>
-                        <Link href="/library" className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`}>
-                            <div className={styles.icon}>
-                                {activeLink === '/library' ? (
-                                    <LibraryIcon filled={true} fill={ACCENT_COLOR} stroke={ACCENT_COLOR}/>
-                                ) : (
-                                    <LibraryIcon/>
+                {user?.loaded && user?.id && user?.token ? (
+                    <div className={`${styles.section} ${styles.librarySection}`}>
+                        <div className={styles.header}>
+                            <Link href={'/library'} className={`${styles.link} ${activeLink === '/library' ? styles.active : ''}`}>
+                                <div className={styles.icon}>
+                                    {activeLink === '/library' ? (
+                                        <LibraryIcon filled={true} fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>
+                                    ) : (
+                                        <LibraryIcon/>
+                                    )}
+                                </div>
+                                {!isMinimized && (
+                                    <div className={styles.label}>
+                                        Your Library
+                                    </div>
                                 )}
-                            </div>
+                            </Link>
                             {!isMinimized && (
-                                <div className={styles.label}>
-                                    Your Library
+                                <div className={styles.operations}>
+                                    <TooltipHandler title={'Create playlist'}>
+                                        <button>
+                                            <AddIcon strokeRate={1.2} stroke={'#aeaeae'}/>
+                                        </button>
+                                    </TooltipHandler>
+                                    <TooltipHandler title={!isMinimized ? 'Minimize side panel' : ''}>
+                                        <button onClick={() => handleMinimize()}>
+                                            <PrevIcon strokeRate={1.2} stroke={'#aeaeae'}/>
+                                        </button>
+                                    </TooltipHandler>
                                 </div>
                             )}
-                        </Link>
-                        {!isMinimized && (
-                            <div className={styles.operations}>
-                                <TooltipHandler title={'Create playlist'}>
-                                    <button>
-                                        <AddIcon strokeRate={1.2} stroke={'#aeaeae'}/>
-                                    </button>
-                                </TooltipHandler>
-                                <TooltipHandler title={!isMinimized ? 'Minimize side panel' : ''}>
-                                    <button onClick={() => handleMinimize()}>
-                                        <PrevIcon strokeRate={1.2} stroke={'#aeaeae'}/>
-                                    </button>
-                                </TooltipHandler>
-                            </div>
-                        )}
-                    </div>
-                    <CustomScrollbar>
-                        <div className={styles.libraryList}>
-                            {libraryItems.map((album) => (
-                                <Link href={'/album/[id]'} as={`/album/${album?.id || album?._id}`} key={album?.id || album?._id}>
-                                    <div className={styles.listItem}>
-                                        <div className={styles.image}>
-                                            {album?.cover ? <img src={`${process.env.IMAGE_CDN}/${album?.cover}`} alt={album?.title}/> : <AlbumDefault/>}
-                                        </div>
-                                        {!isMinimized && (
-                                            <div className={styles.info}>
-                                                <div className={styles.name}>
-                                                    {album?.title}
-                                                </div>
-                                                <div className={styles.creator}>
-                                                    {album?.artist?.name}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </Link>
-                            ))}
                         </div>
-                    </CustomScrollbar>
-                </div>
+                        <CustomScrollbar>
+                            <div className={styles.libraryList}>
+                                {library?.albums?.map(item => (
+                                    <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`} key={item?.id || item?._id}>
+                                        <div className={styles.listItem}>
+                                            <div className={styles.image}>
+                                                {item?.cover ? <img src={`${process.env.IMAGE_CDN}/${item?.cover}`} alt={item?.title}/> : <AlbumDefault/>}
+                                            </div>
+                                            {!isMinimized && (
+                                                <div className={styles.info}>
+                                                    <div className={styles.name}>
+                                                        {item?.title}
+                                                    </div>
+                                                    <div className={styles.creator}>
+                                                        {item?.artist?.name}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </CustomScrollbar>
+                    </div>
+                ) : ''}
                 <div className={styles.layoutResizer} ref={resizerRef} onMouseDown={handleResizeDown}></div>
             </div>
         </>

@@ -6,11 +6,12 @@ import axios from 'axios'
 import {AuthContext} from '@/contexts/auth'
 import {AlertContext} from '@/contexts/alert'
 import Input from '@/components/form/input'
+import Checkbox from '@/components/form/checkbox'
 import Button from '@/components/form/button'
+import getAlbumData from '@/utils/get-album-data'
+import convertDuration from '@/utils/convert-duration'
 import {AddIcon, AlbumDefault, CloseIcon, EditIcon, NextIcon} from '@/icons'
 import styles from '@/styles/admin/create-track.module.sass'
-import Checkbox from '@/components/form/checkbox'
-import getAlbumData from '@/utils/get-album-data'
 
 export default function CreateTrackPage() {
     const router = useRouter() // Router instance
@@ -69,7 +70,7 @@ export default function CreateTrackPage() {
                 }
             })
         }
-    }, [router]);
+    }, [router])
 
     const handleAudioFile = e => {
         if (!e.target?.files?.length) return // If there is no file, return
@@ -242,18 +243,8 @@ export default function CreateTrackPage() {
         setTrack({
             ...track,
             lyrics: track.lyrics.sort((a, b) => {
-                const aTime = a.start.split(':').map((t, i) => {
-                    if (i === 0) return Number(t) * 60 * 1000
-                    if (i === 1) return Number(t) * 1000
-                    return Number(t)
-                })
-                const bTime = b.start.split(':').map((t, i) => {
-                    if (i === 0) return Number(t) * 60 * 1000
-                    if (i === 1) return Number(t) * 1000
-                    return Number(t)
-                })
-                if (aTime[0] > bTime[0]) return 1
-                if (aTime[0] < bTime[0]) return -1
+                if (convertDuration(a.start) > convertDuration(b.start)) return 1
+                else if (convertDuration(a.start) < convertDuration(b.start)) return -1
                 return 0
             })
         })

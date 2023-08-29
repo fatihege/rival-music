@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Head from 'next/head'
 import {useContext, useEffect, useRef, useState} from 'react'
+import {AuthContext} from '@/contexts/auth'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
@@ -15,11 +16,12 @@ import {
     PanelPrevTrackIcon,
     PanelNextTrackIcon,
     PauseIcon,
-    RepeatOneIcon, AlbumDefault
+    RepeatOneIcon, AlbumDefault, ExplicitIcon
 } from '@/icons'
 import styles from '@/styles/track-panel.module.sass'
 
 export default function TrackPanel() {
+    const [user] = useContext(AuthContext) // Get user from auth context
     const {
         currentTime,
         queueIndex,
@@ -44,7 +46,13 @@ export default function TrackPanel() {
     const playButton = useRef() // Play button ref
 
     const getLyrics = async () => {
-        const response = await axios.get(`${process.env.API_URL}/track/lyrics/${track._id}`)
+        if (!user?.loaded || !user?.id || !user?.token) return // If user is not loaded, return
+
+        const response = await axios.get(`${process.env.API_URL}/track/lyrics/${track._id}`, {
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            }
+        })
         if (response.data?.status === 'OK') {
             setLyrics(response.data?.lyrics || [])
         } else setLyrics([])
@@ -77,16 +85,16 @@ export default function TrackPanel() {
         }
     }, [playButton.current])
 
-    const scrollToActiveLyric = (smooth = true) => {
+    const scrollToActiveLyric = () => {
         if (notSynced) return
 
         if (activeRef.current) lyricsRef.current.scrollTo({ // If there is active lyric, scroll to it
             top: activeRef.current.offsetTop - (lyricsRef.current.clientHeight / 2 - activeRef.current.clientHeight / 2), // Calculate scroll position to center active lyric
-            behavior: smooth ? 'smooth' : 'auto' // If smooth is true, scroll smoothly
+            behavior: 'smooth'
         })
         else lyricsRef.current.scrollTo({ // Otherwise, Scroll to top
             top: 0,
-            behavior: smooth ? 'smooth' : 'auto'
+            behavior: 'smooth'
         })
     }
 
@@ -142,7 +150,17 @@ export default function TrackPanel() {
                                     <AlbumDefault/>}
                             </div>
                             <div className={styles.trackInfo}>
-                                <div className={styles.trackTitle}>{track?.title}</div>
+                                <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track?._id}`} className={styles.trackTitle}
+                                    onClick={close}>
+                                    {track?.title}
+                                    {track?.explicit && (
+                                        <TooltipHandler title={'Explicit content'}>
+                                            <span className={styles.explicit}>
+                                                <ExplicitIcon/>
+                                            </span>
+                                        </TooltipHandler>
+                                    )}
+                                </Link>
                                 <div className={styles.trackArtistAndAlbum}>
                                     <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}
                                           onClick={close}>{track?.album?.artist?.name}</Link>

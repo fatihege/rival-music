@@ -13,6 +13,7 @@ import {TooltipProvider} from '@/contexts/tooltip'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
 import '@/styles/globals.sass'
+import {LibraryProvider} from '@/contexts/library'
 
 export const useHistory = () => { // History hook
     const router = useRouter() // Get router
@@ -61,19 +62,21 @@ export default function App({Component, pageProps}) {
                     <TooltipProvider>
                         <AlertProvider>
                             <DialogueProvider>
-                                <AudioProvider>
-                                    <QueueProvider>
-                                        <TrackPanelProvider>
-                                            <ModalProvider>
-                                                <NavigationBarProvider>
-                                                    <Main>
-                                                        <Component {...pageProps}/>
-                                                    </Main>
-                                                </NavigationBarProvider>
-                                            </ModalProvider>
-                                        </TrackPanelProvider>
-                                    </QueueProvider>
-                                </AudioProvider>
+                                <LibraryProvider>
+                                    <AudioProvider>
+                                        <ModalProvider>
+                                                <QueueProvider>
+                                                    <TrackPanelProvider>
+                                                        <NavigationBarProvider>
+                                                            <Main>
+                                                                <Component {...pageProps}/>
+                                                            </Main>
+                                                        </NavigationBarProvider>
+                                                    </TrackPanelProvider>
+                                                </QueueProvider>
+                                        </ModalProvider>
+                                    </AudioProvider>
+                                </LibraryProvider>
                             </DialogueProvider>
                         </AlertProvider>
                     </TooltipProvider>

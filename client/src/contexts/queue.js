@@ -2,6 +2,8 @@ import axios from 'axios'
 import {createContext, useContext, useEffect, useState} from 'react'
 import {AudioContext} from '@/contexts/audio'
 import {AuthContext} from '@/contexts/auth'
+import {ModalContext} from '@/contexts/modal'
+import AskLoginModal from '@/components/modals/ask-login'
 
 const QueueContext = createContext(null)
 
@@ -22,6 +24,7 @@ const QueueProvider = ({children}) => {
         handleSeek,
         currentTime,
     } = useContext(AudioContext) // Get required functions and states from AudioContext
+    const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
     const [track, setTrack] = useState(null) // Create track state
     const [isLiked, setIsLiked] = useState(false) // Create isLiked state
 
@@ -39,10 +42,18 @@ const QueueProvider = ({children}) => {
                 }
             })
         }
-    }, [queue, queueIndex]);
+    }, [queue, queueIndex])
 
     useEffect(() => {
-        if (!user) return
+        if (!user?.loaded) return
+        if (!user?.id || !user?.token) { // If user is not logged in
+            localStorage.removeItem('track') // Remove track ID from localStorage
+            setTrack(null) // Set track data to null
+            return setModal({ // Show ask login modal
+                active: <AskLoginModal/>,
+                canClose: true,
+            })
+        }
 
         if (localStorage.getItem('track')) { // If there is a track ID in localStorage
             axios.get(`${process.env.API_URL}/track/info/${localStorage.getItem('track')}${user?.id && user?.token ? `?user=${user?.id}` : ''}`).then(res => { // Get track info from localStorage and request to the server

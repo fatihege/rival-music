@@ -57,17 +57,19 @@ export default function Volume() {
             e.preventDefault()
             e.stopPropagation()
             if (levelRef.current < 100) { // If volume level is less than 100
-                setLevel(levelRef.current + 1) // Increase volume level by 1
-                handleVolumeUpdate(levelRef.current + 1) // Handle volume by 1
-                localStorage.setItem('volumeLevel', (levelRef.current + 1).toString()) // If volume level is not 0, save to the local storage
+                const newLevel = Math.min(100, levelRef.current + 1) // Increase volume level by 1 and set to 100 if it is more than 100
+                setLevel(newLevel) // Set volume level
+                handleVolumeUpdate(newLevel) // Handle volume level
+                localStorage.setItem('volumeLevel', newLevel.toString()) // Save to the local storage
             }
         } else if (e.code === 'ArrowDown' && e.ctrlKey) { // If arrow down or arrow left is pressed
             e.preventDefault()
             e.stopPropagation()
             if (levelRef.current > 0) { // If volume level is more than 0
-                setLevel(levelRef.current - 1) // Decrease volume level by 1
-                handleVolumeUpdate(levelRef.current - 1) // Handle volume by 1
-                localStorage.setItem('volumeLevel', (levelRef.current - 1).toString()) // If volume level is not 0, save to the local storage
+                const newLevel = Math.max(0, levelRef.current - 1) // Decrease volume level by 1 and set to 0 if it is less than 0
+                setLevel(newLevel) // Set volume level
+                handleVolumeUpdate(newLevel) // Handle volume level
+                localStorage.setItem('volumeLevel', newLevel.toString()) // Save to the local storage
             }
         }
     })

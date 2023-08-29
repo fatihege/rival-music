@@ -68,9 +68,13 @@ export default function AccountPage() {
         try {
             setDisableInformationSubmit(true) // Disable submit button
 
-            const response = await axios.post(`${process.env.API_URL}/user/update/${user.id}`, { // Send POST request
+            const response = await axios.post(`${process.env.API_URL}/user/update`, { // Send POST request
                 name: name.current?.trim(),
                 email: email.current?.trim(),
+            }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
             })
 
             if (response.data?.status === 'OK') { // If response status is OK
@@ -109,10 +113,14 @@ export default function AccountPage() {
         try {
             setDisablePasswordSubmit(true) // Disable submit button
 
-            const response = await axios.post(`${process.env.API_URL}/user/update/${user.id}`, { // Send POST request
+            const response = await axios.post(`${process.env.API_URL}/user/update`, { // Send POST request
                 currentPassword: currentPassword.current,
                 newPassword: newPassword.current,
                 passwordConfirm: passwordConfirm.current,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
             })
 
             if (response.data.status === 'OK') { // If response status is OK

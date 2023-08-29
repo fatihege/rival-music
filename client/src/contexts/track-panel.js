@@ -28,8 +28,8 @@ const TrackPanelProvider = ({children}) => {
 
     return (
         <TrackPanelContext.Provider value={[trackPanel, setTrackPanel]}>
-            {trackPanel.active ? <TrackPanel/> : ''}
             {children}
+            {trackPanel.active ? <TrackPanel/> : ''}
         </TrackPanelContext.Provider>
     )
 }

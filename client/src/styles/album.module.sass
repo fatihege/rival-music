@@ -140,31 +140,40 @@
                   transform: translateY(-50%)
                   z-index: 2
 
-          button.play
+          .buttons
             margin-top: 2rem
-            cursor: pointer
-            background-color: $accentColor
-            border: none
-            border-radius: 6px
-            font-size: .9rem
-            font-weight: 700
-            color: #1c1c1c
-            width: max-content
-            padding: .25rem 1rem
             display: flex
-            align-items: center
+            gap: .5rem
 
-            &:hover
-              box-shadow: 0 4px 12px 0 transparentize($accentColor, .6)
+            button.play,
+            button.like
+              cursor: pointer
+              background-color: $accentColor
+              border: none
+              border-radius: 6px
+              font-size: .9rem
+              font-weight: 700
+              color: #1c1c1c
+              width: max-content
+              padding: .25rem 1rem
+              display: flex
+              align-items: center
 
-            &.disabled
-              opacity: .6
-              pointer-events: none
+              &:hover
+                box-shadow: 0 4px 12px 0 transparentize($accentColor, .6)
 
-            svg
-              width: 1rem
-              height: 1rem
-              margin-right: .25rem
+              &:active
+                box-shadow: 0 2px 8px 0 transparentize($accentColor, .6)
+
+
+              &.disabled
+                opacity: .6
+                pointer-events: none
+
+              svg
+                width: 1rem
+                height: 1rem
+                margin-right: .25rem
 
         .adminControls
           position: absolute
@@ -237,13 +246,6 @@
 
               .playing span
                 background-color: #1c1c1c
-
-              button svg *
-                //fill: #1c1c1c !important
-
-            .title .explicit svg *,
-            .lastColumn button svg *
-              //fill: #1c1c1c !important
 
           .id
             width: 2rem

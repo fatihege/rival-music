@@ -179,8 +179,11 @@ export default function NowPlayingBar() {
 
         try {
             const response = await axios.post(`${process.env.API_URL}/track/like/${track?._id}`, { // Request to like track
-                user: user.id,
                 like: isLiked ? -1 : 1,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                }
             })
 
             if (response.data?.status === 'OK') // If status is OK
@@ -197,7 +200,7 @@ export default function NowPlayingBar() {
 
     const handleNext = () => handleEnded(true) // Handle next track
 
-    return track && (
+    return user?.loaded && user?.id && user?.token && track ? (
         <>
             <div
                 className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 516 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 516 || minimizeBar ? styles.lower : ''}`}>
@@ -318,7 +321,7 @@ export default function NowPlayingBar() {
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
-                                <button className={`no_focus ${styles.play}`} onKeyDown={e => e.preventDefault()}
+                                <button className={`no_focus ${styles.play}`}
                                         onClick={() => handlePlayPause()}>
                                     {isPlaying ? <PauseIcon fill={'#181818'}/> : <PlayIcon fill={'#181818'}/>}
                                 </button>
@@ -360,5 +363,5 @@ export default function NowPlayingBar() {
                 </div>
             </div>
         </>
-    )
+    ) : ''
 }

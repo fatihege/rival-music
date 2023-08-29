@@ -102,9 +102,10 @@ export default function ChangeProfileModal() {
             if (!user.accentColor || user.accentColor?.toString() !== accentColorRef.current?.toString()) // If the user is not has an accent color or the new accent color value is different from the user's accent color
                 formData.append('accentColor', accentColorRef.current.toString()) // Add an entry to the form data for accent color
 
-            const response = await axios.post(`${process.env.API_URL}/user/update-profile/${user.id}`, formData, { // Send POST request to the API and get response
+            const response = await axios.post(`${process.env.API_URL}/user/update-profile`, formData, { // Send POST request to the API and get response
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    Authorization: `Bearer ${user.token}`,
+                    'Content-Type': 'multipart/form-data',
                 }
             })
 

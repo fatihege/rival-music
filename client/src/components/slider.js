@@ -1,10 +1,14 @@
+import axios from 'axios'
 import {useRouter} from 'next/router'
 import {useContext, useEffect, useRef, useState} from 'react'
+import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
 import {TooltipHandler} from '@/components/tooltip'
 import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
+import {ModalContext} from '@/contexts/modal'
+import AskLoginModal from '@/components/modals/ask-login'
 
 /**
  * @param {'artists' | 'albums' | 'tracks'} type
@@ -14,7 +18,9 @@ import styles from '@/styles/slider.module.sass'
  * @constructor
  */
 export default function Slider({title, items = []}) {
-    const {setQueue, setQueueIndex} = useContext(QueueContext) // Queue context
+    const [user] = useContext(AuthContext) // Get user from auth context
+    const {setQueue, setQueueIndex, handlePlayPause} = useContext(QueueContext) // Queue context
+    const [, setModal] = useContext(ModalContext) // Modal context
     const router = useRouter() // Router instance
     const isScrolling = useRef(false) // Is slider scrolling
     /**
@@ -168,10 +174,29 @@ export default function Slider({title, items = []}) {
 
     const handlePlay = (e, type, index) => {
         e.stopPropagation() // Prevent click on parent element
+
+        if (!user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
+            active: <AskLoginModal/>,
+            canClose: true,
+        })
+
         if (!type) return // If type is not defined, return
         if (type === 'track') {
             setQueue(items.filter(i => i?.type === 'track').map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with tracks
             setQueueIndex(index || 0) // Set queue index to 0
+            handlePlayPause(true) // Play track
+        } else if (type === 'album') {
+            try {
+                axios.get(`${process.env.API_URL}/album/${items[index]?._id}?tracks=1`).then(response => {
+                    if (response.data.status === 'OK' && response.data?.album) {
+                        setQueue(response.data?.album?.tracks?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with album tracks
+                        setQueueIndex(0) // Set queue index to 0
+                        handlePlayPause(true) // Play tracks
+                    }
+                })
+            } catch (e) {
+                console.error(e)
+            }
         }
     }
 
@@ -223,7 +248,7 @@ export default function Slider({title, items = []}) {
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
                                         {item?.cover ? <img src={`${process.env.IMAGE_CDN}/${item.cover}`} alt={item?.title}/> : <AlbumDefault/>}
                                         <div className={styles.overlay}>
-                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album')}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album', i)}>
                                                 <PlayIcon/>
                                             </button>
                                             <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
@@ -281,7 +306,7 @@ export default function Slider({title, items = []}) {
                                             <img src={`${process.env.IMAGE_CDN}/${item.image}`} alt={item.name}/> :
                                             <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>}
                                         <div className={styles.overlay}>
-                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist')}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist', i)}>
                                                 <PlayIcon/>
                                             </button>
                                         </div>

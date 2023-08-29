@@ -3,7 +3,8 @@ import User from '../models/user.js'
 
 export default async (req, res, next) => {
     try {
-        const {token} = req.params // Get token from request params
+        const token = req.headers.authorization?.split(' ')[1] // Get token from request headers
+
         if (!token?.length) return res.status(404).send() // If token is not exist, return 404 response
 
         const decodedToken = jwt.verify(token, process.env.JWT_KEY) // Decode JWT token
@@ -20,13 +21,7 @@ export default async (req, res, next) => {
             message: 'User not found.',
         })
 
-        if (!user?.admin) return res.status(403).json({ // If user is not an admin, return 403 response
-            status: 'FORBIDDEN',
-            message: 'This user is not an admin.'
-        })
-
-        // If user is an admin, add user to request object and continue
-        req.user = user
+        req.user = user // Add user to request object and continue
         next()
     } catch (e) {
         return res.status(500).json({

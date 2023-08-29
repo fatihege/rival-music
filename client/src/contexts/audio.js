@@ -1,5 +1,8 @@
-import {createContext, useEffect, useRef, useState} from 'react'
+import axios from 'axios'
+import {createContext, useContext, useEffect, useRef, useState} from 'react'
 import Hls from 'hls.js'
+import {AuthContext} from '@/contexts/auth'
+import {LibraryContext} from '@/contexts/library'
 
 const REPEAT = { // Repeat value constants
     NO: 0,
@@ -16,6 +19,8 @@ const EXCLUDED_ELEMENTS = [
 const AudioContext = createContext(null) // Create audio context
 
 const AudioProvider = ({children}) => {
+    const [user] = useContext(AuthContext) // Get user from AuthContext
+    const [, , getLibrary] = useContext(LibraryContext) // Get library from LibraryContext
     const audioRef = useRef(null) // Audio element
     const [queue, setQueue] = useState([]) // Queue state
     const [queueIndex, setQueueIndex] = useState(0) // Queue index of active track
@@ -28,6 +33,8 @@ const AudioProvider = ({children}) => {
     const hlsRef = useRef(null) // HLS instance reference
     const isPlayingRef = useRef(isPlaying) // Is playing state reference
     const durationRef = useRef(duration) // Duration state reference
+    const playTimeRef = useRef(0) // Play time reference
+    const playTimeInterval = useRef(null) // Play time interval reference
 
     const setIsPlaying = value => { // Set is playing state
         isPlayingRef.current = value
@@ -47,6 +54,28 @@ const AudioProvider = ({children}) => {
 
         if (!audio || !track) return // If audio or track is not set, return
         const url = `${process.env.API_URL}/track/manifest/${track?.audio}` // Create track URL
+
+        if (user?.loaded && user?.id && user?.token) {
+            clearInterval(playTimeInterval.current)
+            playTimeInterval.current = null
+
+            playTimeInterval.current = setInterval(() => {
+                if (isPlayingRef.current) playTimeRef.current++
+
+                if (playTimeRef.current > 20) {
+                    clearInterval(playTimeInterval.current)
+                    playTimeInterval.current = null
+
+                    if (user?.loaded && user?.id && user?.token) {
+                        axios.post(`${process.env.API_URL}/user/listened/${track?.id || track?._id}`, {}, {headers: {Authorization: `Bearer ${user?.token}`}})
+                            .then(() => {
+                                getLibrary()
+                            })
+                            .catch(e => console.error(e))
+                    }
+                }
+            }, 1000)
+        }
 
         if (Hls.isSupported()) { // If HLS is supported by browser
             if (!hlsRef.current) { // If HLS reference is not set
@@ -102,26 +131,11 @@ const AudioProvider = ({children}) => {
                 hls.attachMedia(audio) // Attach media to the audio
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     audio.currentTime = 0 // Start audio from 0
+                    playTimeRef.current = 0
                 })
                 hls.on(Hls.Events.MEDIA_ATTACHED, () => {
                     setDuration(audio.duration) // Update track duration state when media is attached
                     if (isPlayingRef.current) audio.play() // Play the track if it is playing
-                })
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    console.error(event, data)
-                    if (data.fatal) {
-                        // switch (data.type) {
-                        //     case Hls.ErrorTypes.NETWORK_ERROR:
-                        //         hls.startLoad()
-                        //         break
-                        //     case Hls.ErrorTypes.MEDIA_ERROR:
-                        //         hls.recoverMediaError()
-                        //         break
-                        //     default:
-                        //         hls.destroy()
-                        //         break
-                        // }
-                    }
                 })
                 hlsRef.current = hls // Update HLS instance reference to the hls instance
             } else {
@@ -133,7 +147,18 @@ const AudioProvider = ({children}) => {
             setDuration(audio.duration) // Update track duration state
             handlePlayPause(true) // Play the track
         }
-    }, [queue, queueIndex]);
+    }, [queue, queueIndex])
+
+    useEffect(() => {
+        if (!user?.loaded) return // If user is not loaded, return
+
+        if (!user?.id || !user?.token) { // If user id or token is not set
+            audioRef.current?.pause() // Pause the track
+            clearInterval(playTimeInterval.current)
+            playTimeInterval.current = null
+            localStorage.removeItem('track')
+        }
+    }, [user])
 
     useEffect(() => {
         const audio = audioRef.current // Get audio reference

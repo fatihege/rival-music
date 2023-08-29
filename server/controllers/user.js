@@ -4,6 +4,8 @@ import {join} from 'path'
 import checkEmail from '../utils/check-email.js'
 import {encrypt} from '../utils/encryption.js'
 import User from '../models/user.js'
+import Track from '../models/track.js'
+import Playlist from '../models/playlist.js'
 import authenticate from '../utils/authenticate.js'
 import {__dirname} from '../utils/dirname.js'
 import {checkPassword, checkUserName} from '../utils/checkers.js'
@@ -228,16 +230,15 @@ export const postLoginUser = async (req, res) => {
 
 export const postUpdateProfile = async (req, res) => {
     try {
-        const {id} = req.params // Get user ID from the request parameters
+        if (!req.user) return res.status(401).json({ // If there is no user, return an error
+            status: 'ERROR',
+            message: 'Unauthorized.',
+        })
+
         const image = req.file // Get image from the request files
         const {name, noImage, profileColor, accentColor} = req.body // Get data from the request body
 
-        if (!id) return res.status(400).json({ // If there is no ID, return an error
-            status: 'ERROR',
-            message: 'Bad request.',
-        })
-
-        const user = await User.findById(id) // Get user by ID
+        const {user} = req // Get user from the request user
 
         if (!user) return res.status(404).json({ // If there is no user, return an error
             status: 'ERROR',
@@ -304,15 +305,13 @@ export const postUpdateProfile = async (req, res) => {
 
 export const postUpdateUser = async (req, res) => {
     try {
-        const {id} = req.params // Get user ID from the request parameters
-        const {name, email, currentPassword, newPassword, passwordConfirm} = req.body // Get data from the request body
-
-        if (!id) return res.status(400).json({ // If there is no ID, return an error
+        if (!req.user) return res.status(401).json({ // If there is no user, return an error
             status: 'ERROR',
-            message: 'Bad request.',
+            message: 'Unauthorized.',
         })
 
-        const user = await User.findById(id) // Get user by ID
+        const {name, email, currentPassword, newPassword, passwordConfirm} = req.body // Get data from the request body
+        const {user} = req // Get user from the request
 
         if (!user) return res.status(404).json({ // If there is no user, return an error
             status: 'ERROR',
@@ -420,6 +419,125 @@ export const postUpdateUser = async (req, res) => {
         res.status(500).json({ // Return 500 response when an error occurs
             status: 'ERROR',
             message: 'An error occurred while updating user.',
+            error: e.message,
+        })
+    }
+}
+
+export const getUserLibrary = async (req, res) => {
+    try {
+        if (!req.user) return res.status(401).json({ // If there is no user, return an error
+            status: 'ERROR',
+            message: 'Unauthorized.',
+        })
+
+        const user = await User.findById(req.user.id).populate({ // Get user by ID and populate liked tracks and albums
+            path: 'likedTracks',
+            populate: {
+                path: 'album',
+                select: 'title cover',
+                populate: {
+                    path: 'artist',
+                    select: 'name',
+                },
+            },
+            perDocumentLimit: 50,
+        }).populate({
+            path: 'likedAlbums',
+            populate: {
+                path: 'artist',
+                select: 'name',
+            },
+            perDocumentLimit: 50,
+        }).populate({
+            path: 'lastListenedTracks',
+            populate: {
+                path: 'album',
+                select: 'title cover',
+                populate: {
+                    path: 'artist',
+                    select: 'name',
+                },
+            },
+            perDocumentLimit: 50,
+        })
+
+        if (!user) return res.status(404).json({ // If there is no user, return an error
+            status: 'ERROR',
+            message: 'User not found.',
+        })
+
+        const playlists = await Playlist.find({owner: user._id}).populate({ // Get playlists of the user and populate tracks
+            path: 'tracks',
+            populate: {
+                path: 'album',
+                select: 'title cover',
+                populate: {
+                    path: 'artist',
+                    select: 'name',
+                },
+            },
+        }).limit(50)
+
+        res.status(200).json({ // Return user library
+            status: 'OK',
+            library: {
+                tracks: user?.likedTracks,
+                albums: user?.likedAlbums,
+                lastListenedTracks: user?.lastListenedTracks,
+                playlists,
+            },
+        })
+    } catch (e) {
+        res.status(500).json({ // Return 500 response when an error occurs
+            status: 'ERROR',
+            message: 'An error occurred while retrieving user library.',
+            error: e.message,
+        })
+    }
+}
+
+export const postListenedTrack = async (req, res) => {
+    try {
+        if (!req.user) return res.status(401).json({ // If there is no user, return an error
+            status: 'ERROR',
+            message: 'Unauthorized.',
+        })
+
+        const {id} = req.params // Get track ID from the request parameters
+
+        if (!id) return res.status(400).json({ // If track ID is not specified, return an error
+            status: 'ERROR',
+            message: 'Bad request.',
+        })
+
+        const {user} = req // Get user from the request
+
+        if (!user) return res.status(404).json({ // If there is no user, return an error
+            status: 'ERROR',
+            message: 'User not found.',
+        })
+
+        const track = await Track.findById(id) // Get track by ID
+
+        if (!track) return res.status(404).json({ // If there is no track, return an error
+            status: 'ERROR',
+            message: 'Track not found.',
+        })
+
+        if (!user?.lastListenedTracks) user.lastListenedTracks = [] // If user's last listened tracks is not defined, define it as an empty array
+        user.lastListenedTracks = [id, ...user.lastListenedTracks.filter(listenedTrack => listenedTrack.toString() !== id)].slice(0, 50) // Add track to the beginning of the array and remove duplicates
+
+        await user.save() // Save user
+
+        res.status(200).json({ // Return success response
+            status: 'OK',
+            message: 'Listened track updated.',
+        })
+    } catch (e) {
+        res.status(500).json({ // Return 500 response when an error occurs
+            status: 'ERROR',
+            message: 'An error occurred while updating listened track.',
             error: e.message,
         })
     }

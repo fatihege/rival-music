@@ -12,6 +12,7 @@ import {RGBtoHSL, RGBtoString} from '@/utils/color-converter'
 import getUserData from '@/utils/get-user-data'
 import {AddIcon} from '@/icons'
 import styles from '@/styles/profile.module.sass'
+import {LibraryContext} from '@/contexts/library'
 
 export function getServerSideProps(context) {
     return {
@@ -23,19 +24,14 @@ export function getServerSideProps(context) {
 
 export default function UserProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user from auth context
+    const [library] = useContext(LibraryContext) // Get library from library context
     const [, setModal] = useContext(ModalContext) // Use modal context
     const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
 
     const getUserInfo = async () => {
         if (!id) return // If ID property is not defined, return
-        const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:favouriteArtists,count:followedUsers,count:followers,populate:likedTracks') // Get user's profile properties from API
-        if (userData?.likedTracks?.length) { // If user has liked tracks
-            userData.likedTracks = userData.likedTracks.map(t => {
-                t.type = 'track'
-                return t
-            }) // Add type property to each track
-        }
+        const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:favouriteArtists,count:followedUsers,count:followers') // Get user's profile properties from API
 
         if (userData?.id) setActiveUser(userData) // If user's id is defined, set active user
         setLoad(true) // Set load state to true
@@ -105,7 +101,15 @@ export default function UserProfilePage({id}) {
                             </div>
                         </div>
                         <div className={styles.innerContent}>
-                            <Slider title="Liked tracks" items={activeUser?.likedTracks || []} />
+                            {library?.lastListenedTracks && (
+                                    <Slider title="Last listened tracks" items={library?.lastListenedTracks || []} />
+                            )}
+                            {library?.albums && (
+                                    <Slider title="Liked albums" items={library?.albums || []} />
+                            )}
+                            {library?.tracks && (
+                                    <Slider title="Liked tracks" items={library?.tracks || []} />
+                            )}
                         </div>
                     </div>
                 </div>

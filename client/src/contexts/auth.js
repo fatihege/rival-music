@@ -16,7 +16,11 @@ const AuthProvider = ({children}) => {
             try {
                 let tmpUser = null
 
-                const response = await axios.get(`${process.env.API_URL}/user/${token}`) // Send a GET request for user info
+                const response = await axios.get(`${process.env.API_URL}/user/${token}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }) // Send a GET request for user info
                 if (response.data?.status === 'OK') {
                     tmpUser = {loaded: true, token, ...response.data.user} // If response is OK, update user
                     const colorData = await getUserData(response.data.user.id, 'profileColor,accentColor')

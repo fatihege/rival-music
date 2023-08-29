@@ -11,11 +11,10 @@ import checkDir from '../utils/check-dir.js'
 import {__dirname} from '../utils/dirname.js'
 
 export const getTrack = async (req, res) => {
-    const {track} = req.params // Get track file name from request parameters
-    const range = req.headers.range?.replace('bytes=', '').split('-').map(v => parseInt(v)) // Get range from Range header
-    const trackPath = join(__dirname, '..', 'audio', 'manifest', track) // Create track path
-
     try {
+        const {track} = req.params // Get track file name from request parameters
+        const range = req.headers.range?.replace('bytes=', '').split('-').map(v => parseInt(v)) // Get range from Range header
+        const trackPath = join(__dirname, '..', 'audio', 'manifest', track) // Create track path
         const trackSize = statSync(trackPath)?.size // Get track file size
         if (Array.isArray(range) && range?.length && !range.includes(NaN)) // If range is set
             res.writeHead(206, { // Send partial content response to the client
@@ -146,25 +145,29 @@ export const getTrackInfo = async (req, res) => {
             select: `name ${populate === 'all' ? 'image' : ''}`,
         })
 
+        if (!track) return res.status(404).json({ // If track is not exists, return 404 response
+            status: 'ERROR',
+            message: 'Track is not exists',
+        })
+
         if (track?.lyrics?.length) {
             track.lyrics = track.lyrics.map(lyric => {
-                // Convert ms to mm:ss:ms format manually
-                lyric.start = `${Math.floor(lyric.start / 60000)}:${Math.floor((lyric.start % 60000) / 1000)}:${lyric.start % 1000}`
+                lyric.start = `${Math.floor(lyric.start / 60000)}:${Math.floor((lyric.start % 60000) / 1000)}:${lyric.start % 1000}` // Convert milliseconds to minutes, seconds and milliseconds
                 return lyric
             })
         }
 
         let liked = false
         if (userId) {
-            const user = await User.findById(userId)
-            if (user && user.likedTracks?.find(t => t.toString() === id)) liked = true
+            const user = await User.findById(userId) // Find user by ID
+            if (user && user.likedTracks?.find(t => t.toString() === id)) liked = true // If track is liked by user, set liked to true
         }
 
         return res.status(200).json({ // Send OK response to the client
             status: 'OK',
             message: 'Track info is successfully fetched',
             track: {
-                ...track._doc,
+                ...(track?._doc || []),
                 liked,
             },
         })
@@ -178,6 +181,11 @@ export const getTrackInfo = async (req, res) => {
 
 export const getLyrics = async (req, res) => {
     try {
+        if (!req.user) return res.status(401).json({ // If user is not authenticated, return 401 response
+            status: 'ERROR',
+            message: 'Unauthorized',
+        })
+
         const {id} = req.params // Get track ID from request parameters
         const track = await Track.findById(id) // Find track by ID
 
@@ -310,8 +318,13 @@ export const getTracks = async (req, res) => {
 
 export const postLike = async (req, res) => {
     try {
+        if (!req.user) return res.status(401).json({ // If user is not authenticated, return 401 response
+            status: 'ERROR',
+            message: 'Unauthorized',
+        })
+
         const {id} = req.params // Get track ID from request parameters
-        const {user: userId, like} = req.body // Get user ID from request body
+        const {like} = req.body // Get user ID from request body
         const track = await Track.findById(id) // Find track by ID
 
         if (!track) return res.status(404).json({ // If track is not exists, return 404 response
@@ -319,7 +332,7 @@ export const postLike = async (req, res) => {
             message: 'Track is not exists',
         })
 
-        const user = await User.findById(userId) // Find user by ID
+        const {user} = req // Get user from request
 
         if (!user) return res.status(404).json({ // If user is not exists, return 404 response
             status: 'ERROR',
@@ -330,14 +343,14 @@ export const postLike = async (req, res) => {
         user.likedTracks = user.likedTracks.filter((t, i) => user.likedTracks.findIndex(t2 => t2.toString() === t.toString()) === i) // Remove duplicate tracks from user's liked tracks
 
 
-        if (Number(like) === 1 && !user.likedTracks?.find(t => t.toString() === id)) user.likedTracks.push(track._id) // If track is not liked by user, push track to user's liked tracks
-        else if (Number(like) === -1 && user.likedTracks?.find(t => t.toString() === id)) user.likedTracks = user.likedTracks.filter(t => t.toString() !== id) // If track is liked by user, remove track from user's liked tracks
+        if (Number(like) === 1 && !user.likedTracks?.find(t => t.toString() === track._id.toString())) user.likedTracks.push(track._id.toString()) // If track is not liked by user, push track to user's liked tracks
+        else if (Number(like) === -1 && user.likedTracks?.find(t => t.toString() === track._id.toString())) user.likedTracks = user.likedTracks.filter(t => t.toString() !== track._id.toString()) // If track is liked by user, remove track from user's liked tracks
 
         await user.save() // Save user
 
         return res.status(200).json({ // Send OK response to the client
             status: 'OK',
-            message: 'Track is successfully liked',
+            message:  Number(like) === 1 ? 'Track is successfully liked' : 'Track is successfully unliked',
             liked: !!user.likedTracks?.find(t => t.toString() === id),
         })
     } catch (e) {
