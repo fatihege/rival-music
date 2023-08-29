@@ -2,6 +2,8 @@
 
 This application is a web application that allows users to search, play, and share music of different genres. This application is currently under development.
 
+**Note:** The application's API (`server` folder) and client-side contexts (`client/src/contexts` folder) are no longer open source.
+
 ## Technologies
 
 This application is built using MERN (MongoDB, Express.js, React.js, Node.js) stack and a Server Side Rendering (SSR) framework such as Next.js. Additionally, Redis is used for caching and improving performance.
