@@ -186,7 +186,7 @@ export default function AlbumPage({id}) {
                         <div className={styles.coverSection}>
                             <div className={styles.coverWrapper}>
                                 <div className={styles.cover}>
-                                    <Image src={album?.cover} width={600} height={600} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} height={300}/>}/>
+                                    <Image src={album?.cover} width={300} height={300} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} height={300}/>}/>
                                 </div>
                                 <div className={styles.albumInfo}>
                                     <div className={styles.info}>
