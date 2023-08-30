@@ -12,7 +12,18 @@
   overflow: hidden
   z-index: 3
   transition: left .2s ease-in-out, right .2s ease-in-out, bottom .2s ease-in-out, opacity .2s ease-in-out
-  border: 1px solid rgba(255, 255, 255, .05)
+
+  &::after
+    content: ""
+    position: absolute
+    top: -1px
+    left: -1px
+    width: calc(100% - 2px)
+    height: calc(100% - 2px)
+    border-radius: 16px
+    border: 2px solid rgba(65, 65, 65, .4)
+    z-index: 1
+    pointer-events: none
 
   &.show
     pointer-events: all
@@ -261,8 +272,7 @@
           width: calc(100% - 2px)
           height: calc(100% - 2px)
           border-radius: 8px
-          border: 1px solid rgba(255, 255, 255, .25)
-          mix-blend-mode: overlay
+          border: 1px solid rgba(65, 65, 65, .4)
           z-index: 1
           pointer-events: none
 
