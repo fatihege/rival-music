@@ -83,7 +83,7 @@ export default function Volume() {
     }
 
     const updateVolumeByLocal = () => {
-        const localLevel = !isNaN(parseInt(localStorage.getItem('volumeLevel'))) ? parseInt(localStorage.getItem('volumeLevel')) : 100 // Get volume level from local storage. If it is not set, set to 100%
+        const localLevel = !isNaN(parseInt(localStorage.getItem('volumeLevel'))) ? parseInt(localStorage.getItem('volumeLevel')) : 50 // Get volume level from local storage. If it is not set, set to 50%
         setLevel(localLevel) // Update volume level
         handleVolumeUpdate(localLevel) // Handle volume level by local value
     }

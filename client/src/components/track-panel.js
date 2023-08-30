@@ -5,6 +5,7 @@ import {AuthContext} from '@/contexts/auth'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import Player from '@/components/player'
 import Volume from '@/components/volume'
 import {TooltipHandler} from '@/components/tooltip'
@@ -124,13 +125,13 @@ export default function TrackPanel() {
                                 <feDisplacementMap in2="turbulence" in="SourceGraphic"
                                                    scale="60" xChannelSelector="R" yChannelSelector="B"/>
                             </filter>
-                            <image href={`${process.env.IMAGE_CDN}/${track.album.cover}`} width="110%" height="110%"
+                            <image href={`${process.env.IMAGE_CDN}/${track.album.cover}?width=120&height=120&format=webp`} width="110%" height="110%"
                                    x="-20" y="-20" preserveAspectRatio="none"
                                    filter="url(#displacementFilter)"/>
-                            <image href={`${process.env.IMAGE_CDN}/${track.album.cover}`} width="60%" height="50%"
+                            <image href={`${process.env.IMAGE_CDN}/${track.album.cover}?width=120&height=120&format=webp`} width="60%" height="50%"
                                    x="40%" y="-20" preserveAspectRatio="none"
                                    filter="url(#displacementFilter)"/>
-                            <image href={`${process.env.IMAGE_CDN}/${track.album.cover}`} width="50%" height="50%"
+                            <image href={`${process.env.IMAGE_CDN}/${track.album.cover}?width=120&height=120&format=webp`} width="50%" height="50%"
                                    x="-10%" y="40%" preserveAspectRatio="none"
                                    filter="url(#displacementFilter)"/>
                         </svg>

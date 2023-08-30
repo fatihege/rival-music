@@ -107,37 +107,37 @@ export default function AdminPage() {
                     <div className={styles.stat}>
                         <span>Users</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
-                            {statistics.loaded ? statistics.users : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                            {statistics.loaded ? statistics.users : <Skeleton height={22}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>
                         <span>Artists</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
-                            {statistics.loaded ? statistics.artists : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                            {statistics.loaded ? statistics.artists : <Skeleton height={22}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>
                         <span>Albums</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
-                            {statistics.loaded ? statistics.albums : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                            {statistics.loaded ? statistics.albums : <Skeleton height={22}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>
                         <span>Tracks</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
-                            {statistics.loaded ? statistics.tracks : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                            {statistics.loaded ? statistics.tracks : <Skeleton height={22}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>
                         <span>Non-Audio Tracks</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
-                            {statistics.loaded ? statistics.nonAudioTracks : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                            {statistics.loaded ? statistics.nonAudioTracks : <Skeleton height={22}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>
                         <span>Playlists</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
-                            {statistics.loaded ? statistics.playlists : <Skeleton height={22} baseColor={'rgba(194,194,194,.5)'} highlightColor={'rgba(224,224,224,.7)'}/>}
+                            {statistics.loaded ? statistics.playlists : <Skeleton height={22}/>}
                         </span>
                     </div>
                 </div>

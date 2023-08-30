@@ -5,6 +5,7 @@ import {AuthContext} from '@/contexts/auth'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {ModalContext} from '@/contexts/modal'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import LoginModal from '@/components/modals/login'
 import SignupModal from '@/components/modals/signup'
 import AskLoginModal from '@/components/modals/ask-login'
@@ -12,6 +13,7 @@ import {TooltipHandler} from '@/components/tooltip'
 import {RGBtoString} from '@/utils/color-converter'
 import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
+import Skeleton from 'react-loading-skeleton'
 
 export default function NavigationBar() {
     const router = useRouter()
@@ -60,8 +62,11 @@ export default function NavigationBar() {
                             <div className={styles.info} onClick={handleShowMenu}>
                                 <div className={styles.image}
                                      style={!user.image && user.accentColor ? {backgroundColor: RGBtoString(user.accentColor)} : {}}>
-                                    {user.image ? <img src={`${process.env.IMAGE_CDN}/${user.image}`} alt={''}/> :
-                                        <span style={!user.image && user.profileColor ? {color: RGBtoString(user.profileColor)} : {}}>{user?.name[0]?.toUpperCase()}</span>}
+                                    <Image src={user?.image || '0'} width={28} height={28} format={'webp'} alt={user?.name}
+                                           alternative={<span style={{color: RGBtoString(user?.profileColor)}}>
+                                               {user?.name[0]?.toUpperCase()}</span>}
+                                           loading={<Skeleton width={28} height={28} style={{top: '-2px'}} />}
+                                    />
                                 </div>
                                 <div className={styles.name}>
                                     {user.name}

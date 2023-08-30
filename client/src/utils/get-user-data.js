@@ -7,11 +7,7 @@ import axios from 'axios'
  */
 export default async (id, props) => {
     try {
-        const response = await axios.get(`${process.env.API_URL}/user/?id=${id}&props=${props}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        }) // Send GET request to the API
+        const response = await axios.get(`${process.env.API_URL}/user/?id=${id}&props=${props}`) // Send GET request to the API
         if (!response.data || !response.data.user) return // If there is no data in the response, return
 
         return response.data.user // Return user data

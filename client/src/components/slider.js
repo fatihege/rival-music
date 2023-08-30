@@ -4,20 +4,22 @@ import {useContext, useEffect, useRef, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
 import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 import {ModalContext} from '@/contexts/modal'
 import AskLoginModal from '@/components/modals/ask-login'
+import Skeleton from 'react-loading-skeleton'
 
 /**
- * @param {'artists' | 'albums' | 'tracks'} type
+ * @param {'artist' | 'album' | 'track'} type
  * @param {string} title
  * @param {Array} items
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Slider({title, items = []}) {
+export default function Slider({type, title, items = []}) {
     const [user] = useContext(AuthContext) // Get user from auth context
     const {setQueue, setQueueIndex, handlePlayPause} = useContext(QueueContext) // Queue context
     const [, setModal] = useContext(ModalContext) // Modal context
@@ -172,7 +174,7 @@ export default function Slider({title, items = []}) {
         }
     }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef, items])
 
-    const handlePlay = (e, type, index) => {
+    const handlePlay = (e, itemType, index) => {
         e.stopPropagation() // Prevent click on parent element
 
         if (!user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
@@ -180,12 +182,12 @@ export default function Slider({title, items = []}) {
             canClose: true,
         })
 
-        if (!type) return // If type is not defined, return
-        if (type === 'track') {
-            setQueue(items.filter(i => i?.type === 'track').map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with tracks
+        if (!itemType) itemType = type
+        if (itemType === 'track') {
+            setQueue(items.filter(i => !i?.type || i?.type === 'track').map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with tracks
             setQueueIndex(index || 0) // Set queue index to 0
             handlePlayPause(true) // Play track
-        } else if (type === 'album') {
+        } else if (itemType === 'album') {
             try {
                 axios.get(`${process.env.API_URL}/album/${items[index]?._id}?tracks=1`).then(response => {
                     if (response.data.status === 'OK' && response.data?.album) {
@@ -207,9 +209,9 @@ export default function Slider({title, items = []}) {
 
     const handleItemMouseUp = (e, item) => {
         if (!isScrolling.current) { // If not scrolling, change route
-            if (item?.type === 'artist') router.push('/artist/[id]', `/artist/${item?._id}`)
-            else if (item?.type === 'album') router.push('/album/[id]', `/album/${item?._id}`)
-            else if (item?.type === 'track') router.push('/album/[id]', `/album/${item?.album?._id}#${item?._id}`)
+            if ((item?.type && item.type === 'artist') || (!item?.type && type === 'artist')) router.push('/artist/[id]', `/artist/${item?._id}`)
+            else if ((item?.type && item.type === 'album') || (!item?.type && type === 'album')) router.push('/album/[id]', `/album/${item?._id}`)
+            else if ((item?.type && item.type === 'track') || (!item?.type && type === 'track')) router.push('/album/[id]', `/album/${item?.album?._id}#${item?._id}`)
         }
         else isScrolling.current = false // Set is scrolling to false
     }
@@ -221,32 +223,38 @@ export default function Slider({title, items = []}) {
                     {title}
                 </div>
                 <div className={styles.controls}>
-                    {items?.length ? (
-                        <span className={styles.control}
-                              onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
+                    {Array.isArray(items) && items?.length ? (
+                        <>
+                            {items?.length ? (
+                                <span className={styles.control}
+                                      onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
+                            ) : ''}
+                            <TooltipHandler title={'Previous items'}>
+                                <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
+                                        ref={prevButtonRef}>
+                                    <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
+                                </button>
+                            </TooltipHandler>
+                            <TooltipHandler title={'Next items'}>
+                                <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
+                                        ref={nextButtonRef}>
+                                    <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
+                                </button>
+                            </TooltipHandler>
+                        </>
                     ) : ''}
-                    <TooltipHandler title={'Previous items'}>
-                        <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
-                                ref={prevButtonRef}>
-                            <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
-                        </button>
-                    </TooltipHandler>
-                    <TooltipHandler title={'Next items'}>
-                        <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
-                                ref={nextButtonRef}>
-                            <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
-                        </button>
-                    </TooltipHandler>
                 </div>
             </div>
             <div className={styles.fading} ref={fadingRef}>
                 <div className={styles.wrapper} ref={sliderRef}>
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
-                        {items?.length ? items.map((item, i) =>
-                            item?.type === 'album' ? (
+                        {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
+                            (item?.type && item.type === 'album') || (!item?.type && type === 'album') ? (
                                 <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
-                                        {item?.cover ? <img src={`${process.env.IMAGE_CDN}/${item.cover}`} alt={item?.title}/> : <AlbumDefault/>}
+                                        <Image src={item?.cover} width={200} height={200} format={'webp'}
+                                               alt={item?.title} alternative={<AlbumDefault/>}
+                                               loading={<Skeleton height={200} width={200} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album', i)}>
                                                 <PlayIcon/>
@@ -271,10 +279,12 @@ export default function Slider({title, items = []}) {
                                         </div>
                                     </div>
                                 </div>
-                            ) : item?.type === 'track' ? (
+                            ) : (item?.type && item.type === 'track') || (!item?.type && type === 'track') ? (
                                 <div className={`${styles.item} ${styles.track}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
-                                        {item?.album?.cover ? <img src={`${process.env.IMAGE_CDN}/${item?.album?.cover}`} alt={item?.title}/> : <AlbumDefault/>}
+                                        <Image src={item?.album?.cover} width={200} height={200} format={'webp'}
+                                               alt={item?.title} alternative={<AlbumDefault/>}
+                                               loading={<Skeleton height={200} width={200} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'track', i)}>
                                                 <PlayIcon/>
@@ -299,12 +309,12 @@ export default function Slider({title, items = []}) {
                                         </div>
                                     </div>
                                 </div>
-                            ) : item.type === 'artist' ? (
+                            ) : (item?.type && item.type === 'artist') || (!item?.type && type === 'artist') ? (
                                 <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
-                                        {item.image?.length ?
-                                            <img src={`${process.env.IMAGE_CDN}/${item.image}`} alt={item.name}/> :
-                                            <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>}
+                                        <Image src={item?.image} width={200} height={200} format={'webp'} alt={item?.title} alternative={
+                                            <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>
+                                        } loading={<Skeleton height={200} width={200} borderRadius={'100%'}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist', i)}>
                                                 <PlayIcon/>
@@ -324,7 +334,28 @@ export default function Slider({title, items = []}) {
                             <div className={styles.noItems}>
                                 No tracks, albums or artists found
                             </div>
-                        )}
+                        )) : (() => {
+                            const skeletons = []
+
+                            for (let i = 0; i < 6; i++)
+                                skeletons.push(
+                                    <div key={i} className={`${styles.item} ${type === 'artist' ? styles.artist : ''} ${styles.loading}`}>
+                                        <div className={styles.itemImage}>
+                                            <Skeleton width={200} height={200} style={{top: '-1px'}} borderRadius={type === 'artist' ? '50%' : '0'}/>
+                                        </div>
+                                        <div className={styles.itemInfo}>
+                                            <div className={styles.itemName}>
+                                                <Skeleton/>
+                                            </div>
+                                            <div className={styles.itemArtist}>
+                                                <Skeleton height={16} width={120}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+
+                            return skeletons
+                        })()}
                     </div>
                 </div>
             </div>

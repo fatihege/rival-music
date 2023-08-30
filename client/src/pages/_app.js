@@ -57,7 +57,7 @@ export default function App({Component, pageProps}) {
 
     return (
         <AuthProvider>
-            <SkeletonTheme baseColor="rgba(0,0,0,.2)" highlightColor="rgba(50,50,50,.5)">
+            <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
                 <Wrapper load={load}>
                     <TooltipProvider>
                         <AlertProvider>

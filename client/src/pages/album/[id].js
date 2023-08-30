@@ -2,6 +2,7 @@ import axios from 'axios'
 import {useRouter} from 'next/router'
 import Head from 'next/head'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import {useContext, useEffect, useState} from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
@@ -16,7 +17,6 @@ import getAlbumData from '@/utils/get-album-data'
 import formatTime from '@/utils/format-time'
 import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon} from '@/icons'
 import styles from '@/styles/album.module.sass'
-import 'react-loading-skeleton/dist/skeleton.css'
 
 export function getServerSideProps(context) {
     return {
@@ -25,8 +25,6 @@ export function getServerSideProps(context) {
         },
     }
 }
-
-const SkeletonBase = (props) => <Skeleton {...props} baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}/>
 
 export default function AlbumPage({id}) {
     const router = useRouter() // Router instance
@@ -63,6 +61,7 @@ export default function AlbumPage({id}) {
         return () => { // When component is unmounted
             setAlbum(null) // Reset album data
             setLoad(false) // Reset load state
+            setSelectedTracks([]) // Reset selected tracks
         }
     }, [id, user])
 
@@ -178,7 +177,7 @@ export default function AlbumPage({id}) {
                                                    scale="60" xChannelSelector="R" yChannelSelector="B"/>
                             </filter>
                             {album?.cover ?
-                                <image href={`${process.env.IMAGE_CDN}/${album?.cover}`} width="110%"
+                                <image href={`${process.env.IMAGE_CDN}/${album?.cover}?width=100&height=100&format=webp`} width="110%"
                                        height="110%" x="-20" y="-20" preserveAspectRatio="none"
                                        filter="url(#displacementFilter)"/> : ''}
                         </svg>
@@ -187,27 +186,24 @@ export default function AlbumPage({id}) {
                         <div className={styles.coverSection}>
                             <div className={styles.coverWrapper}>
                                 <div className={styles.cover}>
-                                    {!load ? <SkeletonBase style={{top: '-3px'}} height={300}/> :
-                                        album?.cover ? <img src={`${process.env.IMAGE_CDN}/${album.cover}`}
-                                                            alt={`${album?.title} Cover`}/> :
-                                            <AlbumDefault/>}
+                                    <Image src={album?.cover} width={600} height={600} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} height={300}/>}/>
                                 </div>
                                 <div className={styles.albumInfo}>
                                     <div className={styles.info}>
                                         <h2 className={styles.title}>
                                             {!load || !album?.title ?
-                                                <SkeletonBase width={250} height={40}/> :
+                                                <Skeleton width={250} height={40}/> :
                                                 album?.title}
                                         </h2>
                                         {!load || !album?.artist?.name ? (
-                                            <SkeletonBase width={100} height={20}/>
+                                            <Skeleton width={100} height={20}/>
                                         ) : (
                                             <Link href={'/artist/[id]'}
                                                   as={`/artist/${album?.artist?._id || album?.artist?.id}`}
                                                   className={styles.artist}>{album?.artist?.name}</Link>
                                         )}
                                         {!load || !album?.releaseYear || !album?.genres?.length ? (
-                                            <SkeletonBase width={150} height={20}/>
+                                            <Skeleton width={150} height={20}/>
                                         ) : (
                                             <div className={styles.small}>
                                                 <span className={styles.genre}>{album?.genres?.length ? (
@@ -243,9 +239,9 @@ export default function AlbumPage({id}) {
                             <div className={styles.tracks}>
                                 {!load ? (
                                     <>
-                                        <SkeletonBase width={'100%'} height={52} borderRadius={8}/>
-                                        <SkeletonBase width={'100%'} height={52} borderRadius={8}/>
-                                        <SkeletonBase width={'100%'} height={52} borderRadius={8}/>
+                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
                                     </>
                                 ) : album && album?.tracks?.length ? album?.tracks?.map((track, index) => (
                                     <div key={index} id={track?._id}

@@ -328,10 +328,10 @@ export default function EditTrackPage({id}) {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Create Track — Rival Music</title>
+                <title>Edit Track — Rival Music</title>
             </Head>
             <div className={styles.mainContainer}>
-                <h1 className={styles.mainTitle}>Create Track</h1>
+                <h1 className={styles.mainTitle}>Edit Track</h1>
                 <div className={styles.form}>
                     <h3 className={styles.formTitle}>Title</h3>
                     <Input placeholder="Track title" onChange={title => setTrack({...track, title})}

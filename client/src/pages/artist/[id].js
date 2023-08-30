@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Head from 'next/head'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import {useContext, useEffect, useState} from 'react'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import Slider from '@/components/slider'
@@ -9,6 +10,7 @@ import NotFoundPage from '@/pages/404'
 import getArtistData from '@/utils/get-artist-data'
 import {PlayIcon} from '@/icons'
 import styles from '@/styles/artist.module.sass'
+import Skeleton from 'react-loading-skeleton'
 
 export function getServerSideProps(context) {
     return {
@@ -23,7 +25,7 @@ export default function ArtistProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user data from AuthContext
     const [artist, setArtist] = useState({}) // Artist data
     const [showDescription, setShowDescription] = useState(false) // Show full description
-    const [albums, setAlbums] = useState([]) // Artist albums
+    const [albums, setAlbums] = useState(null) // Artist albums
 
     const getArtistInfo = async () => {
         if (!id) return // If ID property is not defined, return
@@ -37,10 +39,8 @@ export default function ArtistProfilePage({id}) {
 
         try {
             const response = await axios.get(`${process.env.API_URL}/album/artist/${id}`) // Send GET request to the API
-            if (response.data?.albums) {
-                response.data.albums = response.data.albums.map(album => ({...album, type: 'album'})) // Add type property to each album
-                setAlbums(response.data.albums) // If there is albums data in the response, set albums state
-            }
+            if (response.data?.albums?.length) setAlbums(response.data.albums) // If there is albums data in the response, set albums state
+            else setAlbums([]) // Otherwise, set albums state to empty array
         } catch (e) {
             console.error(e)
         }
@@ -55,7 +55,7 @@ export default function ArtistProfilePage({id}) {
         return () => { // When component is unmounted
             setLoad(false) // Set load state to false
             setArtist({}) // Reset artist data
-            setAlbums([]) // Reset albums data
+            setAlbums(null) // Reset albums data
         }
     }, [id])
 
@@ -69,7 +69,7 @@ export default function ArtistProfilePage({id}) {
                     <div className={styles.content}>
                         <div className={`${styles.profileSection} ${load && !artist?.banner ? styles.noBanner : ''}`}>
                             <div className={styles.banner}>
-                                {load && artist?.banner ? <img src={`${process.env.IMAGE_CDN}/${artist.banner}`} alt={`${artist?.name} Banner`}/> : ''}
+                                <Image src={artist.banner} width={2400} height={933} format={'webp'} alt={`${artist?.name} Banner`} loading={<Skeleton height={500} style={{top: '-3px'}}/>}/>
                             </div>
                             <div className={styles.artistInfo}>
                                 <button className={styles.playButton}>
@@ -102,14 +102,14 @@ export default function ArtistProfilePage({id}) {
                             {artist?.banner ? (
                                 <>
                                     <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" width="100%" height="90">
-                                        <image href={`${process.env.IMAGE_CDN}/${artist.banner}`} width="110%" height="600" x="-5%" y="-530" preserveAspectRatio="none"/>
+                                        <image href={`${process.env.IMAGE_CDN}/${artist.banner}?width=300&height=100&format=webp`} width="110%" height="600" x="-5%" y="-530" preserveAspectRatio="none"/>
                                     </svg>
                                     <div className={styles.blurFilter}></div>
                                 </>
                             ) : ''}
                         </div>
                         <div className={styles.albums}>
-                            <Slider title="Latest Albums" items={albums}/>
+                            <Slider type={'album'} title="Latest Albums" items={albums}/>
                         </div>
                     </div>
                 </div>

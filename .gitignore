@@ -1,2 +1,2 @@
-server/*
-client/src/contexts/*
+server/
+client/src/contexts/

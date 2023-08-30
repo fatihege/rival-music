@@ -1,6 +1,8 @@
 import {useRouter} from 'next/router'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {LibraryContext} from '@/contexts/library'
@@ -204,11 +206,13 @@ export default function SidePanel() {
                         </div>
                         <CustomScrollbar>
                             <div className={styles.libraryList}>
-                                {library?.albums?.map(item => (
+                                {library ? library?.albums?.map(item => (
                                     <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`} key={item?.id || item?._id}>
                                         <div className={styles.listItem}>
                                             <div className={styles.image}>
-                                                {item?.cover ? <img src={`${process.env.IMAGE_CDN}/${item?.cover}`} alt={item?.title}/> : <AlbumDefault/>}
+                                                <Image src={item?.cover} width={56} height={56} format={'webp'}
+                                                       alt={item?.title} alternative={<AlbumDefault/>}
+                                                       loading={<Skeleton width={56} height={56} style={{top: '-2px'}}/>}/>
                                             </div>
                                             {!isMinimized && (
                                                 <div className={styles.info}>
@@ -222,7 +226,13 @@ export default function SidePanel() {
                                             )}
                                         </div>
                                     </Link>
-                                ))}
+                                )) : (
+                                    <>
+                                        <Skeleton height={60} borderRadius={12}/>
+                                        <Skeleton height={60} borderRadius={12}/>
+                                        <Skeleton height={60} borderRadius={12}/>
+                                    </>
+                                )}
                             </div>
                         </CustomScrollbar>
                     </div>

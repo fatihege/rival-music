@@ -4,6 +4,7 @@ import {AuthContext} from '@/contexts/auth'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'
 import Link from '@/components/link'
+import Image from '@/components/image'
 import Player from '@/components/player'
 import Volume from '@/components/volume'
 import {TooltipHandler} from '@/components/tooltip'
@@ -27,6 +28,7 @@ import {
     UpArrowIcon,
 } from '@/icons'
 import styles from '@/styles/now-playing-bar.module.sass'
+import Skeleton from 'react-loading-skeleton'
 
 export default function NowPlayingBar() {
     const BAR_BREAKPOINT = 850 // Replace some elements when width is less than this value
@@ -204,8 +206,8 @@ export default function NowPlayingBar() {
         <>
             <div
                 className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 516 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 516 || minimizeBar ? styles.lower : ''}`}>
-                {track?.album?.cover ?
-                    <img src={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} alt={track?.title}/> : <AlbumDefault/>}
+                <Image src={track?.album?.cover} width={248} height={248} format={'webp'} alt={track?.title}
+                       alternative={<AlbumDefault/>} loading={<Skeleton width={248} height={248} style={{top: '-3px'}}/>}/>
                 <div className={styles.overlay}>
                     <TooltipHandler title={albumCoverRight ? 'Move left' : 'Move right'}>
                         <button className={styles.button} onClick={() => toggleAlbumCoverRight()}>
@@ -247,7 +249,7 @@ export default function NowPlayingBar() {
                                     <feDisplacementMap in2="turbulence" in="SourceGraphic"
                                                        scale="40" xChannelSelector="R" yChannelSelector="B"/>
                                 </filter>
-                                <image href={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} width="110%"
+                                <image href={`${process.env.IMAGE_CDN}/${track?.album?.cover}?width=200&height=200&format=webp`} width="110%"
                                        height="140" x="-5%" y="-25"
                                        preserveAspectRatio="none" filter="url(#displacementFilter)"/>
                             </svg>
@@ -258,7 +260,8 @@ export default function NowPlayingBar() {
                          onMouseDown={e => handleResizeDown(e, 1)}></div>
                     <div className={styles.track}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
-                            <img src={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} alt={track?.title}/>
+                            <Image src={track?.album?.cover} width={63} height={63} alt={track?.title} format={'webp'}
+                                   alternative={<AlbumDefault/>} loading={<Skeleton width={63} height={63} style={{top: '-3px'}}/>}/>
                             <div className={styles.overlay}>
                                 <TooltipHandler title={'Show big album cover'}>
                                     <button className={styles.hideButton}
