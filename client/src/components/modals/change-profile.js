@@ -155,7 +155,7 @@ export default function ChangeProfileModal() {
     return (
         <div className={styles.changeProfile}>
             <div className={styles.image}>
-                {image ? <img src={image.startsWith('blob:') ? image : `${process.env.IMAGE_CDN}/${image}`} alt="Profile"/> : user?.name[0]?.toUpperCase()}
+                {image ? <img src={image.startsWith('blob:') ? image : `${process.env.IMAGE_CDN}/${image}`} alt="Profile"/> : user?.name?.[0]?.toUpperCase()}
                 <div className={styles.imageOverlay} onClick={() => triggerFileInput()}>
                     <AddIcon/>
                     <span>Upload Photo</span>

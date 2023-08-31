@@ -14,7 +14,7 @@ export default function FollowedUsersModal({id}) {
     const [followedUsers, setFollowedUsers] = useState([]) // Followed users state
 
     const getFollowedUsers = async () => {
-        const userData = await getUserData(id, 'followedUsers') // Get the followed users of the user
+        const userData = await getUserData(id, 'populate:followedUsers') // Get the followed users of the user
         if (userData?.followedUsers?.length) setFollowedUsers(userData.followedUsers) // If there is a data, update the state value
         setLoad(true) // Set the load state to true
     }
@@ -34,19 +34,19 @@ export default function FollowedUsersModal({id}) {
         <div className={styles.fellows}>
             {load ? (
                 followedUsers.length ? followedUsers.map((fellow, i) => (
-                    <Link key={i} className={styles.fellow} href="/profile/[id]" as={`/profile/${fellow._id}`} onClick={() => setModal({canClose: true, active: null})}>
+                    <Link key={i} className={styles.fellow} href={'/profile/[id]'} as={`/profile/${fellow._id}`} onClick={() => setModal({canClose: true, active: null})}>
                         <div className={styles.imageWrapper}>
                             <div className={styles.image}
                                  style={!fellow.image && fellow.accentColor ? {backgroundColor: RGBtoString(fellow.accentColor)} : {}}>
                                 {fellow.image ? <img src={`${process.env.IMAGE_CDN}/${fellow.image}`} alt={fellow.name}/> :
-                                    <span style={!fellow.image && fellow.profileColor ? {color: RGBtoString(fellow.profileColor)} : {}}>{fellow?.name[0]?.toUpperCase()}</span>}
+                                    <span style={!fellow.image && fellow.profileColor ? {color: RGBtoString(fellow.profileColor)} : {}}>{fellow?.name?.[0]?.toUpperCase()}</span>}
                             </div>
                         </div>
                         <div className={styles.name}>{fellow.name}</div>
                     </Link>
                 )) : (
                     <span className={styles.noFollowers}>
-                        {user.id === id ? 'You are not following anyone.' : 'You are not following anyone.'}
+                        {user.id === id ? 'You are not following anyone.' : 'This users is not following anyone.'}
                     </span>
                 )
             ) : ''}

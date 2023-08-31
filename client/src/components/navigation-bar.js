@@ -64,7 +64,7 @@ export default function NavigationBar() {
                                      style={!user.image && user.accentColor ? {backgroundColor: RGBtoString(user.accentColor)} : {}}>
                                     <Image src={user?.image || '0'} width={28} height={28} format={'webp'} alt={user?.name}
                                            alternative={<span style={{color: RGBtoString(user?.profileColor)}}>
-                                               {user?.name[0]?.toUpperCase()}</span>}
+                                               {user?.name?.[0]?.toUpperCase()}</span>}
                                            loading={<Skeleton width={28} height={28} style={{top: '-2px'}} />}
                                     />
                                 </div>

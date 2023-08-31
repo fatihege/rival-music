@@ -8,7 +8,7 @@ import Slider from '@/components/slider'
 import {AuthContext} from '@/contexts/auth'
 import NotFoundPage from '@/pages/404'
 import getArtistData from '@/utils/get-artist-data'
-import {PlayIcon} from '@/icons'
+import {LikeIcon, PlayIcon} from '@/icons'
 import styles from '@/styles/artist.module.sass'
 import Skeleton from 'react-loading-skeleton'
 
@@ -29,7 +29,7 @@ export default function ArtistProfilePage({id}) {
 
     const getArtistInfo = async () => {
         if (!id) return // If ID property is not defined, return
-        const artistData = await getArtistData(id) // Get artist data from API
+        const artistData = await getArtistData(id, user?.id) // Get artist data from API
         if (artistData?._id || artistData?.id) setArtist(artistData)
         setLoad(true) // Set load state to true
     }
@@ -47,7 +47,7 @@ export default function ArtistProfilePage({id}) {
     }
 
     useEffect(() => {
-        if (!id) return // If query ID is not defined, return
+        if (!id || !user?.loaded) return // If query ID is not defined, return
 
         getArtistInfo() // Get artist info from API
         getArtistAlbums() // Get artist albums from API
@@ -57,7 +57,24 @@ export default function ArtistProfilePage({id}) {
             setArtist({}) // Reset artist data
             setAlbums(null) // Reset albums data
         }
-    }, [id])
+    }, [id, user])
+
+    const handleFollow = async () => {
+        if (!user?.id || !user?.token) return // If user is not logged in, return
+
+        try {
+            const response = await axios.post(`${process.env.API_URL}/user/follow/artist/${artist?._id || artist?.id}`, {
+                follow: artist?.following ? -1 : 1,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            }) // Send POST request to the API
+            if (response.data?.status === 'OK') setArtist({...artist, following: response.data?.followed}) // If there is following data in the response, set artist state
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
     return load && !artist?._id && !artist?.id ? <NotFoundPage/> : (
         <>
@@ -92,6 +109,12 @@ export default function ArtistProfilePage({id}) {
                                             </>
                                         )}
                                     </div> : ''}
+                                    {user?.loaded && user?.id && user?.token && artist && typeof artist.following === 'boolean' ? (
+                                        <button className={styles.followButton} onClick={handleFollow}>
+                                            <LikeIcon stroke={'#1c1c1c'} fill={artist?.following ? '#1c1c1c' : 'none'}/>
+                                            {artist?.following ? 'Following' : 'Follow'}
+                                        </button>
+                                    ) : ''}
                                 </div>
                             </div>
                             {user?.id && user?.token && user?.admin && (

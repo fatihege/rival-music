@@ -79,7 +79,7 @@
           .name
             font-size: 48px
             font-weight: 700
-            color: #f1f1f1
+            color: #fff
             text-shadow: 0 6px 10px rgba(21, 21, 21, .5)
             line-height: 1
 
@@ -113,6 +113,32 @@
               backdrop-filter: blur(12px)
               cursor: pointer
               line-height: 1
+
+          .followButton
+            border: none
+            cursor: pointer
+            display: flex
+            align-items: center
+            gap: 4px
+            padding: .5rem 1.5rem
+            border-radius: 8px
+            font-size: .9rem
+            font-weight: 500
+            color: #1c1c1c
+            background-color: $accentColor
+            box-shadow: 0 4px 8px 0 transparentize($accentColorDark, .7)
+            margin-top: 12px
+            line-height: 1
+
+            &:hover
+              background-color: $accentColorDark
+
+            &:active
+              transform: scale(.95)
+
+            svg
+              width: 18px
+              height: 18px
 
       .editButton
         position: absolute

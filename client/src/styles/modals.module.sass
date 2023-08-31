@@ -251,7 +251,7 @@
 
 .followers,
 .fellows,
-.favouriteArtists
+.followedArtists
   padding: 4rem .5rem 2rem
 
   .follower,
@@ -262,7 +262,7 @@
     display: flex
     align-items: center
     column-gap: .75rem
-    transition: background-color .15s ease-out
+    transition: background-color .1s ease-out
     margin-bottom: .25rem
     background-color: transparent
 
@@ -271,14 +271,23 @@
 
     .imageWrapper
       .image
-        width: 2.5rem
-        height: 2.5rem
-        background-color: #ffffff
+        width: 40px
+        height: 40px
         display: flex
         justify-content: center
         align-items: center
         border-radius: 50%
         border: 1px solid rgba(255, 255, 255, .1)
+        overflow: hidden
+
+        &.backgroundWhite
+          background-color: #ffffff
+
+        img
+          width: 100%
+          height: 100%
+          display: block
+          object-fit: cover
 
         span
           color: #ffffff
@@ -289,10 +298,13 @@
       color: #ffffff
       font-size: 1rem
       font-weight: 500
+      max-width: 300px
+      white-space: pre-wrap
+      word-break: break-word
 
   .noFollowers,
   .noFellows,
-  .noFavouriteArtists
+  .noFollowedArtists
     font-size: .9rem
     font-weight: 500
     color: rgba(255, 255, 255, .8)
