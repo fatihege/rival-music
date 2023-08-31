@@ -67,6 +67,22 @@ export default function LoginModal() {
                     ...alertRef.current,
                     [error.field]: error.message
                 })
+            else if (e?.response?.data?.status === 'NOT_ACCEPTED') // If there is NOT_ACCEPTED error
+                setAlertPopup({ // Show an alert
+                    active: true,
+                    title: 'Account not accepted',
+                    description: 'Your account is not accepted by the site owner. Please wait while your account is accepted.',
+                    button: 'OK',
+                    type: '',
+                })
+            else if (e?.response?.data?.status === 'NOT_ACTIVATED') // If there is NOT_ACTIVATED error
+                setAlertPopup({ // Show an alert
+                    active: true,
+                    title: 'Account not activated',
+                    description: 'You must activate your account to use the app. We sent you an activation link to your email address.',
+                    button: 'OK',
+                    type: '',
+                })
             else {
                 setAlertPopup({ // Otherwise, show an alert
                     active: true,

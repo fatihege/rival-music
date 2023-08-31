@@ -20,6 +20,7 @@ import {
     RepeatOneIcon, AlbumDefault, ExplicitIcon
 } from '@/icons'
 import styles from '@/styles/track-panel.module.sass'
+import Skeleton from 'react-loading-skeleton'
 
 export default function TrackPanel() {
     const [user] = useContext(AuthContext) // Get user from auth context
@@ -146,9 +147,9 @@ export default function TrackPanel() {
                     <div className={styles.innerContainer}>
                         <div className={styles.controls}>
                             <div className={styles.albumCover}>
-                                {track?.album?.cover ?
-                                    <img src={`${process.env.IMAGE_CDN}/${track?.album?.cover}`} alt={track?.title}/> :
-                                    <AlbumDefault/>}
+                                <Image src={track?.album?.cover} alt={track?.title} width={500} height={500}
+                                       alternative={<AlbumDefault/>}
+                                       loading={<Skeleton height={500} style={{top: '-3px'}}/>}/>
                             </div>
                             <div className={styles.trackInfo}>
                                 <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track?._id}`} className={styles.trackTitle}

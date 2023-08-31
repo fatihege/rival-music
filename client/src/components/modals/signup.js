@@ -52,7 +52,16 @@ export default function SignupModal() {
             })
 
             if (response.data?.status === 'OK') { // If response is OK
-                setUser({loaded: true, ...response.data.user}) // Update user from auth context
+                if (response.data?.user) setUser({loaded: true, ...response.data.user}) // Update user from auth context
+                else setAlertPopup({ // Otherwise, show an alert
+                    active: true,
+                    title: 'Activation email sent',
+                    description: `We sent an activation email to ${
+                        email.current?.replace(/^(.{3})(.*)(@.*)$/, (_, first, middle, last) => `${first}${middle.replace(/./g, '*')}${last}`)
+                    }. Please check your inbox and activate your account.`,
+                    button: 'OK',
+                    type: 'primary'
+                })
                 setModal({...modal, canClose: true, active: null}) // Enable modal closure and close modal
             } else throw new Error()
         } catch (e) {
