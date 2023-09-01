@@ -14,7 +14,14 @@
   .main
     position: relative
     display: grid
-    grid-template-columns: auto 1fr
+    grid-template-columns: auto 1fr 0
+    transition: grid-template-columns .15s ease-in-out
+
+    &.queuePanelActive
+      grid-template-columns: auto 1fr 320px
+
+      .content
+        border-radius: 22px
 
     .content
       position: relative
@@ -24,6 +31,8 @@
       max-height: 100vh
       border-top-left-radius: 22px
       border-bottom-left-radius: 22px
+      transition: .15s ease-in-out
+      transition-property: border-top-right-radius, border-bottom-right-radius
       overflow-x: hidden
       overflow-y: auto
       background-color: $foregroundDark

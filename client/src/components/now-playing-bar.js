@@ -44,6 +44,8 @@ export default function NowPlayingBar() {
         shuffle,
         handleShuffle,
         handleSeek,
+        showQueuePanel,
+        setShowQueuePanel,
         track,
         isLiked,
         setIsLiked
@@ -351,8 +353,8 @@ export default function NowPlayingBar() {
                                     <MicrophoneIcon strokeRate={1.2}/>
                                 </button>
                             </TooltipHandler>
-                            <TooltipHandler title={'Show queue'}>
-                                <button className={styles.button}>
+                            <TooltipHandler title={showQueuePanel ? 'Hide queue' : 'Show queue'}>
+                                <button className={styles.button} onClick={() => setShowQueuePanel(prev => !prev)}>
                                     <QueueIcon strokeRate={1.2}/>
                                 </button>
                             </TooltipHandler>

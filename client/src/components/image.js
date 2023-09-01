@@ -23,7 +23,8 @@ export default function Image({src, width, height, format, alternative, loading,
                 }
             })
         }, {
-            rootMargin: '0px 0px 100px 0px'
+            rootMargin: '0px 0px 100px 0px',
+            threshold: 0,
         })
 
         observer.observe(imgRef.current)

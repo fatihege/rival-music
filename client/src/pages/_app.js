@@ -10,10 +10,10 @@ import {ModalProvider} from '@/contexts/modal'
 import {AlertProvider} from '@/contexts/alert'
 import {DialogueProvider} from '@/contexts/dialogue'
 import {TooltipProvider} from '@/contexts/tooltip'
+import {LibraryProvider} from '@/contexts/library'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
 import '@/styles/globals.sass'
-import {LibraryProvider} from '@/contexts/library'
 
 export const useHistory = () => { // History hook
     const router = useRouter() // Get router

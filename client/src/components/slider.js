@@ -226,10 +226,10 @@ export default function Slider({type, title, items = []}) {
                 <div className={styles.controls}>
                     {Array.isArray(items) && items?.length ? (
                         <>
-                            {items?.length && (!prevButtonRef.current?.classList?.contains(styles.disabled) || !nextButtonRef.current?.classList?.contains(styles.disabled)) ? (
+                            {items?.length && (
                                 <span className={styles.control}
                                       onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
-                            ) : ''}
+                            )}
                             <TooltipHandler title={'Previous items'}>
                                 <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
                                         ref={prevButtonRef}>

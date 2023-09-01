@@ -52,7 +52,6 @@ The application will be running at `localhost:3000`.
 | GET /library/likes     | User's liked songs                          |   ❌   |
 | GET /library/saved     | User's saved songs                          |   ❌   |
 | GET /playlist/:id      | A playlist with the given ID                |   ❌   |
-| GET /queue             | Current queue of songs                      |   ❌   |
 | GET /artist/:id        | An artist with the given ID                 |   ✅   |
 | GET /album/:id         | Album page with the given ID                |   ✅   |
 | GET /profile           | Users profile                               |   ✅   |
