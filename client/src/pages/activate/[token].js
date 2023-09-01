@@ -1,9 +1,9 @@
 import axios from 'axios'
+import Head from 'next/head'
 import {useRouter} from 'next/router'
 import {useContext, useEffect} from 'react'
 import {AlertContext} from '@/contexts/alert'
 import {ModalContext} from '@/contexts/modal'
-import Head from 'next/head'
 
 export function getServerSideProps(context) {
     return {

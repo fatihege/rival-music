@@ -5,22 +5,20 @@ import {AlertContext} from '@/contexts/alert'
 import {ModalContext} from '@/contexts/modal'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
+import LoginModal from '@/components/modals/login'
 import SignupModal from '@/components/modals/signup'
-import ForgotPasswordModal from '@/components/modals/forgot-password'
 import {LogoIcon, NextIcon} from '@/icons'
 import checkEmail from '@/utils/check-email'
 import styles from '@/styles/modals.module.sass'
 
-export default function LoginModal() {
+export default function ForgotPasswordModal() {
     const [, setUser] = useContext(AuthContext) // Use auth context
     const [, setAlertPopup] = useContext(AlertContext) // Use alert context
     const [modal, setModal] = useContext(ModalContext) // Use modal context
     const email = useRef('') // Email value reference
-    const password = useRef('') // Password value reference
     const [disableSubmit, setDisableSubmit] = useState(false) // Is submit button disabled
     const [alert, _setAlert] = useState({ // Alert state
         email: null,
-        password: null,
     })
     const alertRef = useRef(alert) // Alert state reference
 
@@ -30,7 +28,7 @@ export default function LoginModal() {
     }
 
     useEffect(() => { // When alerts changed
-        if (alertRef.current.email || alertRef.current.password || !email.current.trim().length || !password.current.length) // If alerts is not empty or inputs are empty
+        if (alertRef.current.email || !email.current.trim().length) // If alerts is not empty or inputs are empty
             setDisableSubmit(true) // Disable submit button
         else setDisableSubmit(false) // Otherwise, enable submit button
     }, [alertRef.current])
@@ -45,21 +43,24 @@ export default function LoginModal() {
         else setAlert({...alertRef.current, email: null}) // Otherwise, remove email alert
     }
 
-    const checkPassword = () => setAlert({...alertRef.current, password: null}) // If password field is changed, remove password alert
-
     const handleSubmit = async () => {
-        if (alert.email || alert.password || !modal.canClose) return // If there is an alert or modal is cannot close, return
+        if (alert.email || !modal.canClose) return // If there is an alert or modal is cannot close, return
         setModal({...modal, canClose: false}) // Disable modal closure
 
         try {
-            const response = await axios.post(`${process.env.API_URL}/user/login`, { // Send POST request for login with input data
+            const response = await axios.post(`${process.env.API_URL}/user/forgot-password`, { // Send POST request for
                 email: email.current,
-                password: password.current,
             })
 
             if (response.data?.status === 'OK') { // If response is OK
-                setUser({loaded: true, ...response.data.user}) // Update user from auth context
-                setModal({...modal, canClose: true, active: null}) // Enable modal closure and close modal
+                setAlertPopup({ // Show an alert
+                    active: true,
+                    title: 'Password reset link sent',
+                    description: 'We sent you a link to reset your password. Please check your email address.',
+                    button: 'OK',
+                    type: 'primary',
+                })
+                setModal({canClose: true, active: <LoginModal/>}) // Show login modal
             } else throw new Error()
         } catch (e) { // If there is an error
             if (e.response && e.response.data.errors && Array.isArray(e.response.data.errors) && e.response.data.errors.length) // If there is an error from axios response
@@ -103,21 +104,19 @@ export default function LoginModal() {
             <div className={styles.logo}>
                 <LogoIcon/>
             </div>
-            <h3 className={styles.title}>Log in to Rival Account</h3>
-            <p className={styles.description}>Are you ready to explore your own music world?</p>
+            <h3 className={styles.title}>Reset Your Password</h3>
+            <p className={styles.description}>Enter your email address below and we'll send you a link to reset your password.</p>
             <div className={styles.form}>
                 <div className={styles.inputGroup}>
                     <Input type="text" placeholder="Your email" className={styles.input} autoComplete="off"
                            set={email} alert={alert.email} onChange={checkEmailField}/>
-                    <Input type="password" placeholder="Your password" className={styles.input} autoComplete="off"
-                           set={password} alert={alert.password} onChange={checkPassword}/>
                 </div>
-                <Button value="Sign in" icon={<NextIcon stroke={'#1c1c1c'}/>} onClick={handleSubmit}
+                <Button value="Send reset link" icon={<NextIcon stroke={'#1c1c1c'}/>} onClick={handleSubmit}
                         disabled={disableSubmit ? disableSubmit : !modal.canClose}/>
             </div>
             <div className={styles.extras}>
+                <span onClick={() => modal.canClose ? setModal({...modal, active: <LoginModal/>}) : false}>Back to login</span>
                 <span onClick={() => modal.canClose ? setModal({...modal, active: <SignupModal/>}) : false}>Create new account</span>
-                <span onClick={() => modal.canClose ? setModal({...modal, active: <ForgotPasswordModal/>}) : false}>Forgot your password?</span>
             </div>
         </div>
     )
