@@ -38,6 +38,7 @@
           .listItem
             padding: 0
             margin: .5rem 0
+            justify-content: center
 
             &:hover,
             &:active
@@ -134,8 +135,8 @@
           gap: .5rem
 
           button
-            width: 2.25rem
-            height: 2.25rem
+            width: 2rem
+            height: 2rem
             background-color: transparent
             border: 1px solid transparent
             border-radius: 50%
@@ -166,7 +167,7 @@
           display: flex
           align-items: center
           gap: .5rem
-          padding: .5rem
+          padding: 4px
           border-radius: .75rem
           white-space: nowrap
 
@@ -179,10 +180,8 @@
           .image
             border-radius: .5rem
             overflow: hidden
-            min-width: 3.5rem
-            min-height: 3.5rem
-            max-width: 3.5rem
-            max-height: 3.5rem
+            width: 48px
+            height: 48px
             display: flex
             justify-content: center
             align-items: center
@@ -199,10 +198,12 @@
               border: 1px solid rgba(82, 82, 82, .2)
               z-index: 1
 
-            img
+            img,
+            svg
+              display: block
               width: 100%
-              height: auto
-              object-fit: contain
+              height: 100%
+              object-fit: cover
 
           .info
             display: flex
@@ -210,6 +211,7 @@
             justify-content: center
             overflow: hidden
             color: #fff
+            max-width: calc(100% - 48px - .5rem)
 
             a
               color: #fff

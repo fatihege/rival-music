@@ -202,7 +202,7 @@ export default function NowPlayingBar() {
     return user?.loaded && user?.id && user?.token && track ? (
         <>
             <div
-                className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 516 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 516 || minimizeBar ? styles.lower : ''}`}>
+                className={`${!animateAlbumCover ? 'no_transition' : ''} ${styles.albumCover} ${showAlbumCover ? styles.show : ''} ${width >= maxWidth - 460 && showVisibilityBar && !minimizeBar ? styles.barOpened : ''} ${albumCoverRight ? styles.right : ''} ${width < maxWidth - 460 || minimizeBar ? styles.lower : ''}`}>
                 <Image src={track?.album?.cover} width={248} height={248} format={'webp'} alt={track?.title}
                        alternative={<AlbumDefault/>} loading={<Skeleton width={248} height={248} style={{top: '-3px'}}/>}/>
                 <div className={styles.overlay}>
@@ -257,7 +257,7 @@ export default function NowPlayingBar() {
                          onMouseDown={e => handleResizeDown(e, 1)}></div>
                     <div className={styles.track}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
-                            <Image src={track?.album?.cover} width={63} height={63} alt={track?.title} format={'webp'}
+                            <Image src={track?.album?.cover} width={100} height={100} alt={track?.title} format={'webp'}
                                    alternative={<AlbumDefault/>} loading={<Skeleton width={63} height={63} style={{top: '-3px'}}/>}/>
                             <div className={styles.overlay}>
                                 <TooltipHandler title={'Show big album cover'}>
@@ -347,12 +347,12 @@ export default function NowPlayingBar() {
                             <TooltipHandler title={'Open lyrics panel'}>
                                 <button className={styles.button}
                                         onClick={() => setTrackPanel({...trackPanel, active: !trackPanel.active})}>
-                                    <MicrophoneIcon strokeRate={1.2}/>
+                                    <MicrophoneIcon strokeRate={1.2} width={20} height={20}/>
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={showQueuePanel ? 'Hide queue' : 'Show queue'}>
                                 <button className={styles.button} onClick={() => setShowQueuePanel(prev => !prev)}>
-                                    <QueueIcon strokeRate={1.2}/>
+                                    <QueueIcon strokeRate={1.2} width={20} height={20}/>
                                 </button>
                             </TooltipHandler>
                             <div className={styles.volume}>

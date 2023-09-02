@@ -11,23 +11,21 @@
 
 .dragPreview
   position: fixed
-  top: 0
-  left: 0
+  top: -50px
+  left: -50px
   width: 40px
   height: 40px
   border-radius: 4px
   background-color: #1e1e1e
   border: 1px solid #222
   z-index: 9999
-  pointer-events: none
   overflow: hidden
+  pointer-events: none
   opacity: 0
-  transform: scale(.5) translate(-50%, -50%)
+  transform: translate(-50%, -50%)
 
   &.show
     opacity: .6
-    transform: scale(1) translate(-50%, -50%)
-    transition: opacity .15s ease-in-out, transform .15s ease-in-out
 
   img,
   svg
@@ -50,6 +48,10 @@
   &.active
     pointer-events: all
     opacity: 1
+
+  &.dragging,
+  &.dragging *
+    cursor: not-allowed !important
 
   .wrapper
     background: $foregroundDark

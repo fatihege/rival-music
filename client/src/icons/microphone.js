@@ -1,4 +1,4 @@
-export default function MicrophoneIcon({stroke = '#fff', strokeRate = 1}) {
+export default function MicrophoneIcon({stroke = '#fff', strokeRate = 1, width = null, height = null}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -11,6 +11,8 @@ export default function MicrophoneIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeMiterlimit: 1.5,
             }}
             viewBox="0 0 256 256"
+            width={width}
+            height={height}
         >
             <circle
                 cx={128}

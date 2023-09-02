@@ -117,9 +117,9 @@
       .slides
         position: relative
         display: flex
-        gap: 1.5rem
+        gap: 20px
         width: max-content
-        padding-right: .75rem
+        padding-right: 0
 
         &.wrap
           flex-wrap: wrap
@@ -132,6 +132,9 @@
           opacity: .7
 
         .item
+          min-width: 160px
+          max-width: 250px
+
           &.loading
             pointer-events: none
 
@@ -162,6 +165,10 @@
             position: relative
             width: 200px
             height: 200px
+            min-width: 160px
+            min-height: 160px
+            max-width: 250px
+            max-height: 250px
             border-radius: 10px
             overflow: hidden
             display: flex

@@ -3,12 +3,13 @@ import {useRouter} from 'next/router'
 import {useContext, useEffect, useRef, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
+import {ModalContext} from '@/contexts/modal'
+import {NavigationBarContext} from '@/contexts/navigation-bar'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
 import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
-import {ModalContext} from '@/contexts/modal'
 import AskLoginModal from '@/components/modals/ask-login'
 import Skeleton from 'react-loading-skeleton'
 
@@ -23,35 +24,17 @@ export default function Slider({type, title, items = []}) {
     const [user] = useContext(AuthContext) // Get user from auth context
     const {setQueue, setQueueIndex, handlePlayPause} = useContext(QueueContext) // Queue context
     const [, setModal] = useContext(ModalContext) // Modal context
+    const [navbarWidth] = useContext(NavigationBarContext) // Navigation bar width
+    const [albumWidth, setAlbumWidth] = useState(null) // Album width
+    const [artistWidth, setArtistWidth] = useState(null) // Artist width
     const router = useRouter() // Router instance
     const isScrolling = useRef(false) // Is slider scrolling
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const containerRef = useRef() // Slider container
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const sliderRef = useRef() // Slider wrapper
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const slidesRef = useRef() // Slides container
-    /**
-     * @type {React.MutableRefObject<HTMLButtonElement>}
-     */
     const prevButtonRef = useRef() // Previous button
-    /**
-     * @type {React.MutableRefObject<HTMLButtonElement>}
-     */
     const nextButtonRef = useRef() // Next button
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const referenceSlideRef = useRef() // Reference slide
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const fadingRef = useRef() // Fading overlay
     const [showAll, _setShowAll] = useState(false) // Show all state
     const showAllRef = useRef(showAll) // Show all state reference
@@ -175,6 +158,22 @@ export default function Slider({type, title, items = []}) {
         }
     }, [sliderRef, slidesRef, prevButtonRef, nextButtonRef, referenceSlideRef, items])
 
+    useEffect(() => {
+        if (!containerRef.current) return // Check if container is exist
+        const container = containerRef.current // Slider container reference
+        const handleResize = () => {
+            const containerWidth = container.getBoundingClientRect().width // Get container width
+            const albumWidth = containerWidth / 6 - 18 // Calculate album width (6 albums per slide)
+            const artistWidth = containerWidth / 7 - 18 // Calculate artist width (8 artists per slide)
+
+            setAlbumWidth(albumWidth) // Set item width
+            setArtistWidth(artistWidth) // Set artist width
+        }
+        handleResize() // Initially set slider width
+        window.addEventListener('resize', handleResize) // Add resize listener
+        return () => window.removeEventListener('resize', handleResize) // Remove resize listener
+    }, [navbarWidth])
+
     const handlePlay = (e, itemType, index) => {
         e.stopPropagation() // Prevent click on parent element
 
@@ -251,11 +250,13 @@ export default function Slider({type, title, items = []}) {
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
                         {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
                             (item?.type && item.type === 'album') || (!item?.type && type === 'album') ? (
-                                <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
-                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
-                                        <Image src={item?.cover} width={200} height={200} format={'webp'}
+                                <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                     style={{width: albumWidth || ''}}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
+                                    style={{width: albumWidth || '', height: albumWidth || ''}}>
+                                        <Image src={item?.cover} width={250} height={250} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
-                                               loading={<Skeleton height={200} width={200} style={{top: '-2px'}}/>}/>
+                                               loading={<Skeleton height={250} width={250} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album', i)}>
                                                 <PlayIcon/>
@@ -281,11 +282,13 @@ export default function Slider({type, title, items = []}) {
                                     </div>
                                 </div>
                             ) : (item?.type && item.type === 'track') || (!item?.type && type === 'track') ? (
-                                <div className={`${styles.item} ${styles.track}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
-                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
-                                        <Image src={item?.album?.cover} width={200} height={200} format={'webp'}
+                                <div className={`${styles.item} ${styles.track}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                     style={{width: albumWidth || ''}}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
+                                    style={{width: albumWidth || '', height: albumWidth || ''}}>
+                                        <Image src={item?.album?.cover} width={250} height={250} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
-                                               loading={<Skeleton height={200} width={200} style={{top: '-2px'}}/>}/>
+                                               loading={<Skeleton height={250} width={250} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'track', i)}>
                                                 <PlayIcon/>
@@ -311,8 +314,10 @@ export default function Slider({type, title, items = []}) {
                                     </div>
                                 </div>
                             ) : (item?.type && item.type === 'artist') || (!item?.type && type === 'artist') ? (
-                                <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}>
-                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}>
+                                <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                     style={{width: artistWidth || ''}}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
+                                    style={{width: artistWidth || '', height: artistWidth || ''}}>
                                         <Image src={item?.image} width={200} height={200} format={'webp'} alt={item?.title} alternative={
                                             <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>
                                         } loading={<Skeleton height={200} width={200} borderRadius={'100%'}/>}/>

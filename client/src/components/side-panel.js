@@ -11,7 +11,7 @@ import {TooltipHandler} from '@/components/tooltip'
 import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
-const MIN_WIDTH = 298, // Minimum width of the side panel
+const MIN_WIDTH = 268, // Minimum width of the side panel
     DEFAULT_WIDTH = 320, // Default width of the side panel
     MAX_WIDTH = 598 // Maximum width of the side panel
 
@@ -210,9 +210,9 @@ export default function SidePanel() {
                                     <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`} key={item?.id || item?._id}>
                                         <div className={styles.listItem}>
                                             <div className={styles.image}>
-                                                <Image src={item?.cover} width={56} height={56} format={'webp'}
+                                                <Image src={item?.cover} width={48} height={48} format={'webp'}
                                                        alt={item?.title} alternative={<AlbumDefault/>}
-                                                       loading={<Skeleton width={56} height={56} style={{top: '-2px'}}/>}/>
+                                                       loading={<Skeleton width={48} height={48} style={{top: '-2px'}}/>}/>
                                             </div>
                                             {!isMinimized && (
                                                 <div className={styles.info}>

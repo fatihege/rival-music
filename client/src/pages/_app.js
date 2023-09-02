@@ -11,6 +11,7 @@ import {AlertProvider} from '@/contexts/alert'
 import {DialogueProvider} from '@/contexts/dialogue'
 import {TooltipProvider} from '@/contexts/tooltip'
 import {LibraryProvider} from '@/contexts/library'
+import {DragDropProvider} from '@/contexts/drag-drop'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
 import '@/styles/globals.sass'
@@ -58,29 +59,31 @@ export default function App({Component, pageProps}) {
     return (
         <AlertProvider>
             <AuthProvider>
-                <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
-                    <Wrapper load={load}>
-                        <TooltipProvider>
-                                <DialogueProvider>
-                                    <LibraryProvider>
-                                        <AudioProvider>
-                                            <ModalProvider>
-                                                    <QueueProvider>
-                                                        <TrackPanelProvider>
-                                                            <NavigationBarProvider>
-                                                                <Main>
-                                                                    <Component {...pageProps}/>
-                                                                </Main>
-                                                            </NavigationBarProvider>
-                                                        </TrackPanelProvider>
-                                                    </QueueProvider>
-                                            </ModalProvider>
-                                        </AudioProvider>
-                                    </LibraryProvider>
-                                </DialogueProvider>
-                        </TooltipProvider>
-                    </Wrapper>
-                </SkeletonTheme>
+                <DragDropProvider>
+                    <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
+                        <Wrapper load={load}>
+                            <TooltipProvider>
+                                    <DialogueProvider>
+                                        <LibraryProvider>
+                                            <AudioProvider>
+                                                <ModalProvider>
+                                                        <QueueProvider>
+                                                            <TrackPanelProvider>
+                                                                <NavigationBarProvider>
+                                                                    <Main>
+                                                                        <Component {...pageProps}/>
+                                                                    </Main>
+                                                                </NavigationBarProvider>
+                                                            </TrackPanelProvider>
+                                                        </QueueProvider>
+                                                </ModalProvider>
+                                            </AudioProvider>
+                                        </LibraryProvider>
+                                    </DialogueProvider>
+                            </TooltipProvider>
+                        </Wrapper>
+                    </SkeletonTheme>
+                </DragDropProvider>
             </AuthProvider>
         </AlertProvider>
     )

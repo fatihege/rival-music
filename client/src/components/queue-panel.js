@@ -77,6 +77,7 @@ export default function QueuePanel() {
 
     const dragStart = track => {
         if (clickedRef.current && clickedRef.current?.id === track?.id && !dragItemRef.current) { // If clicked reference is exist and clicked reference's ID is equal to track's ID and drag item is not exist
+            console.log('dragStart')
             dragItemRef.current = track // Set drag item to track
             clickedRef.current = null // Reset clicked reference
         }
@@ -132,7 +133,7 @@ export default function QueuePanel() {
                            format={'webp'} alternative={<AlbumDefault/>}/>
                 ) : ''}
             </div>
-            <div className={`${styles.panel} ${showQueuePanel ? styles.active : ''}`}>
+            <div className={`${styles.panel} ${showQueuePanel ? styles.active : ''} ${dragItemRef.current ? styles.dragging : ''}`}>
                 <div className={styles.wrapper}>
                     <div className={styles.header}>
                         <div className={styles.leftColumn}>
