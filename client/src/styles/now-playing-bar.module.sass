@@ -365,11 +365,20 @@
             align-items: center
             gap: .25rem
 
-            span
-              display: inline-flex
-              align-items: center
+            &:hover
+              text-decoration: underline
 
+            .title
+              display: inline-block
+              overflow: hidden
+              white-space: nowrap
+              text-overflow: ellipsis
+              max-width: 100%
+
+            .explicit
               svg
+                position: relative
+                top: 2px
                 width: 14px
                 height: 14px
 

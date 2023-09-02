@@ -48,7 +48,9 @@ export default function NowPlayingBar() {
         setShowQueuePanel,
         track,
         isLiked,
-        setIsLiked
+        setIsLiked,
+        handlePrevTrack,
+        handleNextTrack,
     } = useContext(QueueContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, _setIsResizing] = useState(false) // Is now playing bar resizing
@@ -197,13 +199,6 @@ export default function NowPlayingBar() {
         }
     }
 
-    const handlePrev = () => {
-        if (queueIndex === 0) handleSeek(0) // If queue index is 0, seek to 0
-        else setQueueIndex(queueIndex - 1) // Otherwise, decrease queue index by 1
-    }
-
-    const handleNext = () => handleEnded(true) // Handle next track
-
     return user?.loaded && user?.id && user?.token && track ? (
         <>
             <div
@@ -276,15 +271,17 @@ export default function NowPlayingBar() {
                         <div className={styles.trackInfo}>
                             <div className={styles.trackName}>
                                 <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track?._id}`}>
-                                    <TooltipHandler title={track?.title || ''}>
-                                        {track?.title || ''}
-                                    </TooltipHandler>
-                                    {track?.explicit ? (
-                                        <TooltipHandler title={'Explicit content'}>
-                                            <span className={styles.explicit}>
-                                                <ExplicitIcon/>
-                                            </span>
+                                    <span className={styles.title}>
+                                        <TooltipHandler title={track?.title || ''}>
+                                            {track?.title || ''}
                                         </TooltipHandler>
+                                    </span>
+                                    {track?.explicit ? (
+                                        <span className={styles.explicit}>
+                                            <TooltipHandler title={'Explicit content'}>
+                                                <ExplicitIcon/>
+                                            </TooltipHandler>
+                                        </span>
                                     ) : ''}
                                 </Link>
                                 <TooltipHandler title={isLiked ? 'Unlike' : 'Like'}>
@@ -321,7 +318,7 @@ export default function NowPlayingBar() {
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={'Previous'}>
-                                <button className={`no_focus ${styles.prevTrack}`} onClick={handlePrev}>
+                                <button className={`no_focus ${styles.prevTrack}`} onClick={handlePrevTrack}>
                                     <PrevTrackIcon strokeRate={1.25}/>
                                 </button>
                             </TooltipHandler>
@@ -332,7 +329,7 @@ export default function NowPlayingBar() {
                                 </button>
                             </TooltipHandler>
                             <TooltipHandler title={'Next'}>
-                                <button className={`no_focus ${styles.nextTrack}`} onClick={handleNext}>
+                                <button className={`no_focus ${styles.nextTrack}`} onClick={handleNextTrack}>
                                     <NextTrackIcon strokeRate={1.25}/>
                                 </button>
                             </TooltipHandler>
