@@ -34,6 +34,8 @@ import DeleteIcon from '@/icons/delete'
 import AlbumDefault from '@/icons/album-default'
 import EditIcon from '@/icons/edit'
 import ExplicitIcon from '@/icons/explicit'
+import PrevThinIcon from '@/icons/prev-thin'
+import NextThinIcon from '@/icons/next-thin'
 
 export {
     Logo,
@@ -72,4 +74,6 @@ export {
     AlbumDefault,
     EditIcon,
     ExplicitIcon,
+    PrevThinIcon,
+    NextThinIcon,
 }

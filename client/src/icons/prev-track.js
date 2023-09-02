@@ -1,4 +1,4 @@
-export default function PrevTrackIcon({stroke = '#fff', strokeRate = 1}) {
+export default function PrevTrackIcon({stroke = '#fff', strokeRate = 1, width = null, height = null}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -10,28 +10,28 @@ export default function PrevTrackIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 64 64"
+            width={width}
+            height={height}
         >
-            <g transform="matrix(-0.879365,0,0,0.879365,247.06,15.4413)">
-                <g transform="matrix(0.895939,0,0,0.895939,30.8684,13.3198)">
-                    <path
-                        d="M0,60.825C-0,48.632 6.641,37.406 17.327,31.533C28.014,25.661 41.05,26.075 51.343,32.613C87.901,55.835 135.995,86.384 167.788,106.58C175.118,111.236 179.559,119.316 179.559,128C179.559,136.684 175.118,144.764 167.788,149.42C135.995,169.616 87.901,200.165 51.343,223.387C41.05,229.925 28.014,230.339 17.327,224.467C6.641,218.594 -0,207.368 -0,195.175C0,154.584 -0,101.416 0,60.825Z"
-                        style={{
-                            fill: "none",
-                            stroke,
-                            strokeWidth: `${26.44 * strokeRate}px`,
-                        }}
-                    />
-                </g>
-                <path
-                    d="M239.917,34.353L220.271,34.353C214.239,34.353 208.454,36.75 204.188,41.015C199.923,45.28 197.527,51.065 197.527,57.097L197.527,198.903C197.527,204.935 199.923,210.72 204.188,214.985C208.454,219.25 214.239,221.647 220.271,221.647L239.917,221.647"
-                    style={{
-                        fill: "none",
-                        stroke,
-                        strokeWidth: `${23.7 * strokeRate}px`,
-                    }}
-                />
-            </g>
+            <path
+                d="M0 60.825a33.423 33.423 0 0 1 51.343-28.212l116.445 73.967a25.376 25.376 0 0 1 0 42.84L51.343 223.387A33.423 33.423 0 0 1 0 195.175V60.825Z"
+                style={{
+                    fill: "none",
+                    stroke,
+                    strokeWidth: `${26.44 * strokeRate}px`,
+                }}
+                transform="matrix(-.19696 0 0 .19696 54.979 6.789)"
+            />
+            <path
+                d="M239.917 34.353h-19.646a22.743 22.743 0 0 0-22.744 22.744v141.806a22.743 22.743 0 0 0 22.744 22.744h19.646"
+                style={{
+                    fill: "none",
+                    stroke,
+                    strokeWidth: `${23.7 * strokeRate}px`,
+                }}
+                transform="matrix(-.21984 0 0 .21984 61.765 3.86)"
+            />
         </svg>
     )
 }

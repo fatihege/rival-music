@@ -2,12 +2,21 @@
 
 .container
   width: 100%
-  margin-bottom: 5rem
+  margin-bottom: 80px
+  position: relative
+
+  &.all
+    border-radius: 16px
+    background-color: #1f1f1f
+    padding: 16px
+    width: calc(100% + 32px)
+    top: -16px
+    left: -16px
 
   .header
     display: flex
     justify-content: space-between
-    align-items: flex-end
+    align-items: center
     margin-bottom: 1rem
 
     .title
@@ -15,25 +24,27 @@
       font-weight: 500
       opacity: .9
 
-    .controls
+    .showAll
       display: flex
       align-items: center
-      column-gap: .25rem
 
-      .control
+      span
+        color: #b4b4b4
         z-index: 1
         height: 40px
         font-size: .8rem
-        color: #b4b4b4
         font-weight: 400
-        border: none
+        padding: .25rem .5rem 0 .5rem
+        border-radius: 8px
+        line-height: 1
+        text-align: center
         cursor: pointer
-        background-color: transparent
-        transition: .15s ease-out
-        transition-property: opacity, background-color
         display: flex
         justify-content: center
         align-items: center
+        background-color: transparent
+        transition: .15s ease-out
+        transition-property: opacity, background-color
 
         &:hover,
         &:focus-visible
@@ -43,38 +54,11 @@
         &:focus-visible
           transform: scale(.9)
 
-      button.control
-        width: 40px
-        background: rgba(255, 255, 255, .05)
-        border-radius: 50%
-        position: relative
-
-        &::after
-          content: ""
-          position: absolute
-          top: 1px
-          left: 1px
-          width: calc(100% - 4px)
-          height: calc(100% - 4px)
-          border-radius: 50%
-          border: 1px solid rgba(208, 208, 208, .4)
-
-        &.disabled
-          opacity: .5
-          pointer-events: none
-
-        svg
-          width: 1.25rem
-          height: 1.25rem
-
-      span.control
-        padding: .25rem .5rem 0 .5rem
-        border-radius: 8px
-        line-height: 1
-        text-align: center
-
   .fading
     position: relative
+
+    &:hover > .control:not(.disabled)
+      opacity: 1
 
     &::before,
     &::after
@@ -90,17 +74,47 @@
 
     &::before
       left: 0
-      background-image: linear-gradient(to right, transparentize($foregroundDark, .2), transparentize($foregroundDark, 1))
+      background-image: linear-gradient(to right, transparentize($foregroundDark, .3), transparentize($foregroundDark, 1))
 
     &::after
       right: 0
-      background-image: linear-gradient(to left, transparentize($foregroundDark, .2), transparentize($foregroundDark, 1))
+      background-image: linear-gradient(to left, transparentize($foregroundDark, .3), transparentize($foregroundDark, 1))
 
     &.left::before
       opacity: 1
 
     &.right::after
       opacity: 1
+
+    > .control
+      position: absolute
+      z-index: 2
+      top: 0
+      width: 40px
+      height: 100%
+      cursor: pointer
+      background: none
+      border: none
+      padding-bottom: 47px
+      transition: opacity .3s ease-out
+      opacity: 0
+
+      &.hide
+        opacity: 0 !important
+        pointer-events: none !important
+
+      &.disabled
+        pointer-events: none
+
+      &.left
+        left: -40px
+
+      &.right
+        right: -40px
+
+      svg
+        width: 12px
+        height: 24px
 
     .wrapper
       width: 100%
@@ -207,6 +221,7 @@
               padding: 2rem
               transition: opacity .12s ease-out
               opacity: 0
+              z-index: 2
 
               .button
                 position: absolute
@@ -252,7 +267,8 @@
 
           .itemInfo
             margin-top: .25rem
-            max-width: 200px
+            min-width: 160px
+            max-width: 250px
 
             a
               font-size: .9rem

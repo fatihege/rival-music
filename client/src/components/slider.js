@@ -8,7 +8,7 @@ import {NavigationBarContext} from '@/contexts/navigation-bar'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
-import {AlbumDefault, NextIcon, OptionsIcon, PlayIcon, PrevIcon} from '@/icons'
+import {AlbumDefault, NextThinIcon, OptionsIcon, PlayIcon, PrevThinIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 import AskLoginModal from '@/components/modals/ask-login'
 import Skeleton from 'react-loading-skeleton'
@@ -22,11 +22,13 @@ import Skeleton from 'react-loading-skeleton'
  */
 export default function Slider({type, title, items = []}) {
     const [user] = useContext(AuthContext) // Get user from auth context
-    const {setQueue, setQueueIndex, handlePlayPause} = useContext(QueueContext) // Queue context
+    const {setQueue, setQueueIndex, handlePlayPause, showQueuePanel} = useContext(QueueContext) // Queue context
     const [, setModal] = useContext(ModalContext) // Modal context
     const [navbarWidth] = useContext(NavigationBarContext) // Navigation bar width
-    const [albumWidth, setAlbumWidth] = useState(null) // Album width
-    const [artistWidth, setArtistWidth] = useState(null) // Artist width
+    const [albumWidth, setAlbumWidth] = useState(0) // Album width
+    const [artistWidth, setArtistWidth] = useState(0) // Artist width
+    const albumWidthRef = useRef(albumWidth) // Album width reference
+    const artistWidthRef = useRef(artistWidth) // Artist width reference
     const router = useRouter() // Router instance
     const isScrolling = useRef(false) // Is slider scrolling
     const containerRef = useRef() // Slider container
@@ -62,6 +64,8 @@ export default function Slider({type, title, items = []}) {
         else nextButtonRef.current?.classList.remove(styles.disabled) // Otherwise, enable next slide button
     }
 
+    const getItemWidth = () => Math.max(Math.min(type === 'artist' ? artistWidthRef.current : albumWidthRef.current, 250), 160)
+
     useEffect(() => {
         if (showAll) fadingRef.current?.classList.remove(styles.left, styles.right) // If show all is true, hide left and right fading
         else checkFading() // Else, check fading
@@ -86,8 +90,8 @@ export default function Slider({type, title, items = []}) {
         const handleScroll = (prev = false) => { // Scroll to previous or next slide
             const sliderRect = slider?.getBoundingClientRect() // Slider wrapper rectangle
             const referenceSlideRect = referenceSlideRef.current?.getBoundingClientRect() // Reference slide rectangle
-            const referenceWidth = referenceSlideRect.width + 16 * 1.5 // Reference slide width + gap
-            const scrollAmount = (prev ? -1 : 1) * (referenceSlideRect ? sliderRect.width / referenceWidth * referenceWidth : 400) // Calculate scroll amount
+            const referenceWidth = getItemWidth() + 20 // Item width + gap
+            const scrollAmount = (prev ? -1 : 1) * (referenceSlideRect ? sliderRect.width / referenceWidth * referenceWidth : 400) + (prev ? 0 : referenceWidth) // Calculate scroll amount
             const snapScroll = (slider.scrollLeft + scrollAmount) % referenceWidth // Calculate scroll amount to snap to next slide
 
             slider.style.scrollBehavior = 'smooth' // Enable smooth scroll
@@ -112,7 +116,7 @@ export default function Slider({type, title, items = []}) {
             slider.style.scrollBehavior = 'smooth' // Enable smooth scroll
             if (e.target.classList.contains(styles.slides)) isScrolling.current = false // If target is not slides, set is scrolling to true
 
-            const referenceWidth = referenceSlideRef.current.getBoundingClientRect().width + 16 * 1.5 // Reference slide width + gap
+            const referenceWidth = getItemWidth() + 20 // Item width + gap
             const scrollPos = walk < 0 ?
                 Math.ceil(slider.scrollLeft / referenceWidth) * referenceWidth :
                 walk > 0 ? Math.ceil(slider.scrollLeft / referenceWidth) * referenceWidth - referenceWidth : null
@@ -161,17 +165,16 @@ export default function Slider({type, title, items = []}) {
     useEffect(() => {
         if (!containerRef.current) return // Check if container is exist
         const container = containerRef.current // Slider container reference
-        const handleResize = () => {
-            const containerWidth = container.getBoundingClientRect().width // Get container width
-            const albumWidth = containerWidth / 6 - 18 // Calculate album width (6 albums per slide)
-            const artistWidth = containerWidth / 7 - 18 // Calculate artist width (8 artists per slide)
+        const containerWidth = container.getBoundingClientRect().width // Get container width
+        const albumWidth = Math.min(Math.max(containerWidth / 6 - 17, 160), 250) // Calculate album width
+        const artistWidth = Math.min(Math.max(containerWidth / 7 - 17, 160), 200) // Calculate artist width
 
-            setAlbumWidth(albumWidth) // Set item width
-            setArtistWidth(artistWidth) // Set artist width
-        }
-        handleResize() // Initially set slider width
-        window.addEventListener('resize', handleResize) // Add resize listener
-        return () => window.removeEventListener('resize', handleResize) // Remove resize listener
+        console.log(albumWidth)
+
+        setAlbumWidth(albumWidth) // Set album width to calculate slide width
+        setArtistWidth(artistWidth) // Set artist width to calculate slide width
+        albumWidthRef.current = albumWidth // Set album width reference
+        artistWidthRef.current = artistWidth // Set artist width reference
     }, [navbarWidth])
 
     const handlePlay = (e, itemType, index) => {
@@ -217,35 +220,21 @@ export default function Slider({type, title, items = []}) {
     }
 
     return (
-        <div className={styles.container} ref={containerRef}>
+        <div className={`${styles.container} ${showAllRef.current ? styles.all : ''}`} ref={containerRef}>
             <div className={styles.header}>
                 <div className={styles.title}>
                     {title}
                 </div>
-                <div className={styles.controls}>
+                <div className={styles.showAll}>
                     {Array.isArray(items) && items?.length ? (
-                        <>
-                            {items?.length && (
-                                <span className={styles.control}
-                                      onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
-                            )}
-                            <TooltipHandler title={'Previous items'}>
-                                <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
-                                        ref={prevButtonRef}>
-                                    <PrevIcon stroke="#b4b4b4" strokeWidth={20}/>
-                                </button>
-                            </TooltipHandler>
-                            <TooltipHandler title={'Next items'}>
-                                <button className={`${styles.control} ${showAllRef.current ? styles.disabled : ''}`}
-                                        ref={nextButtonRef}>
-                                    <NextIcon stroke="#b4b4b4" strokeWidth={20}/>
-                                </button>
-                            </TooltipHandler>
-                        </>
+                        <span onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                     ) : ''}
                 </div>
             </div>
             <div className={styles.fading} ref={fadingRef}>
+                <button className={`${styles.control} ${styles.left} ${showAllRef.current ? styles.hide : ''}`} ref={prevButtonRef}>
+                    <PrevThinIcon/>
+                </button>
                 <div className={styles.wrapper} ref={sliderRef}>
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
                         {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
@@ -256,7 +245,7 @@ export default function Slider({type, title, items = []}) {
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
                                         <Image src={item?.cover} width={250} height={250} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
-                                               loading={<Skeleton height={250} width={250} style={{top: '-2px'}}/>}/>
+                                               loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album', i)}>
                                                 <PlayIcon/>
@@ -288,7 +277,7 @@ export default function Slider({type, title, items = []}) {
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
                                         <Image src={item?.album?.cover} width={250} height={250} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
-                                               loading={<Skeleton height={250} width={250} style={{top: '-2px'}}/>}/>
+                                               loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'track', i)}>
                                                 <PlayIcon/>
@@ -320,7 +309,7 @@ export default function Slider({type, title, items = []}) {
                                     style={{width: artistWidth || '', height: artistWidth || ''}}>
                                         <Image src={item?.image} width={200} height={200} format={'webp'} alt={item?.title} alternative={
                                             <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>
-                                        } loading={<Skeleton height={200} width={200} borderRadius={'100%'}/>}/>
+                                        } loading={<Skeleton height={artistWidth} width={artistWidth} borderRadius={'100%'}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist', i)}>
                                                 <PlayIcon/>
@@ -345,14 +334,21 @@ export default function Slider({type, title, items = []}) {
 
                             for (let i = 0; i < 6; i++)
                                 skeletons.push(
-                                    <div key={i} className={`${styles.item} ${type === 'artist' ? styles.artist : ''} ${styles.loading}`}>
-                                        <div className={styles.itemImage}>
-                                            <Skeleton width={200} height={200} style={{top: '-1px'}} borderRadius={type === 'artist' ? '50%' : '0'}/>
+                                    <div key={i} className={`${styles.item} ${type === 'artist' ? styles.artist : ''} ${styles.loading}`}
+                                        style={{width: type === 'artist' ? artistWidth : albumWidth}}>
+                                        <div className={styles.itemImage}
+                                                style={{width: type === 'artist' ? artistWidth : albumWidth,
+                                                    height: type === 'artist' ? artistWidth : albumWidth}}>
+                                            <Skeleton width={type === 'artist' ? artistWidth : albumWidth}
+                                                      height={type === 'artist' ? artistWidth : albumWidth}
+                                                      style={{top: '-1px'}} borderRadius={type === 'artist' ? '50%' : '0'}/>
                                         </div>
                                         <div className={styles.itemInfo}>
-                                            <div className={styles.itemName}>
-                                                <Skeleton/>
-                                            </div>
+                                            {type !== 'artist' ? (
+                                                <div className={styles.itemName}>
+                                                    <Skeleton/>
+                                                </div>
+                                            ) : ''}
                                             <div className={styles.itemArtist}>
                                                 <Skeleton height={16} width={120}/>
                                             </div>
@@ -364,6 +360,9 @@ export default function Slider({type, title, items = []}) {
                         })()}
                     </div>
                 </div>
+                <button className={`${styles.control} ${styles.right} ${showAllRef.current ? styles.hide : ''}`} ref={nextButtonRef}>
+                    <NextThinIcon/>
+                </button>
             </div>
         </div>
     )

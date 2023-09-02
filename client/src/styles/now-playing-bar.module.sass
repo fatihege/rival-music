@@ -264,18 +264,6 @@
         transition: .2s ease-in-out
         transition-property: min-width, width, opacity
 
-        &::after
-          content: ""
-          position: absolute
-          top: 0
-          left: 0
-          width: calc(100% - 2px)
-          height: calc(100% - 2px)
-          border-radius: 8px
-          border: 1px solid rgba(65, 65, 65, .4)
-          z-index: 1
-          pointer-events: none
-
         &.hide
           width: 0
           min-width: 0

@@ -246,7 +246,7 @@ export default function NowPlayingBar() {
                                     <feDisplacementMap in2="turbulence" in="SourceGraphic"
                                                        scale="40" xChannelSelector="R" yChannelSelector="B"/>
                                 </filter>
-                                <image href={`${process.env.IMAGE_CDN}/${track?.album?.cover}?width=200&height=200&format=webp`} width="110%"
+                                <image href={`${process.env.IMAGE_CDN}/${track?.album?.cover}?width=100&height=100&format=webp`} width="110%"
                                        height="140" x="-5%" y="-25"
                                        preserveAspectRatio="none" filter="url(#displacementFilter)"/>
                             </svg>

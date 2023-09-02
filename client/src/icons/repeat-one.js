@@ -1,4 +1,4 @@
-export default function RepeatOneIcon({stroke = '#fff', strokeRate = 1}) {
+export default function RepeatOneIcon({stroke = '#fff', strokeRate = 1, width = null, height = null}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -11,6 +11,8 @@ export default function RepeatOneIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeMiterlimit: 1.5,
             }}
             viewBox="0 0 64 64"
+            width={width}
+            height={height}
         >
             <g transform="matrix(0.199322,0,0,-0.199322,6.48672,57.9935)">
                 <g transform="matrix(1.35936,0,0,1.35936,-45.9979,-57.4819)">
