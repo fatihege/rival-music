@@ -19,8 +19,8 @@
   .coverBackground
     position: absolute
     z-index: 0
-    height: 560px
-    width: 560px
+    height: 500px
+    width: 500px
     padding: 65px 0 0 55px
 
     &::after
@@ -82,7 +82,7 @@
             height: 100%
             object-fit: cover
 
-        .albumInfo
+        .playlistInfo
           width: calc(100% - 500px)
           height: 300px
           display: flex
@@ -121,21 +121,21 @@
             .small
               display: flex
               font-size: .9rem
-              font-weight: 500
+              font-weight: 400
 
-              .genre,
-              .releaseYear
+              .likeCount,
+              .trackCount
                 opacity: .8
                 position: relative
 
-              .genre
+              .likeCount
                 margin-right: 1rem
                 max-width: 200px
                 white-space: nowrap
                 overflow: hidden
                 text-overflow: ellipsis
 
-              .releaseYear
+              .trackCount
                 &::after
                   content: ""
                   width: 4px
@@ -223,7 +223,7 @@
           font-size: .9rem
           font-weight: 600
           display: flex
-          padding: 1rem
+          padding: 8px 16px
           border-radius: .5rem
           color: #eeeeee
 
@@ -235,12 +235,6 @@
 
             .id
               opacity: 1
-
-              span
-                display: none
-
-              button
-                display: flex
 
           &.disabled
             opacity: .5
@@ -305,6 +299,20 @@
                 height: 100%
                 cursor: pointer
 
+          .cover
+            width: 40px
+            height: 40px
+            margin-right: 16px
+            border-radius: 4px
+            overflow: hidden
+
+            img,
+            svg
+              display: block
+              width: 100%
+              height: 100%
+              object-fit: cover
+
           .title
             flex: 1
             white-space: nowrap
@@ -314,7 +322,7 @@
             align-items: center
             line-height: 1
 
-            span
+            .explicit
               display: inline-flex
               align-items: center
               margin-left: 8px
@@ -361,3 +369,11 @@
                 display: block
                 width: 100%
                 height: 100%
+
+    .addTrackForm
+      padding: 40px 80px 0
+      margin-top: 40px
+      border-top: 1px solid #232323
+
+      .formField
+        width: 100%

@@ -169,8 +169,6 @@ export default function Slider({type, title, items = []}) {
         const albumWidth = Math.min(Math.max(containerWidth / 6 - 17, 160), 250) // Calculate album width
         const artistWidth = Math.min(Math.max(containerWidth / 7 - 17, 160), 200) // Calculate artist width
 
-        console.log(albumWidth)
-
         setAlbumWidth(albumWidth) // Set album width to calculate slide width
         setArtistWidth(artistWidth) // Set artist width to calculate slide width
         albumWidthRef.current = albumWidth // Set album width reference

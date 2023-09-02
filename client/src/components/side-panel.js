@@ -1,9 +1,11 @@
+import axios from 'axios'
 import {useRouter} from 'next/router'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
+import {AlertContext} from '@/contexts/alert'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {LibraryContext} from '@/contexts/library'
 import CustomScrollbar from '@/components/custom-scrollbar'
@@ -19,6 +21,7 @@ export default function SidePanel() {
     const resizerRef = useRef() // Reference to the resizer element
     const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get user from AuthContext
+    const [, setAlert] = useContext(AlertContext) // Use alert context for displaying alerts
     const [, setNavBarWidth] = useContext(NavigationBarContext) // Navigation bar width
     const [library, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [activeLink, setActiveLink] = useState(router.pathname || '/') // Active link
@@ -147,6 +150,25 @@ export default function SidePanel() {
         }
     }
 
+    const handleCreatePlaylist = () => {
+        axios.post(`${process.env.API_URL}/playlist/create`, {}, {
+            headers: {
+                Authorization: `Bearer ${user?.token}`,
+            }
+        }).then(res => {
+            if (res.data?.status === 'OK') router.push('/playlist/[id]', `/playlist/${res.data?.id}`)
+        }).catch(e => {
+            console.error(e)
+            setAlert({
+                active: true,
+                title: 'An error occurred',
+                description: 'An error occurred while creating the playlist',
+                button: 'OK',
+                type: '',
+            })
+        })
+    }
+
     return (
         <>
             <div className={`${styles.sidePanel} ${isMinimized ? styles.minimized : ''} ${!user?.loaded || !user?.id || !user?.token ? styles.notLoggedIn : ''}`}
@@ -192,7 +214,7 @@ export default function SidePanel() {
                             {!isMinimized && (
                                 <div className={styles.operations}>
                                     <TooltipHandler title={'Create playlist'}>
-                                        <button>
+                                        <button onClick={handleCreatePlaylist}>
                                             <AddIcon strokeRate={1.2} stroke={'#aeaeae'}/>
                                         </button>
                                     </TooltipHandler>
@@ -206,27 +228,56 @@ export default function SidePanel() {
                         </div>
                         <CustomScrollbar>
                             <div className={styles.libraryList}>
-                                {library ? library?.albums?.map(item => (
-                                    <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`} key={item?.id || item?._id}>
-                                        <div className={styles.listItem}>
-                                            <div className={styles.image}>
-                                                <Image src={item?.cover} width={48} height={48} format={'webp'}
-                                                       alt={item?.title} alternative={<AlbumDefault/>}
-                                                       loading={<Skeleton width={48} height={48} style={{top: '-2px'}}/>}/>
-                                            </div>
-                                            {!isMinimized && (
-                                                <div className={styles.info}>
-                                                    <div className={styles.name}>
-                                                        {item?.title}
+                                {library ? (
+                                    <>
+                                        {library?.playlists?.map(item => (
+                                            <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
+                                                  key={item?.id || item?._id}>
+                                                <div className={styles.listItem}>
+                                                    <div className={styles.image}>
+                                                        <Image src={item?.image || '0'} width={48} height={48} format={'webp'}
+                                                               alt={item?.title} alternative={<AlbumDefault/>}
+                                                               loading={<Skeleton width={48} height={48}
+                                                                                  style={{top: '-2px'}}/>}/>
                                                     </div>
-                                                    <div className={styles.creator}>
-                                                        {item?.artist?.name}
-                                                    </div>
+                                                    {!isMinimized && (
+                                                        <div className={styles.info}>
+                                                            <div className={styles.name}>
+                                                                {item?.title}
+                                                            </div>
+                                                            <div className={styles.creator}>
+                                                                {item?.owner?.name}
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                        </div>
-                                    </Link>
-                                )) : (
+                                            </Link>
+                                        ))}
+                                        {library?.albums?.map(item => (
+                                            <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`}
+                                                  key={item?.id || item?._id}>
+                                                <div className={styles.listItem}>
+                                                    <div className={styles.image}>
+                                                        <Image src={item?.cover} width={48} height={48} format={'webp'}
+                                                               alt={item?.title} alternative={<AlbumDefault/>}
+                                                               loading={<Skeleton width={48} height={48}
+                                                                                  style={{top: '-2px'}}/>}/>
+                                                    </div>
+                                                    {!isMinimized && (
+                                                        <div className={styles.info}>
+                                                            <div className={styles.name}>
+                                                                {item?.title}
+                                                            </div>
+                                                            <div className={styles.creator}>
+                                                                {item?.artist?.name}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </>
+                                    ) : (
                                     <>
                                         <Skeleton height={60} borderRadius={12}/>
                                         <Skeleton height={60} borderRadius={12}/>

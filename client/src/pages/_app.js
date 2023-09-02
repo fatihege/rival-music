@@ -22,18 +22,20 @@ export const useHistory = () => { // History hook
     const forwardRef = useRef([]) // Create forward reference
 
     useEffect(() => {
-        historyRef.current.push(router.asPath) // Push current path to the history when it changes
+        historyRef.current.push({url: router.pathname, as: router.asPath}) // Push current path to the history when it changes
     }, [router.asPath])
 
     const goBack = () => {
         if (historyRef.current.length > 1) { // If history length is greater than 1
             forwardRef.current.unshift(historyRef.current.pop()) // Push the current path from the history to the first index of the forward list
-            router.push(historyRef.current.pop()) // And change route to the last item of history
+            const historyItem = historyRef.current.pop()
+            if (historyItem) router.push(historyItem.url, historyItem.as) // And change route to the last item of history
         }
     }
 
     const goForward = () => {
-        if (forwardRef.current.length) router.push(forwardRef.current.shift()) // If forward list is not empty, change route to its first element
+        const forwardItem = forwardRef.current.shift() // Get the first element of the forward list
+        if (forwardRef.current.length || forwardItem) router.push(forwardItem.url, forwardItem.as) // If forward list is not empty, change route to its first element
     }
 
     const flushForward = () => forwardRef.current.splice(0, forwardRef.current.length) // Flush forward list
