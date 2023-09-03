@@ -91,7 +91,7 @@ export default function ChangeProfileModal() {
         try {
             const formData = new FormData() // Initialize a form data
 
-            if (image) formData.append('image', file) // If image state is defined, add an entry to the form data
+            if (file) formData.append('image', file) // If image state is defined, add an entry to the form data
             else if (!image && !file) formData.append('noImage', 'true') // Otherwise, set noImage entry to true if image and file states are not defined
 
             if (nameRef.current?.trim() !== user?.name) formData.append('name', nameRef.current) // If name is changed, add an entry to the form data
