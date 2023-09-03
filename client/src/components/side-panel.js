@@ -9,6 +9,7 @@ import {AlertContext} from '@/contexts/alert'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {LibraryContext} from '@/contexts/library'
 import CustomScrollbar from '@/components/custom-scrollbar'
+import PlaylistImage from '@/components/playlist-image'
 import {TooltipHandler} from '@/components/tooltip'
 import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
@@ -86,6 +87,7 @@ export default function SidePanel() {
 
     useEffect(() => {
         if (!user?.loaded || !user?.id || !user?.token) return // If user is not logged in, return
+        if (router.asPath === `/profile/${user?.id}`) return // If route is profile, return
         getUserLibrary()
     }, [user])
 
@@ -235,10 +237,27 @@ export default function SidePanel() {
                                                   key={item?.id || item?._id}>
                                                 <div className={styles.listItem}>
                                                     <div className={styles.image}>
-                                                        <Image src={item?.image || '0'} width={48} height={48} format={'webp'}
-                                                               alt={item?.title} alternative={<AlbumDefault/>}
-                                                               loading={<Skeleton width={48} height={48}
-                                                                                  style={{top: '-2px'}}/>}/>
+                                                        <PlaylistImage playlist={item} width={48} height={48}/>
+                                                    </div>
+                                                    {!isMinimized && (
+                                                        <div className={styles.info}>
+                                                            <div className={styles.name}>
+                                                                {item?.title}
+                                                            </div>
+                                                            <div className={styles.creator}>
+                                                                {item?.owner?.name}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </Link>
+                                        ))}
+                                        {library?.likedPlaylists?.map(item => (
+                                            <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
+                                                  key={item?.id || item?._id}>
+                                                <div className={styles.listItem}>
+                                                    <div className={styles.image}>
+                                                        <PlaylistImage playlist={item} width={48} height={48}/>
                                                     </div>
                                                     {!isMinimized && (
                                                         <div className={styles.info}>

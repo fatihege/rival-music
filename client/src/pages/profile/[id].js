@@ -29,7 +29,7 @@ export function getServerSideProps(context) {
 
 export default function UserProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user from auth context
-    const [library, , getUserLibrary] = useContext(LibraryContext) // Get library from library context
+    const [library, , getUserLibrary, getLibraryById] = useContext(LibraryContext) // Get library from library context
     const [, setModal] = useContext(ModalContext) // Use modal context
     const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
@@ -42,6 +42,10 @@ export default function UserProfilePage({id}) {
         setLoad(true) // Set load state to true
     }
 
+    const getActiveUserLibrary = async () => {
+        await getUserLibrary()
+    }
+
     useEffect(() => {
         if (user?.loaded && (!user?.id || !user?.token)) setModal({canClose: true, active: <AskLoginModal/>}) // If user is not logged in, show ask login modal
         if (!user?.loaded || !id) return // If user is not loaded, return
@@ -51,13 +55,19 @@ export default function UserProfilePage({id}) {
         if (user?.loaded && user?.id === id) {
             getUserLibrary() // Get user library
             setActiveUser({...activeUser, ...user}) // If the current user's id is equal to active user's id, merge them
+        } else if (user?.loaded && user?.id !== id) {
+            getLibraryById(id).then((library) => {
+                setActiveUser(prev => ({...prev, ...library})) // Otherwise, get user library by ID
+            }).catch(e => console.error(e))
         }
+    }, [id, user])
 
+    useEffect(() => {
         return () => { // When component is unmounted
             setLoad(false) // Set load state to false
             setActiveUser({}) // Reset active user
         }
-    }, [id, user])
+    }, [id])
 
     const handleFollow = async () => {
         if (!user?.id || !user?.token) return // If user is not logged in, return
@@ -137,9 +147,18 @@ export default function UserProfilePage({id}) {
                             <div className={styles.innerContent}>
                                 {activeUser?.id === user?.id ? (
                                     <>
+                                        <Slider type={'playlist'} title="Playlists" items={library ? library.playlists : null} />
                                         <Slider type={'track'} title="Last listened tracks" items={library ? library.lastListenedTracks : null} />
                                         <Slider type={'album'} title="Liked albums" items={library ? library.albums : null} />
                                         <Slider type={'track'} title="Liked tracks" items={library ? library.tracks : null} />
+                                    </>
+                                ) : ''}
+                                {activeUser?.id !== user?.id ? (
+                                    <>
+                                        <Slider type={'playlist'} title="Playlists" items={activeUser?.playlists} />
+                                        <Slider type={'track'} title="Last listened tracks" items={activeUser?.lastListenedTracks} />
+                                        <Slider type={'album'} title="Liked albums" items={activeUser?.albums} />
+                                        <Slider type={'track'} title="Liked tracks" items={activeUser?.tracks} />
                                     </>
                                 ) : ''}
                             </div>

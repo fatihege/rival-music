@@ -51,10 +51,28 @@ export default function App({Component, pageProps}) {
 
         const handleDragStart = e => e.preventDefault() // Prevent dragging
 
+        const handleWheel = e => { // Prevent zooming with ctrl + mouse wheel
+            if (e.ctrlKey) e.preventDefault()
+        }
+
+        const handleTouchStart = e => { // Prevent zooming with two fingers
+            if (e.touches.length > 1) e.preventDefault()
+        }
+
+        const handleKeyDown = e => { // Prevent zooming with ctrl + +, ctrl + -, ctrl + 0, ctrl + numpad_add, ctrl + numpad_subtract, ctrl + numpad_0
+            if (e.ctrlKey && ['+', '-', '0', 'numpad_add', 'numpad_subtract', 'numpad_0'].includes(e.key)) e.preventDefault()
+        }
+
         window.addEventListener('dragstart', handleDragStart)
+        window.addEventListener('wheel', handleWheel, {passive: false})
+        window.addEventListener('touchstart', handleTouchStart, {passive: false})
+        window.addEventListener('keydown', handleKeyDown, {passive: false})
 
         return () => {
             window.removeEventListener('dragstart', handleDragStart)
+            window.removeEventListener('wheel', handleWheel)
+            window.removeEventListener('touchstart', handleTouchStart)
+            window.removeEventListener('keydown', handleKeyDown)
         }
     }, [])
 

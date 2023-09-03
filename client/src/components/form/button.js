@@ -2,7 +2,7 @@ import styles from '@/styles/inputs.module.sass'
 
 /**
  * @param {string} value
- * @param {'primary' | string} type
+ * @param {'primary' | 'noBackground' | string} type
  * @param {JSX.Element<SVGElement>} icon
  * @param {string} className
  * @param {Function} onClick

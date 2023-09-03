@@ -12,11 +12,13 @@ import {ModalContext} from '@/contexts/modal'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
 import Input from '@/components/form/input'
+import PlaylistImage from '@/components/playlist-image'
 import AskLoginModal from '@/components/modals/ask-login'
+import EditPlaylistModal from '@/components/modals/edit-playlist'
 import NotFoundPage from '@/pages/404'
 import getPlaylistData from '@/utils/get-playlist-data'
 import formatTime from '@/utils/format-time'
-import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon} from '@/icons'
+import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon, EditIcon} from '@/icons'
 import styles from '@/styles/playlist.module.sass'
 
 export function getServerSideProps(context) {
@@ -105,8 +107,7 @@ export default function PlaylistPage({id}) {
             })
 
             if (response.data?.status === 'OK') { // If there is a response
-                if (response.data?.liked) setPlaylist({...playlist, liked: true}) // If playlist is liked, set liked state to true
-                else setPlaylist({...playlist, liked: false}) // Otherwise, set liked state to false
+                setPlaylist({...playlist, liked: response.data?.liked || false, likedUsers: response.data?.likes || 0})
                 getUserLibrary() // Get user library
             }
         } catch (e) {
@@ -164,7 +165,8 @@ export default function PlaylistPage({id}) {
             const lastIndex = tracks?.indexOf(id)
             const selected = tracks?.slice(Math.min(firstIndex, lastIndex), Math.max(firstIndex, lastIndex) + 1)
             setSelectedTracks(selected)
-        } else setSelectedTracks([id])
+        } else if (selectedTracks?.includes(id)) setSelectedTracks([])
+        else setSelectedTracks([id])
     }
 
     return load && !playlist?._id && !playlist?.id ? <NotFoundPage/> : (
@@ -182,17 +184,44 @@ export default function PlaylistPage({id}) {
                                 <feDisplacementMap in2="turbulence" in="SourceGraphic"
                                                    scale="60" xChannelSelector="R" yChannelSelector="B"/>
                             </filter>
-                            {playlist?.image ?
-                                <image href={`${process.env.IMAGE_CDN}/${playlist?.image}?width=100&height=100&format=webp`} width="110%"
-                                       height="110%" x="-20" y="-20" preserveAspectRatio="none"
-                                       filter="url(#displacementFilter)"/> : ''}
+                            {playlist?.image ? (
+                                <image href={`${process.env.IMAGE_CDN}/${playlist?.image}?width=100&height=100&format=webp`} width="385"
+                                       height="385" x="-20" y="-20" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                            ) : playlist?.covers?.length && playlist?.covers?.length > 3 ? (
+                                <>
+                                    <image href={`${process.env.IMAGE_CDN}/${playlist?.covers[0]}?width=25&height=25&format=webp`} width="193"
+                                         height="193" x="-20" y="-20" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                                    <image href={`${process.env.IMAGE_CDN}/${playlist?.covers[1]}?width=25&height=25&format=webp`} width="193"
+                                         height="193" x="173" y="-20" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                                    <image href={`${process.env.IMAGE_CDN}/${playlist?.covers[2]}?width=25&height=25&format=webp`} width="193"
+                                         height="193" x="-20" y="173" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                                    <image href={`${process.env.IMAGE_CDN}/${playlist?.covers[3]}?width=25&height=25&format=webp`} width="193"
+                                         height="193" x="173" y="173" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                                </>
+                            ) : playlist?.covers?.length ? (
+                                <image href={`${process.env.IMAGE_CDN}/${playlist?.covers[0]}?width=100&height=100&format=webp`} width="385"
+                                       height="385" x="-20" y="-20" preserveAspectRatio="none" filter="url(#displacementFilter)"/>
+                            ) : (
+                                <rect width="385" height="385" x="-20" y="-20" fill={'#161616'}/>
+                            )}
                         </svg>
                     </div>
                     <div className={styles.content}>
                         <div className={styles.coverSection}>
                             <div className={styles.coverWrapper}>
                                 <div className={styles.cover}>
-                                    <Image src={playlist?.image || '0'} width={300} height={300} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} height={300}/>}/>
+                                    <PlaylistImage playlist={playlist}/>
+                                    {playlist?.owner?._id === user?.id ? (
+                                        <div className={styles.overlay} onClick={() => {
+                                            setModal({
+                                                active: <EditPlaylistModal id={playlist?._id} setPlaylist={setPlaylist}/>,
+                                                canClose: true,
+                                            })
+                                        }}>
+                                            <EditIcon stroke={'#eee'}/>
+                                            Edit Playlist
+                                        </div>
+                                    ) : ''}
                                 </div>
                                 <div className={styles.playlistInfo}>
                                     <div className={styles.info}>
@@ -206,13 +235,17 @@ export default function PlaylistPage({id}) {
                                         ) : (
                                             <Link href={'/profile/[id]'}
                                                   as={`/profile/${playlist?.owner?._id || playlist?.owner?.id}`}
-                                                  className={styles.artist}>{playlist?.owner?.name}</Link>
+                                                  className={styles.owner}>{playlist?.owner?.name}</Link>
                                         )}
                                         {!load || !playlist?.createdAt ? (
                                             <Skeleton width={150} height={20}/>
                                         ) : (
                                             <div className={styles.small}>
-                                                <span className={styles.likeCount}>0 likes</span>
+                                                <span className={styles.likeCount}>{
+                                                    playlist?.likedUsers === 1 ?
+                                                        '1 like' :
+                                                        `${playlist?.likedUsers} likes`
+                                                }</span>
                                                 <span className={styles.trackCount}>{
                                                     playlist?.tracks?.length === 1 ?
                                                         '1 track' :
@@ -247,11 +280,7 @@ export default function PlaylistPage({id}) {
                                     </>
                                 ) : playlist && playlist?.tracks?.length ? playlist?.tracks?.map((track, index) => (
                                     <div key={index} id={track?._id}
-                                         onClick={e => handleSelectTrack(e, track?._id)} onDoubleClick={e => {
-                                             e.preventDefault()
-                                             e.stopPropagation()
-                                             handlePlay(track?._id)
-                                         }}
+                                         onClick={e => handleSelectTrack(e, track?._id)}
                                          className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
                                         <div className={styles.id}>
                                             {contextTrack?._id === track?._id && isPlaying ? (
@@ -267,16 +296,40 @@ export default function PlaylistPage({id}) {
                                         </div>
                                         <div className={styles.cover}>
                                             <Image src={track?.album?.cover || '0'} width={40} height={40} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} width={40} height={40}/>}/>
+                                            <button className={styles.play} onClick={e => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                if (contextTrack?._id === track?._id && isPlaying) handlePlayPause(false) // If track is playing, pause track
+                                                else handlePlay(track?._id) // Otherwise, play track
+                                            }}>
+                                                {contextTrack?._id === track?._id && isPlaying ? (
+                                                    <PauseIcon/>
+                                                ) : (
+                                                    <PlayIcon rounded={true}/>
+                                                )}
+                                            </button>
                                         </div>
-                                        <div className={styles.title}>
-                                            {track?.title}
-                                            {track?.explicit ? (
-                                                <TooltipHandler title={'Explicit content'}>
-                                                    <span className={styles.explicit}>
+                                        <div className={styles.infoColumn}>
+                                            <div className={styles.title}>
+                                                <p className={styles.titleInner}>
+                                                    {track?.title}
+                                                </p>
+                                                {track?.explicit ? (
+                                                    <TooltipHandler title={'Explicit content'}>
                                                         <ExplicitIcon fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                                    </span>
-                                                </TooltipHandler>
-                                            ) : ''}
+                                                    </TooltipHandler>
+                                                ) : ''}
+                                            </div>
+                                            <div className={styles.artist}>
+                                                <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`} onClick={e => e.stopPropagation()}>
+                                                    {track?.album?.artist?.name}
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        <div className={styles.album}>
+                                            <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`} onClick={e => e.stopPropagation()}>
+                                                {track?.album?.title}
+                                            </Link>
                                         </div>
                                         <div className={styles.lastColumn}>
                                             <button className={styles.like} onClick={e => {

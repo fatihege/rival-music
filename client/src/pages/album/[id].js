@@ -249,11 +249,7 @@ export default function AlbumPage({id}) {
                                     </>
                                 ) : album && album?.tracks?.length ? album?.tracks?.map((track, index) => (
                                     <div key={index} id={track?._id}
-                                         onClick={e => handleSelectTrack(e, track?._id)} onDoubleClick={e => {
-                                             e.preventDefault()
-                                             e.stopPropagation()
-                                             handlePlay(track?._id)
-                                         }}
+                                         onClick={e => handleSelectTrack(e, track?._id)}
                                          className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
                                         <div className={styles.id}>
                                             {contextTrack?._id === track?._id && isPlaying ? (

@@ -8,13 +8,14 @@ import {NavigationBarContext} from '@/contexts/navigation-bar'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
+import PlaylistImage from '@/components/playlist-image'
 import {AlbumDefault, NextThinIcon, OptionsIcon, PlayIcon, PrevThinIcon} from '@/icons'
 import styles from '@/styles/slider.module.sass'
 import AskLoginModal from '@/components/modals/ask-login'
 import Skeleton from 'react-loading-skeleton'
 
 /**
- * @param {'artist' | 'album' | 'track'} type
+ * @param {'artist' | 'album' | 'playlist' | 'track'} type
  * @param {string} title
  * @param {Array} items
  * @returns {JSX.Element}
@@ -200,6 +201,18 @@ export default function Slider({type, title, items = []}) {
             } catch (e) {
                 console.error(e)
             }
+        } else if (itemType === 'playlist') {
+            try {
+                axios.get(`${process.env.API_URL}/playlist/${items[index]?._id}?tracks=1`).then(response => {
+                    if (response.data.status === 'OK' && response.data?.playlist) {
+                        setQueue(response.data?.playlist?.tracks?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with playlist tracks
+                        setQueueIndex(0) // Set queue index to 0
+                        handlePlayPause(true) // Play tracks
+                    }
+                })
+            } catch (e) {
+                console.error(e)
+            }
         }
     }
 
@@ -212,6 +225,7 @@ export default function Slider({type, title, items = []}) {
         if (!isScrolling.current) { // If not scrolling, change route
             if ((item?.type && item.type === 'artist') || (!item?.type && type === 'artist')) router.push('/artist/[id]', `/artist/${item?._id}`)
             else if ((item?.type && item.type === 'album') || (!item?.type && type === 'album')) router.push('/album/[id]', `/album/${item?._id}`)
+            else if ((item?.type && item.type === 'playlist') || (!item?.type && type === 'playlist')) router.push('/playlist/[id]', `/playlist/${item?._id}`)
             else if ((item?.type && item.type === 'track') || (!item?.type && type === 'track')) router.push('/album/[id]', `/album/${item?.album?._id}#${item?._id}`)
         }
         else isScrolling.current = false // Set is scrolling to false
@@ -224,7 +238,7 @@ export default function Slider({type, title, items = []}) {
                     {title}
                 </div>
                 <div className={styles.showAll}>
-                    {Array.isArray(items) && items?.length ? (
+                    {Array.isArray(items) && items?.length && items.length > 1 ? (
                         <span onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                     ) : ''}
                 </div>
@@ -241,7 +255,7 @@ export default function Slider({type, title, items = []}) {
                                      style={{width: albumWidth || ''}}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
-                                        <Image src={item?.cover} width={250} height={250} format={'webp'}
+                                        <Image src={item?.cover || '0'} width={250} height={250} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
                                                loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
@@ -261,9 +275,39 @@ export default function Slider({type, title, items = []}) {
                                                 </TooltipHandler>
                                             </Link>
                                         </div>
-                                        <div className={styles.itemArtist}>
+                                        <div className={styles.itemOwner}>
                                             <Link href={'/artist/[id]'} as={`/artist/${item?.artist?._id || item?.artist?.id}`}>
                                                 {item?.artist?.name}
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (item?.type && item.type === 'playlist') || (!item?.type && type === 'playlist') ? (
+                                <div className={`${styles.item} ${styles.playlist}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                     style={{width: albumWidth || ''}}>
+                                    <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
+                                    style={{width: albumWidth || '', height: albumWidth || ''}}>
+                                        <PlaylistImage playlist={item} width={250} height={250}/>
+                                        <div className={styles.overlay}>
+                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'playlist', i)}>
+                                                <PlayIcon/>
+                                            </button>
+                                            <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
+                                                <OptionsIcon/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemName}>
+                                            <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}>
+                                                <TooltipHandler title={item?.title}>
+                                                    {item?.title}
+                                                </TooltipHandler>
+                                            </Link>
+                                        </div>
+                                        <div className={styles.itemOwner}>
+                                            <Link href={'/profile/[id]'} as={`/profile/${item?.owner?._id || item?.owner?.id}`}>
+                                                {item?.owner?.name}
                                             </Link>
                                         </div>
                                     </div>
@@ -273,7 +317,7 @@ export default function Slider({type, title, items = []}) {
                                      style={{width: albumWidth || ''}}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
-                                        <Image src={item?.album?.cover} width={250} height={250} format={'webp'}
+                                        <Image src={item?.album?.cover || '0'} width={250} height={250} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
                                                loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
@@ -293,7 +337,7 @@ export default function Slider({type, title, items = []}) {
                                                 </TooltipHandler>
                                             </Link>
                                         </div>
-                                        <div className={styles.itemArtist}>
+                                        <div className={styles.itemOwner}>
                                             <Link href={'/artist/[id]'} as={`/artist/${item?.album?.artist?._id}`}>
                                                 {item?.album?.artist?.name}
                                             </Link>
@@ -305,7 +349,7 @@ export default function Slider({type, title, items = []}) {
                                      style={{width: artistWidth || ''}}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: artistWidth || '', height: artistWidth || ''}}>
-                                        <Image src={item?.image} width={200} height={200} format={'webp'} alt={item?.title} alternative={
+                                        <Image src={item?.image || '0'} width={200} height={200} format={'webp'} alt={item?.title} alternative={
                                             <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>
                                         } loading={<Skeleton height={artistWidth} width={artistWidth} borderRadius={'100%'}/>}/>
                                         <div className={styles.overlay}>
@@ -325,7 +369,7 @@ export default function Slider({type, title, items = []}) {
                             ) : ''
                         ) : (
                             <div className={styles.noItems}>
-                                No tracks, albums or artists found
+                                There is no {type === 'artist' ? 'artists' : type === 'album' ? 'albums' : type === 'playlist' ? 'playlists' : 'tracks'} to show.
                             </div>
                         )) : (() => {
                             const skeletons = []
@@ -347,7 +391,7 @@ export default function Slider({type, title, items = []}) {
                                                     <Skeleton/>
                                                 </div>
                                             ) : ''}
-                                            <div className={styles.itemArtist}>
+                                            <div className={styles.itemOwner}>
                                                 <Skeleton height={16} width={120}/>
                                             </div>
                                         </div>
