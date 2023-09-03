@@ -42,10 +42,6 @@ export default function UserProfilePage({id}) {
         setLoad(true) // Set load state to true
     }
 
-    const getActiveUserLibrary = async () => {
-        await getUserLibrary()
-    }
-
     useEffect(() => {
         if (user?.loaded && (!user?.id || !user?.token)) setModal({canClose: true, active: <AskLoginModal/>}) // If user is not logged in, show ask login modal
         if (!user?.loaded || !id) return // If user is not loaded, return
