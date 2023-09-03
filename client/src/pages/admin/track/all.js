@@ -24,10 +24,8 @@ export default function ViewTracksPage() {
     const cursorRef = useRef(0) // Cursor state
     const sortingRef = useRef(sorting) // Sorting ref
     const tracksRef = useRef(tracks) // Tracks ref
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const contentRef = useRef()
+    const searchTimeoutRef = useRef()
 
     const setSorting = value => { // Set sorting state
         sortingRef.current = value
@@ -144,8 +142,12 @@ export default function ViewTracksPage() {
                 <div className={styles.searchContainer}>
                     <Input placeholder="Search track by title, album, artist, or genre" className={styles.search} onChange={value => {
                         searchRef.current = value
-                        if (!blockSearchRef.current) handleSearch()
-                        else blockSearchRef.current = false
+                        if (blockSearchRef.current) {
+                            blockSearchRef.current = false
+                            return
+                        }
+                        clearTimeout(searchTimeoutRef.current)
+                        searchTimeoutRef.current = setTimeout(handleSearch, 500)
                     }}/>
                 </div>
                 <div className={styles.tracksContainer}>

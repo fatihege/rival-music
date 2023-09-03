@@ -23,10 +23,8 @@ export default function ViewAlbumsPage() {
     const cursorRef = useRef(0) // Cursor state
     const sortingRef = useRef(sorting) // Sorting ref
     const albumsRef = useRef(albums) // Albums ref
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const contentRef = useRef()
+    const searchTimeoutRef = useRef()
 
     const setSorting = value => { // Set sorting state
         sortingRef.current = value
@@ -141,7 +139,10 @@ export default function ViewAlbumsPage() {
                     <button onClick={() => setSorting('least-songs')} className={sorting === 'least-songs' ? styles.active : ''}>Least songs</button>
                 </div>
                 <div className={styles.searchContainer}>
-                    <Input placeholder="Search album by title, artist, or genre" className={styles.search} onChange={value => setSearch(value)}/>
+                    <Input placeholder="Search album by title, artist, or genre" className={styles.search} onChange={value => {
+                        clearTimeout(searchTimeoutRef.current)
+                        searchTimeoutRef.current = setTimeout(() => setSearch(value), 500)
+                    }}/>
                 </div>
                 <div className={styles.albumsContainer}>
                     <div className={styles.albums}>

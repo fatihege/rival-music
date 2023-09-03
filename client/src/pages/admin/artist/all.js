@@ -23,9 +23,6 @@ export default function ViewArtistsPage() {
     const cursorRef = useRef(0) // Cursor state
     const sortingRef = useRef(sorting) // Sorting ref
     const artistsRef = useRef(artists) // Artists ref
-    /**
-     * @type {React.MutableRefObject<HTMLDivElement>}
-     */
     const contentRef = useRef()
 
     const setSorting = value => { // Set sorting state
