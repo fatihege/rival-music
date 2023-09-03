@@ -38,7 +38,7 @@ export default function ArtistProfilePage({id}) {
         if (!id) return // If ID property is not defined, return
 
         try {
-            const response = await axios.get(`${process.env.API_URL}/album/artist/${id}`) // Send GET request to the API
+            const response = await axios.get(`${process.env.API_URL}/album/artist/${id}?sorting=last-released`) // Send GET request to the API
             if (response.data?.albums?.length) setAlbums(response.data.albums) // If there is albums data in the response, set albums state
             else setAlbums([]) // Otherwise, set albums state to empty array
         } catch (e) {
