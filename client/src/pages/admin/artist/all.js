@@ -40,7 +40,7 @@ export default function ViewArtistsPage() {
         if (fromZero) cursorRef.current = 0 // If fromZero is true, set cursor to 0
 
         try {
-            const response = await axios.get(`${process.env.API_URL}/artist?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}${search?.trim()?.length ? `&query=${search?.trim()}` : ''}`) // Get artists from API
+            const response = await axios.get(`${process.env.API_URL}/artist${search?.trim()?.length ? `?query=${search.trim()}` : `?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}`}`) // Get artists from API
 
             if (response.data?.status === 'OK' && response.data?.artists) { // If response is OK
                 setArtists(fromZero ? response.data?.artists : [...artistsRef.current, ...response.data?.artists]) // Set artists state
@@ -77,6 +77,7 @@ export default function ViewArtistsPage() {
         if (!contentRef.current) return // If contentRef is not defined, return
 
         const handleScroll = () => { // Add scroll event listener
+            if (search?.trim()?.length) return // If there is a search query, return
             if (contentRef.current.scrollTop + contentRef.current.clientHeight >= contentRef.current.scrollHeight) getArtists() // If the user scrolled to the bottom of the page, get artists from API
         }
 

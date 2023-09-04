@@ -267,8 +267,17 @@
               display: flex
 
           &.disabled
-            opacity: .5
-            pointer-events: none
+            &:hover
+              background: #1f1f1f
+
+            .id,
+            .cover,
+            .infoColumn,
+            .album,
+            .lastColumn .like,
+            .lastColumn .duration
+              opacity: .6
+              pointer-events: none
 
           &.highlight
             background-color: $accentColor
@@ -476,5 +485,102 @@
       margin-top: 40px
       border-top: 1px solid #232323
 
+      .formTitle
+        font-size: 1.25rem
+        font-weight: 600
+        margin-bottom: 1rem
+
       .formField
         width: 100%
+
+      .results
+        margin-top: 1rem
+
+        .result
+          display: flex
+          align-items: center
+          padding: 6px
+          border-radius: 10px
+
+          &:nth-child(2n+2)
+            background-color: #1f1f1f
+
+          &:hover
+            background: #252525
+
+          .cover
+            border-radius: 4px
+            overflow: hidden
+            width: 40px
+            height: 40px
+
+            img,
+            svg
+              display: block
+              width: 100%
+              height: 100%
+              object-fit: cover
+
+          .info
+            flex: calc(50% - 150px)
+            display: flex
+            flex-direction: column
+            justify-content: center
+            margin-left: 8px
+
+            .title
+              line-height: 1.2
+
+              a
+                color: #eee
+                font-size: .9rem
+                font-weight: 600
+                max-width: 100%
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+            .artist
+              line-height: 1
+
+              a
+                font-size: .8rem
+                font-weight: 500
+                color: #eee
+                opacity: .7
+                max-width: 100%
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+          .album
+            flex: calc(50% - 100px)
+            line-height: 1
+
+            a
+              font-size: .8rem
+              font-weight: 500
+              color: #eee
+              opacity: .7
+              max-width: 100%
+              white-space: nowrap
+              overflow: hidden
+              text-overflow: ellipsis
+
+          .add
+            position: relative
+            right: 4px
+            width: 32px
+            height: 32px
+            margin-left: auto
+            cursor: pointer
+            border: none
+            background-color: $accentColor
+            border-radius: 8px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            svg
+              width: 20px
+              height: 20px

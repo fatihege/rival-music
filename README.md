@@ -14,6 +14,7 @@ This application is built using MERN (MongoDB, Express.js, React.js, Node.js) st
 * **Node.js** - Used for running server-side logic.
 * **Next.js** - Used for server-side rendering.
 * **Redis** - In-memory data store used for caching.
+* **MiniSearch** - Used for full-text search capabilities.
 
 ## Installation
 

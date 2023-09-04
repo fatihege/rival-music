@@ -3,7 +3,7 @@ import {useRouter} from 'next/router'
 import Head from 'next/head'
 import Link from '@/components/link'
 import Image from '@/components/image'
-import {useContext, useEffect, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
@@ -18,7 +18,7 @@ import EditPlaylistModal from '@/components/modals/edit-playlist'
 import NotFoundPage from '@/pages/404'
 import getPlaylistData from '@/utils/get-playlist-data'
 import formatTime from '@/utils/format-time'
-import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon, EditIcon} from '@/icons'
+import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon, EditIcon, AddIcon} from '@/icons'
 import styles from '@/styles/playlist.module.sass'
 
 export function getServerSideProps(context) {
@@ -48,6 +48,9 @@ export default function PlaylistPage({id}) {
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
     const [playlist, setPlaylist] = useState(null) // Playlist data
     const [selectedTracks, setSelectedTracks] = useState([]) // Selected tracks
+    const [searchResults, setSearchResults] = useState([]) // Search results
+    const searchRef = useRef('') // Search ref
+    const searchTimeoutRef = useRef()
 
     const getPlaylistInfo = async () => {
         if (!id) return // If ID property is not defined, return
@@ -169,6 +172,53 @@ export default function PlaylistPage({id}) {
         else setSelectedTracks([id])
     }
 
+    const handleSearch = async () => {
+        if (!searchRef.current?.trim()?.length) return setSearchResults([]) // If search query is empty, return
+        if (!user?.id || !user?.token) return setModal({ // If user is not logged in, open ask login modal
+            active: <AskLoginModal/>,
+            canClose: true,
+        })
+
+        try {
+            const response = await axios.get(`${process.env.API_URL}/track?query=${searchRef.current?.trim()}&limit=10`, { // Send GET request to the API
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                }
+            })
+
+            if (response.data?.status === 'OK' && response.data?.tracks) { // If there is a response
+                setSearchResults(response.data?.tracks)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const handleAddTrack = async track => {
+        if (!user?.id || !user?.token) return setModal({ // If user is not logged in, open ask login modal
+            active: <AskLoginModal/>,
+            canClose: true,
+        })
+
+        try {
+            const response = await axios.post(`${process.env.API_URL}/playlist/add-tracks/${playlist?._id}`, { // Send POST request to the API
+                tracks: [track?._id],
+            }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                }
+            })
+
+            if (response.data?.status === 'OK') { // If there is a response
+                setPlaylist({...playlist, tracks: [...(playlist?.tracks || []), ...response.data?.tracks]})
+                setSearchResults([])
+                searchRef.current = ''
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     return load && !playlist?._id && !playlist?.id ? <NotFoundPage/> : (
         <>
             <Head>
@@ -280,7 +330,7 @@ export default function PlaylistPage({id}) {
                                     </>
                                 ) : playlist && playlist?.tracks?.length ? playlist?.tracks?.map((track, index) => (
                                     <div key={index} id={track?._id}
-                                         onClick={e => handleSelectTrack(e, track?._id)}
+                                         onMouseDown={e => track?.audio ? handleSelectTrack(e, track?._id) : e.preventDefault()}
                                          className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
                                         <div className={styles.id}>
                                             {contextTrack?._id === track?._id && isPlaying ? (
@@ -345,7 +395,7 @@ export default function PlaylistPage({id}) {
                                                 className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
                                             <button>
                                                 <OptionsIcon
-                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
+                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
                                             </button>
                                         </div>
                                     </div>
@@ -357,7 +407,45 @@ export default function PlaylistPage({id}) {
                             </div>
                         </div>
                         <div className={styles.addTrackForm}>
-                            <Input placeholder={'Search for a track to add'} className={styles.formField}/>
+                            <h3 className={styles.formTitle}>Add Track</h3>
+                            <Input placeholder={'Search for a track to add'} className={styles.formField} set={searchRef} onChange={() => {
+                                clearTimeout(searchTimeoutRef.current)
+                                searchTimeoutRef.current = setTimeout(() => handleSearch(), 500)
+                            }}/>
+                            <div className={styles.results}>
+                                {searchResults?.length ? searchResults?.map((track, index) => (
+                                    <div key={index} className={styles.result}>
+                                        <div className={styles.cover}>
+                                            <Image src={track?.album?.cover || '0'} width={40} height={40} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} width={40} height={40}/>}/>
+                                        </div>
+                                        <div className={styles.info}>
+                                            <div className={styles.title}>
+                                                <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track._id}`} className={styles.titleInner}>
+                                                    {track?.title}
+                                                </Link>
+                                                {track?.explicit ? (
+                                                    <TooltipHandler title={'Explicit content'}>
+                                                        <ExplicitIcon fill={'#eee'}/>
+                                                    </TooltipHandler>
+                                                ) : ''}
+                                            </div>
+                                            <div className={styles.artist}>
+                                                <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}>
+                                                    {track?.album?.artist?.name}
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        <div className={styles.album}>
+                                            <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`}>
+                                                {track?.album?.title}
+                                            </Link>
+                                        </div>
+                                        <button className={styles.add} onClick={() => handleAddTrack(track)}>
+                                            <AddIcon stroke={'#282828'} strokeRate={1.5}/>
+                                        </button>
+                                    </div>
+                                )) : ''}
+                            </div>
                         </div>
                     </div>
                 </div>

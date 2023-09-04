@@ -42,7 +42,7 @@ export default function ViewTracksPage() {
         if (fromZero) cursorRef.current = 0 // If fromZero is true, set cursor to 0
 
         try {
-            const response = await axios.get(`${process.env.API_URL}/track?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}${searchRef.current?.trim()?.length ? `&query=${searchRef.current?.trim()}` : ''}`) // Get tracks from API
+            const response = await axios.get(`${process.env.API_URL}/track${searchRef.current?.trim()?.length ? `?query=${searchRef.current?.trim()}` : `?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}`}`) // Get tracks from API
 
             if (response.data?.status === 'OK' && response.data?.tracks) { // If response is OK
                 setTracks(fromZero ? response.data?.tracks : [...tracksRef.current, ...response.data?.tracks]) // Set tracks state
@@ -75,6 +75,7 @@ export default function ViewTracksPage() {
         if (!contentRef.current) return // If contentRef is not defined, return
 
         const handleScroll = () => { // Add scroll event listener
+            if (searchRef.current?.trim()?.length) return // If there is a search query, return
             if (contentRef.current.scrollTop + contentRef.current.clientHeight >= contentRef.current.scrollHeight) getTracks() // If the user scrolled to the bottom of the page, get tracks from API
         }
 
@@ -140,7 +141,7 @@ export default function ViewTracksPage() {
                     <button onClick={() => setSorting('least-songs')} className={sorting === 'least-songs' ? styles.active : ''}>Least songs</button>
                 </div>
                 <div className={styles.searchContainer}>
-                    <Input placeholder="Search track by title, album, artist, or genre" className={styles.search} onChange={value => {
+                    <Input placeholder="Search track by title, album, or artist" className={styles.search} onChange={value => {
                         searchRef.current = value
                         if (blockSearchRef.current) {
                             blockSearchRef.current = false

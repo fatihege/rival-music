@@ -41,7 +41,7 @@ export default function ViewAlbumsPage() {
         if (fromZero) cursorRef.current = 0 // If fromZero is true, set cursor to 0
 
         try {
-            const response = await axios.get(`${process.env.API_URL}/album?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}${search?.trim()?.length ? `&query=${search?.trim()}` : ''}`) // Get albums from API
+            const response = await axios.get(`${process.env.API_URL}/album${search?.trim()?.length ? `?query=${search?.trim()}` : `?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}`}`) // Get albums from API
 
             if (response.data?.status === 'OK' && response.data?.albums) { // If response is OK
                 setAlbums(fromZero ? response.data?.albums : [...albumsRef.current, ...response.data?.albums]) // Set albums state
@@ -78,6 +78,7 @@ export default function ViewAlbumsPage() {
         if (!contentRef.current) return // If contentRef is not defined, return
 
         const handleScroll = () => { // Add scroll event listener
+            if (search?.trim()?.length) return // If there is a search query, return
             if (contentRef.current.scrollTop + contentRef.current.clientHeight >= contentRef.current.scrollHeight) getAlbums() // If the user scrolled to the bottom of the page, get albums from API
         }
 
@@ -139,7 +140,7 @@ export default function ViewAlbumsPage() {
                     <button onClick={() => setSorting('least-songs')} className={sorting === 'least-songs' ? styles.active : ''}>Least songs</button>
                 </div>
                 <div className={styles.searchContainer}>
-                    <Input placeholder="Search album by title, artist, or genre" className={styles.search} onChange={value => {
+                    <Input placeholder="Search album by title or artist" className={styles.search} onChange={value => {
                         clearTimeout(searchTimeoutRef.current)
                         searchTimeoutRef.current = setTimeout(() => setSearch(value), 500)
                     }}/>
