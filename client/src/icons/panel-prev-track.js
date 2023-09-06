@@ -9,21 +9,21 @@ export default function PanelPrevTrackIcon({fill = '#fff'}) {
                 strokeLinejoin: "round",
                 strokeMiterlimit: 2,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
             <path
                 d="M0 30.684a16.86 16.86 0 0 1 25.9-14.232l153.206 97.316a16.862 16.862 0 0 1 0 28.464L25.9 239.548A16.86 16.86 0 0 1 0 225.316V30.684Z"
                 style={{
                     fill,
                 }}
-                transform="matrix(-.6438 0 0 .6438 248.344 45.593)"
+                transform="matrix(-.08048 0 0 .08048 31.043 5.7)"
             />
             <path
                 d="M0 30.684a16.86 16.86 0 0 1 25.9-14.232l153.206 97.316a16.862 16.862 0 0 1 0 28.464L25.9 239.548A16.86 16.86 0 0 1 0 225.316V30.684Z"
                 style={{
                     fill,
                 }}
-                transform="matrix(-.6438 0 0 .6438 128 45.593)"
+                transform="matrix(-.08048 0 0 .08048 16 5.7)"
             />
         </svg>
     )

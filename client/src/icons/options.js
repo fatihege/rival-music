@@ -9,9 +9,9 @@ export default function OptionsIcon({fill = '#fff'}) {
                 strokeLinejoin: "round",
                 strokeMiterlimit: 2,
             }}
-            viewBox="0 0 64 64"
+            viewBox="0 0 32 32"
         >
-            <g transform="translate(-23.442 -4.366) scale(1.13645)">
+            <g transform="matrix(.56822 0 0 .56822 -11.721 -2.183)">
                 <circle
                     cx={32}
                     cy={32}

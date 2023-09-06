@@ -1,4 +1,4 @@
-export default function VolumeMuteIcon({stroke = '#fff', strokeRate = 1}) {
+export default function ShareIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -13,31 +13,31 @@ export default function VolumeMuteIcon({stroke = '#fff', strokeRate = 1}) {
             viewBox="0 0 32 32"
         >
             <path
-                d="M127.878 49.13h-12.285c-16.153 0-29.246 13.094-29.246 29.246v.003c0 16.152 13.093 29.246 29.246 29.246h12.285l17.345 13.986a15.009 15.009 0 0 0 24.43-11.685V46.829a15.01 15.01 0 0 0-24.43-11.685L127.878 49.13Z"
+                d="M1.21 13.017s.109 5.544.109 12.655A6.326 6.326 0 0 0 7.648 32h16.704a6.326 6.326 0 0 0 6.329-6.328c0-7.111-.109-12.655-.109-12.655"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${8.2 * strokeRate}px`,
+                    strokeWidth: `${3.05 * strokeRate}px`,
                 }}
-                transform="matrix(.22236 0 0 .22236 -18.265 -1.428)"
+                transform="matrix(.75808 0 0 .75808 3.87 4.281)"
             />
             <path
-                d="m201.612 103.517-33.191 33.192"
+                d="M0 32V0h32"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${11.88 * strokeRate}px`,
+                    strokeWidth: `${7.59 * strokeRate}px`,
                 }}
-                transform="matrix(.15347 0 0 .15347 -3.172 -2.433)"
+                transform="scale(.30432) rotate(45 12.563 69.15)"
             />
             <path
-                d="m201.612 103.517-33.191 33.192"
+                d="M16 9.71V16"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${11.88 * strokeRate}px`,
+                    strokeWidth: `${1.05 * strokeRate}px`,
                 }}
-                transform="matrix(0 -.15347 .15347 0 6.789 44.394)"
+                transform="translate(-19.03 -17.798) scale(2.18937)"
             />
         </svg>
     )

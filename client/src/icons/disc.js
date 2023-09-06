@@ -1,4 +1,4 @@
-export default function AddIcon({stroke = '#fff', strokeRate = 1}) {
+export default function DiscIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,23 +12,26 @@ export default function AddIcon({stroke = '#fff', strokeRate = 1}) {
             }}
             viewBox="0 0 32 32"
         >
-            <path
-                d="M128 18.403V241.54"
+            <circle
+                cx={16}
+                cy={16}
+                r={12.63}
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${22.08 * strokeRate}px`,
+                    strokeWidth: `${2.45 * strokeRate}px`,
                 }}
-                transform="matrix(.09437 0 0 .09437 3.872 3.686)"
             />
-            <path
-                d="M128 18.403V241.54"
+            <circle
+                cx={16}
+                cy={16}
+                r={12.63}
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${22.08 * strokeRate}px`,
+                    strokeWidth: `${8.87 * strokeRate}px`,
                 }}
-                transform="matrix(0 -.09437 .09437 0 3.686 28.03)"
+                transform="matrix(.2766 0 0 .2766 11.575 11.575)"
             />
         </svg>
     )

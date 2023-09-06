@@ -36,7 +36,9 @@ export default function TrackPanel() {
         handleLoop,
         shuffle,
         handleShuffle,
-        track
+        track,
+        handleNextTrack,
+        handlePrevTrack,
     } = useContext(QueueContext) // Audio controls context
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [fade, setFade] = useState(false) // Can the panel fade in
@@ -101,13 +103,6 @@ export default function TrackPanel() {
     }
 
     const close = () => setTrackPanel({...trackPanel, active: false}) // Close track panel
-
-    const handlePrev = () => {
-        if (queueIndex === 0) handleSeek(0) // If queue index is 0, seek to 0
-        else setQueueIndex(queueIndex - 1) // Otherwise, decrease queue index by 1
-    }
-
-    const handleNext = () => handleEnded(true) // Handle next track
 
     const isActive = (l, i) => currentTime * 1000 >= l.start && (lyrics[i + 1]?.start || currentTime * 1000 + 1) > currentTime * 1000
 
@@ -182,18 +177,18 @@ export default function TrackPanel() {
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={'Previous'}>
-                                        <button className={`no_focus ${styles.bigger}`} onClick={handlePrev}>
+                                        <button className={`no_focus ${styles.bigger}`} onClick={handlePrevTrack}>
                                             <PanelPrevTrackIcon/>
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={isPlaying ? 'Pause' : 'Play'}>
-                                        <button className={`no_focus ${styles.bigger}`} onKeyDown={e => e.preventDefault()}
+                                        <button className={`no_focus ${styles.bigger} ${styles.play}`}
                                                 onClick={() => handlePlayPause()} ref={playButton}>
-                                            {!isPlaying ? <PlayIcon/> : <PauseIcon/>}
+                                            {!isPlaying ? <PlayIcon rounded={true}/> : <PauseIcon/>}
                                         </button>
                                     </TooltipHandler>
                                     <TooltipHandler title={'Next'}>
-                                        <button className={`no_focus ${styles.bigger}`} onClick={handleNext}>
+                                        <button className={`no_focus ${styles.bigger}`} onClick={handleNextTrack}>
                                             <PanelNextTrackIcon/>
                                         </button>
                                     </TooltipHandler>

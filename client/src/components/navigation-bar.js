@@ -1,5 +1,6 @@
 import {useRouter} from 'next/router'
 import {useContext} from 'react'
+import Skeleton from 'react-loading-skeleton'
 import {useHistory} from '@/pages/_app'
 import {AuthContext} from '@/contexts/auth'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
@@ -13,7 +14,6 @@ import {TooltipHandler} from '@/components/tooltip'
 import {RGBtoString} from '@/utils/color-converter'
 import {NextIcon, PrevIcon} from '@/icons'
 import styles from '@/styles/navigation-bar.module.sass'
-import Skeleton from 'react-loading-skeleton'
 
 export default function NavigationBar() {
     const router = useRouter()

@@ -15,7 +15,7 @@ import AskLoginModal from '@/components/modals/ask-login'
 import NotFoundPage from '@/pages/404'
 import getAlbumData from '@/utils/get-album-data'
 import formatTime from '@/utils/format-time'
-import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon} from '@/icons'
+import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon, DiscIcon} from '@/icons'
 import styles from '@/styles/album.module.sass'
 
 export function getServerSideProps(context) {
@@ -142,8 +142,14 @@ export default function AlbumPage({id}) {
         if (!contextTrack) return // If track is not defined, return
 
         if (album?.tracks?.find(t => t._id === contextTrack?._id)) { // If track is in the album
-            if (isLiked && !album?.likes?.includes(contextTrack?._id)) setAlbum({...album, likes: [...album.likes, contextTrack?._id]}) // If track is not liked, push track ID to the likes array
-            else if (!isLiked && album?.likes?.includes(contextTrack?._id)) setAlbum({...album, likes: album.likes.filter(t => t !== contextTrack?._id)}) // Otherwise, remove track ID from the likes array
+            if (isLiked && !album?.likes?.includes(contextTrack?._id)) setAlbum({
+                ...album,
+                likes: [...album.likes, contextTrack?._id]
+            }) // If track is not liked, push track ID to the likes array
+            else if (!isLiked && album?.likes?.includes(contextTrack?._id)) setAlbum({
+                ...album,
+                likes: album.likes.filter(t => t !== contextTrack?._id)
+            }) // Otherwise, remove track ID from the likes array
         }
     }, [isLiked, contextTrack])
 
@@ -181,16 +187,20 @@ export default function AlbumPage({id}) {
                                                    scale="60" xChannelSelector="R" yChannelSelector="B"/>
                             </filter>
                             {album?.cover ?
-                                <image href={`${process.env.IMAGE_CDN}/${album?.cover}?width=100&height=100&format=webp`} width="110%"
-                                       height="110%" x="-20" y="-20" preserveAspectRatio="none"
-                                       filter="url(#displacementFilter)"/> : ''}
+                                <image
+                                    href={`${process.env.IMAGE_CDN}/${album?.cover}?width=100&height=100&format=webp`}
+                                    width="110%"
+                                    height="110%" x="-20" y="-20" preserveAspectRatio="none"
+                                    filter="url(#displacementFilter)"/> : ''}
                         </svg>
                     </div>
                     <div className={styles.content}>
                         <div className={styles.coverSection}>
                             <div className={styles.coverWrapper}>
                                 <div className={styles.cover}>
-                                    <Image src={album?.cover || '0'} width={300} height={300} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} height={300}/>}/>
+                                    <Image src={album?.cover || '0'} width={300} height={300} format={'webp'}
+                                           alternative={<AlbumDefault/>}
+                                           loading={<Skeleton style={{top: '-3px'}} height={300}/>}/>
                                 </div>
                                 <div className={styles.albumInfo}>
                                     <div className={styles.info}>
@@ -225,7 +235,8 @@ export default function AlbumPage({id}) {
                                         </button>
                                         {album !== null && (
                                             <button className={styles.like} onClick={handleLikeAlbum}>
-                                                <LikeIcon fill={album?.liked ? '#1c1c1c' : 'none'} stroke={'#1c1c1c'} strokeRate={1.25}/>
+                                                <LikeIcon fill={album?.liked ? '#1c1c1c' : 'none'} stroke={'#1c1c1c'}
+                                                          strokeRate={1.25}/>
                                                 {album?.liked ? 'Liked' : 'Like'}
                                             </button>
                                         )}
@@ -234,7 +245,8 @@ export default function AlbumPage({id}) {
                                 {user?.id && user?.token && user?.admin ? (
                                     <div className={styles.adminControls}>
                                         <Link href={`/admin/track/create#${album?._id || album?.id}`}>Add Track</Link>
-                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit Album</Link>
+                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit
+                                            Album</Link>
                                     </div>
                                 ) : ''}
                             </div>
@@ -247,67 +259,83 @@ export default function AlbumPage({id}) {
                                         <Skeleton width={'100%'} height={52} borderRadius={8}/>
                                         <Skeleton width={'100%'} height={52} borderRadius={8}/>
                                     </>
-                                ) : album && album?.tracks?.length ? album?.tracks?.map((track, index) => (
-                                    <div key={index} id={track?._id}
-                                         onClick={e => handleSelectTrack(e, track?._id)}
-                                         className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
-                                        <div className={styles.id}>
-                                            {contextTrack?._id === track?._id && isPlaying ? (
-                                                <>
-                                                    <span className={styles.playing}>
-                                                        <span></span>
-                                                        <span></span>
-                                                    </span>
-                                                    <button onClick={e => {
+                                ) : album && album?.discs?.length ? album?.discs?.map((disc, index) => (
+                                    <div key={index} className={styles.disc}>
+                                        {album?.discs?.length > 1 ? (
+                                            <div className={styles.discTitle}>
+                                                <DiscIcon stroke={'#eee'}/>
+                                                <span>Disc {index + 1}</span>
+                                            </div>
+                                        ) : ''}
+                                        {disc?.length ? disc?.map((track, index) => (
+                                            <div key={index} id={track?._id}
+                                                 onClick={e => handleSelectTrack(e, track?._id)}
+                                                 className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
+                                                <div className={styles.id}>
+                                                    {contextTrack?._id === track?._id && isPlaying ? (
+                                                        <>
+                                                        <span className={styles.playing}>
+                                                            <span></span>
+                                                            <span></span>
+                                                        </span>
+                                                            <button onClick={e => {
+                                                                e.preventDefault()
+                                                                e.stopPropagation()
+                                                                handlePlayPause(false)
+                                                            }}>
+                                                                <PauseIcon
+                                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                        <span>
+                                                            {index + 1}
+                                                        </span>
+                                                            <button onClick={e => {
+                                                                e.preventDefault()
+                                                                e.stopPropagation()
+                                                                handlePlay(track?._id)
+                                                            }}>
+                                                                <PlayIcon
+                                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}
+                                                                    rounded={true}/>
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <div className={styles.title}>
+                                                    {track?.title}
+                                                    {track?.explicit ? (
+                                                        <TooltipHandler title={'Explicit content'}>
+                                                            <ExplicitIcon
+                                                                fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
+                                                        </TooltipHandler>
+                                                    ) : ''}
+                                                </div>
+                                                <div className={styles.lastColumn}>
+                                                    <button className={styles.like} onClick={e => {
                                                         e.preventDefault()
                                                         e.stopPropagation()
-                                                        handlePlayPause(false)
+                                                        toggleLikeTrack(track?._id)
                                                     }}>
-                                                        <PauseIcon fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
+                                                        <LikeIcon
+                                                            fill={album?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
+                                                            stroke={album?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
                                                     </button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span>
-                                                        {index + 1}
-                                                    </span>
-                                                    <button onClick={e => {
-                                                        e.preventDefault()
-                                                        e.stopPropagation()
-                                                        handlePlay(track?._id)
-                                                    }}>
-                                                        <PlayIcon
-                                                            fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}
-                                                            rounded={true}/>
+                                                    <div
+                                                        className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
+                                                    <button>
+                                                        <OptionsIcon
+                                                            fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
                                                     </button>
-                                                </>
-                                            )}
-                                        </div>
-                                        <div className={styles.title}>
-                                            {track?.title}
-                                            {track?.explicit ? (
-                                                <TooltipHandler title={'Explicit content'}>
-                                                    <ExplicitIcon fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                                </TooltipHandler>
-                                            ) : ''}
-                                        </div>
-                                        <div className={styles.lastColumn}>
-                                            <button className={styles.like} onClick={e => {
-                                                e.preventDefault()
-                                                e.stopPropagation()
-                                                toggleLikeTrack(track?._id)
-                                            }}>
-                                                <LikeIcon
-                                                    fill={album?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
-                                                    stroke={album?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                            </button>
-                                            <div
-                                                className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
-                                            <button>
-                                                <OptionsIcon
-                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
-                                            </button>
-                                        </div>
+                                                </div>
+                                            </div>
+                                        )) : (
+                                            <div className={styles.noTracks}>
+                                                There are no tracks in this disc.
+                                            </div>
+                                        )}
                                     </div>
                                 )) : (
                                     <div className={styles.noTracks}>

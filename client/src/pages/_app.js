@@ -12,6 +12,7 @@ import {DialogueProvider} from '@/contexts/dialogue'
 import {TooltipProvider} from '@/contexts/tooltip'
 import {LibraryProvider} from '@/contexts/library'
 import {DragDropProvider} from '@/contexts/drag-drop'
+import {ContextMenuProvider} from '@/contexts/context-menu'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
 import '@/styles/globals.sass'
@@ -49,6 +50,8 @@ export default function App({Component, pageProps}) {
     useEffect(() => {
         if (localStorage) setLoad(true) // If local storage is available, set load state to true
 
+        const handleContextMenu = e => e.preventDefault() // Prevent context menu
+
         const handleDragStart = e => e.preventDefault() // Prevent dragging
 
         const handleWheel = e => { // Prevent zooming with ctrl + mouse wheel
@@ -63,12 +66,14 @@ export default function App({Component, pageProps}) {
             if (e.ctrlKey && ['+', '-', '0', 'numpad_add', 'numpad_subtract', 'numpad_0'].includes(e.key)) e.preventDefault()
         }
 
+        window.addEventListener('contextmenu', handleContextMenu)
         window.addEventListener('dragstart', handleDragStart)
         window.addEventListener('wheel', handleWheel, {passive: false})
         window.addEventListener('touchstart', handleTouchStart, {passive: false})
         window.addEventListener('keydown', handleKeyDown, {passive: false})
 
         return () => {
+            window.removeEventListener('contextmenu', handleContextMenu)
             window.removeEventListener('dragstart', handleDragStart)
             window.removeEventListener('wheel', handleWheel)
             window.removeEventListener('touchstart', handleTouchStart)
@@ -79,31 +84,33 @@ export default function App({Component, pageProps}) {
     return (
         <AlertProvider>
             <AuthProvider>
-                <DragDropProvider>
-                    <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
-                        <Wrapper load={load}>
-                            <TooltipProvider>
+                <LibraryProvider>
+                    <DragDropProvider>
+                        <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
+                            <Wrapper load={load}>
+                                <TooltipProvider>
                                     <DialogueProvider>
-                                        <LibraryProvider>
-                                            <AudioProvider>
-                                                <ModalProvider>
-                                                        <QueueProvider>
-                                                            <TrackPanelProvider>
-                                                                <NavigationBarProvider>
-                                                                    <Main>
-                                                                        <Component {...pageProps}/>
-                                                                    </Main>
-                                                                </NavigationBarProvider>
-                                                            </TrackPanelProvider>
-                                                        </QueueProvider>
-                                                </ModalProvider>
-                                            </AudioProvider>
-                                        </LibraryProvider>
+                                        <AudioProvider>
+                                            <ModalProvider>
+                                                <QueueProvider>
+                                                    <ContextMenuProvider>
+                                                        <TrackPanelProvider>
+                                                            <NavigationBarProvider>
+                                                                <Main>
+                                                                    <Component {...pageProps}/>
+                                                                </Main>
+                                                            </NavigationBarProvider>
+                                                        </TrackPanelProvider>
+                                                    </ContextMenuProvider>
+                                                </QueueProvider>
+                                            </ModalProvider>
+                                        </AudioProvider>
                                     </DialogueProvider>
-                            </TooltipProvider>
-                        </Wrapper>
-                    </SkeletonTheme>
-                </DragDropProvider>
+                                </TooltipProvider>
+                            </Wrapper>
+                        </SkeletonTheme>
+                    </DragDropProvider>
+                </LibraryProvider>
             </AuthProvider>
         </AlertProvider>
     )

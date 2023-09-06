@@ -1,14 +1,15 @@
 import axios from 'axios'
 import {useContext, useEffect, useRef, useState} from 'react'
+import Skeleton from 'react-loading-skeleton'
 import {QueueContext} from '@/contexts/queue'
 import Image from '@/components/image'
+import formatTime from '@/utils/format-time'
 import {AlbumDefault, CloseIcon, PlayIcon} from '@/icons'
 import styles from '@/styles/queue-panel.module.sass'
-import Skeleton from 'react-loading-skeleton'
-import formatTime from '@/utils/format-time'
 
 export default function QueuePanel() {
-    const {showQueuePanel,
+    const {
+        showQueuePanel,
         setShowQueuePanel,
         queue,
         setQueue,
@@ -18,16 +19,35 @@ export default function QueuePanel() {
         dontChangeRef,
     } = useContext(QueueContext) // Get required functions and states from QueueContext
     const [queueData, setQueueData] = useState([]) // Queue data
-    const [clicked, setClicked] = useState(null) // Clicked state
-    const [dragItem, setDragItem] = useState(null) // Drag item state
-    const [dragIndex, setDragIndex] = useState(null) // Drag index state
-    const [dragPreview, setDragPreview] = useState(null) // Drag preview state
-    const [animatedDragItem, setAnimatedDragItem] = useState(null) // Animated drag item state
-    const clickedRef = useRef(null) // Clicked reference
-    const dragItemRef = useRef(null) // Drag item reference
-    const dragIndexRef = useRef(null) // Drag index reference
-    const dragPreviewRef = useRef(null) // Drag preview reference
-    const animatedDragItemRef = useRef(null) // Animated drag item reference
+    const [clicked, _setClicked] = useState(null) // Clicked state
+    const [dragItem, _setDragItem] = useState(null) // Drag item state
+    const [dragIndex, _setDragIndex] = useState(null) // Drag index state
+    const [animatedDragItem, _setAnimatedDragItem] = useState(null) // Animated drag item state
+    const clickedRef = useRef(clicked) // Clicked reference
+    const dragItemRef = useRef(dragItem) // Drag item reference
+    const dragIndexRef = useRef(dragIndex) // Drag index reference
+    const dragPreviewRef = useRef() // Drag preview reference
+    const animatedDragItemRef = useRef(animatedDragItem) // Animated drag item reference
+
+    const setClicked = value => {
+        clickedRef.current = value
+        _setClicked(value)
+    }
+
+    const setDragItem = value => {
+        dragItemRef.current = value
+        _setDragItem(value)
+    }
+
+    const setDragIndex = value => {
+        dragIndexRef.current = value
+        _setDragIndex(value)
+    }
+
+    const setAnimatedDragItem = value => {
+        animatedDragItemRef.current = value
+        _setAnimatedDragItem(value)
+    }
 
     useEffect(() => {
         if (!showQueuePanel) return // If queue panel is not visible, return
@@ -49,8 +69,8 @@ export default function QueuePanel() {
         }
 
         const mouseUp = () => {
-            clickedRef.current = null
-            dragItemRef.current = null
+            setClicked(null)
+            setDragItem(null)
         }
 
         document.addEventListener('mousemove', mouseMove)
@@ -77,14 +97,14 @@ export default function QueuePanel() {
 
     const dragStart = track => {
         if (clickedRef.current && clickedRef.current?.id === track?.id && !dragItemRef.current) { // If clicked reference is exist and clicked reference's ID is equal to track's ID and drag item is not exist
-            dragItemRef.current = track // Set drag item to track
-            clickedRef.current = null // Reset clicked reference
+            setDragItem(track) // Set drag item to track
+            setClicked(null) // Reset clicked reference
         }
     }
 
     const mouseLeave = track => {
         if (!dragItemRef.current) return // If drag item is not exist, return
-        if (dragIndexRef.current === queueData.findIndex(t => t?.id === track?.id)) dragIndexRef.current = null // If drag index is equal to target element's index, set drag index to null
+        if (dragIndexRef.current === queueData.findIndex(t => t?.id === track?.id)) setDragIndex(null) // If drag index is equal to target element's index, set drag index to null
     }
 
     const dragEnd = track => {
@@ -101,10 +121,10 @@ export default function QueuePanel() {
         }) // Add drag item to new queue
         dontChangeRef.current = true // Set dontChangeRef to true
         setQueue(newQueue) // Set queue to new queue
-        animatedDragItemRef.current = dragItemRef.current // Set animated drag item to drag item
-        dragItemRef.current = null // Reset drag item
+        setAnimatedDragItem(dragItemRef.current) // Set animated drag item to drag item
+        setDragItem(null) // Reset drag item
         setTimeout(() => {
-            animatedDragItemRef.current = null // Reset animated drag item
+            setAnimatedDragItem(null) // Reset animated drag item
         }, 250)
     }
 
@@ -118,7 +138,7 @@ export default function QueuePanel() {
 
     const handleRemove = (track) => {
         const newQueue = [...queue]
-        newQueue.splice(newQueue.findIndex(t => t?.id === track?.id), 1)
+        newQueue.splice(newQueue.findIndex(t => t?.id === track?.id || t?._id === track?.id), 1)
         dontChangeRef.current = true // Set dontChangeRef to true
         setQueue(newQueue)
         setQueueData(queueData.filter(t => t?.id !== track?.id))
@@ -126,13 +146,13 @@ export default function QueuePanel() {
 
     return (
         <>
-            <div className={`${styles.dragPreview} ${dragItemRef.current ? styles.show : ''}`} ref={dragPreviewRef}>
-                {dragItemRef.current ? (
-                    <Image src={dragItemRef.current?.album?.cover} alt={dragItemRef.current?.title} width={40} height={40}
+            <div className={`${styles.dragPreview} ${dragItem ? styles.show : ''}`} ref={dragPreviewRef}>
+                {dragItem ? (
+                    <Image src={dragItem?.album?.cover} alt={dragItem?.title} width={40} height={40}
                            format={'webp'} alternative={<AlbumDefault/>}/>
                 ) : ''}
             </div>
-            <div className={`${styles.panel} ${showQueuePanel ? styles.active : ''} ${dragItemRef.current ? styles.dragging : ''}`}>
+            <div className={`${styles.panel} ${showQueuePanel ? styles.active : ''}`}>
                 <div className={styles.wrapper}>
                     <div className={styles.header}>
                         <div className={styles.leftColumn}>
@@ -151,10 +171,10 @@ export default function QueuePanel() {
                     </div>
                     {!queueData.length ? '' : (
                         <div className={styles.queue}>
-                            {queueData.map((track) => (
-                                <div key={track?.id}>
-                                    <div className={`${styles.track} ${dragItemRef.current && dragItemRef.current.id === track?.id ? styles.dragging : ''} ${animatedDragItemRef.current && animatedDragItemRef.current.id === track?.id ? styles.animated : ''}`}
-                                         onMouseDown={() => clickedRef.current = track} onMouseMove={() => dragStart(track)} onMouseLeave={() => mouseLeave(track)} onMouseUp={() => dragEnd(track)}>
+                            {queueData.map((track, index) => (
+                                <div key={index}>
+                                    <div className={`${styles.track} ${dragItem && dragItem.id === track?.id ? styles.dragging : ''} ${animatedDragItem && animatedDragItem.id === track?.id ? styles.animated : ''}`}
+                                         onMouseDown={() => setClicked(track)} onMouseMove={() => dragStart(track)} onMouseLeave={() => mouseLeave(track)} onMouseUp={() => dragEnd(track)}>
                                         <div className={styles.trackInfo}>
                                             <div className={styles.cover}>
                                                 <Image src={track?.album?.cover} alt={track?.title} width={40} height={40} format={'webp'}

@@ -20,8 +20,9 @@
     &.queuePanelActive
       grid-template-columns: auto 1fr 320px
 
-      .content
-        border-radius: 22px
+    &.contextMenuActive,
+    &.contextMenuActive *
+      overflow-y: hidden
 
     .content
       position: relative

@@ -1,5 +1,5 @@
-export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth = 6, fill = '#fff'}) {
-    return !filled ? (
+export default function SearchIcon({stroke = '#fff', strokeRate = 1, fill = 'none'}) {
+    return !fill ? (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlSpace="preserve"
@@ -10,9 +10,9 @@ export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
-            <g transform="translate(-188.232 -166.722) scale(2.56691)">
+            <g transform="matrix(.32086 0 0 .32086 -23.53 -20.84)">
                 <circle
                     cx={115.184}
                     cy={106.804}
@@ -20,7 +20,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: `${strokeWidth}px`,
+                        strokeWidth: `${5.68 * strokeRate}px`,
                     }}
                 />
                 <path
@@ -28,7 +28,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: `${strokeWidth}px`,
+                        strokeWidth: `${5.68 * strokeRate}px`,
                     }}
                     transform="translate(27.44 27.44)"
                 />
@@ -45,9 +45,9 @@ export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
-            <g transform="translate(-188.232 -166.722) scale(2.56691)">
+            <g transform="matrix(.32086 0 0 .32086 -23.53 -20.84)">
                 <circle
                     cx={115.184}
                     cy={106.804}
@@ -55,7 +55,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: `${strokeWidth}px`,
+                        strokeWidth: `${5.68 * strokeRate}px`,
                     }}
                 />
                 <circle
@@ -72,7 +72,7 @@ export default function SearchIcon({filled = false, stroke = '#fff', strokeWidth
                     style={{
                         fill: "none",
                         stroke,
-                        strokeWidth: `${strokeWidth}px`,
+                        strokeWidth: `${5.68 * strokeRate}px`,
                     }}
                     transform="translate(27.44 27.44)"
                 />

@@ -34,16 +34,12 @@ export default function NowPlayingBar() {
     const BAR_BREAKPOINT = 850 // Replace some elements when width is less than this value
     const [user] = useContext(AuthContext) // Get user from AuthContext
     const {
-        queueIndex,
-        setQueueIndex,
         isPlaying,
         handlePlayPause,
-        handleEnded,
         loop,
         handleLoop,
         shuffle,
         handleShuffle,
-        handleSeek,
         showQueuePanel,
         setShowQueuePanel,
         track,

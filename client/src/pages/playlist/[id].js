@@ -9,6 +9,9 @@ import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
 import {LibraryContext} from '@/contexts/library'
 import {ModalContext} from '@/contexts/modal'
+import {DialogueContext} from '@/contexts/dialogue'
+import {ContextMenuContext} from '@/contexts/context-menu'
+import TrackContextMenu from '@/components/context-menus/track'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
 import Input from '@/components/form/input'
@@ -33,6 +36,7 @@ export default function PlaylistPage({id}) {
     const router = useRouter() // Router instance
     const [load, setLoad] = useState(false) // Is profile loaded
     const [user] = useContext(AuthContext) // Get user data from AuthContext
+    const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const {
         queue,
         setQueue,
@@ -46,6 +50,7 @@ export default function PlaylistPage({id}) {
     } = useContext(QueueContext) // Get queue data from QueueContext
     const [, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
+    const [, setDialogue] = useContext(DialogueContext) // Get setDialogue function from DialogueContext
     const [playlist, setPlaylist] = useState(null) // Playlist data
     const [selectedTracks, setSelectedTracks] = useState([]) // Selected tracks
     const [searchResults, setSearchResults] = useState([]) // Search results
@@ -119,7 +124,6 @@ export default function PlaylistPage({id}) {
     }
 
     const toggleLikeTrack = async (trackId) => {
-        if (!trackId || !playlist?.tracks?.find(t => t._id === trackId)?.audio) return // If track ID is not defined or track audio is not exists, return
         if (!user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
             active: <AskLoginModal/>,
             canClose: true,
@@ -159,6 +163,7 @@ export default function PlaylistPage({id}) {
     }, [router.asPath])
 
     const handleSelectTrack = (e, id) => {
+        if (e.button !== 0) return // If mouse button is not left, return
         if (e.ctrlKey || e.metaKey) {
             if (selectedTracks.includes(id)) setSelectedTracks(selectedTracks.filter(t => t !== id))
             else setSelectedTracks([...selectedTracks, id])
@@ -219,6 +224,44 @@ export default function PlaylistPage({id}) {
         }
     }
 
+    const handleTrackContextMenu = (e, _tracks) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        const tracks = []
+        if (typeof _tracks[0] === 'string') {
+            _tracks.map(t => {
+                const foundTrack = playlist.tracks.find(tr => tr._id === t)
+                if (foundTrack) tracks.push(foundTrack)
+            })
+        } else tracks.push(_tracks[0])
+
+        setContextMenu({
+            menu: <TrackContextMenu tracks={tracks} playlist={playlist} setPlaylist={setPlaylist} toggleLikeTrack={toggleLikeTrack}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
+    const handleConfirmDelete = () => {
+        setDialogue({
+            active: true,
+            title: 'Delete playlist',
+            description: 'Are you sure you want to delete this playlist?',
+            button: 'Delete',
+            type: 'danger',
+            callback: () => {
+                axios.delete(`${process.env.API_URL}/playlist/${playlist?._id}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    }
+                }).catch(e => console.error(e))
+                getUserLibrary()
+                router.push('/library')
+            },
+        })
+    }
+
     return load && !playlist?._id && !playlist?.id ? <NotFoundPage/> : (
         <>
             <Head>
@@ -261,7 +304,7 @@ export default function PlaylistPage({id}) {
                             <div className={styles.coverWrapper}>
                                 <div className={styles.cover}>
                                     <PlaylistImage playlist={playlist}/>
-                                    {playlist?.owner?._id === user?.id ? (
+                                    {playlist?.owner?._id === user?.id || user?.admin ? (
                                         <div className={styles.overlay} onClick={() => {
                                             setModal({
                                                 active: <EditPlaylistModal id={playlist?._id} setPlaylist={setPlaylist}/>,
@@ -317,6 +360,11 @@ export default function PlaylistPage({id}) {
                                             </button>
                                         ) : ''}
                                     </div>
+                                    {user?.loaded && playlist?.owner?._id === user?.id || user?.admin ? (
+                                        <button className={styles.delete} onClick={handleConfirmDelete}>
+                                            Delete
+                                        </button>
+                                    ) : ''}
                                 </div>
                             </div>
                         </div>
@@ -329,7 +377,7 @@ export default function PlaylistPage({id}) {
                                         <Skeleton width={'100%'} height={52} borderRadius={8}/>
                                     </>
                                 ) : playlist && playlist?.tracks?.length ? playlist?.tracks?.map((track, index) => (
-                                    <div key={index} id={track?._id}
+                                    <div key={index} id={track?._id} onContextMenu={e => handleTrackContextMenu(e, selectedTracks?.length && selectedTracks?.includes(track?._id) ? selectedTracks : [track])}
                                          onMouseDown={e => track?.audio ? handleSelectTrack(e, track?._id) : e.preventDefault()}
                                          className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
                                         <div className={styles.id}>
@@ -393,7 +441,7 @@ export default function PlaylistPage({id}) {
                                             </button>
                                             <div
                                                 className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
-                                            <button>
+                                            <button onClick={e => handleTrackContextMenu(e, [track])}>
                                                 <OptionsIcon
                                                     fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
                                             </button>
@@ -406,47 +454,49 @@ export default function PlaylistPage({id}) {
                                 )}
                             </div>
                         </div>
-                        <div className={styles.addTrackForm}>
-                            <h3 className={styles.formTitle}>Add Track</h3>
-                            <Input placeholder={'Search for a track to add'} className={styles.formField} set={searchRef} onChange={() => {
-                                clearTimeout(searchTimeoutRef.current)
-                                searchTimeoutRef.current = setTimeout(() => handleSearch(), 500)
-                            }}/>
-                            <div className={styles.results}>
-                                {searchResults?.length ? searchResults?.map((track, index) => (
-                                    <div key={index} className={styles.result}>
-                                        <div className={styles.cover}>
-                                            <Image src={track?.album?.cover || '0'} width={40} height={40} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} width={40} height={40}/>}/>
-                                        </div>
-                                        <div className={styles.info}>
-                                            <div className={styles.title}>
-                                                <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track._id}`} className={styles.titleInner}>
-                                                    {track?.title}
-                                                </Link>
-                                                {track?.explicit ? (
-                                                    <TooltipHandler title={'Explicit content'}>
-                                                        <ExplicitIcon fill={'#eee'}/>
-                                                    </TooltipHandler>
-                                                ) : ''}
+                        {user?.loaded && playlist?.owner?._id === user?.id || user?.admin ? (
+                            <div className={styles.addTrackForm}>
+                                <h3 className={styles.formTitle}>Add track to playlist</h3>
+                                <Input placeholder={'Search for a track to add'} className={styles.formField} set={searchRef} onChange={() => {
+                                    clearTimeout(searchTimeoutRef.current)
+                                    searchTimeoutRef.current = setTimeout(() => handleSearch(), 500)
+                                }}/>
+                                <div className={styles.results}>
+                                    {searchResults?.length ? searchResults?.map((track, index) => (
+                                        <div key={index} className={styles.result}>
+                                            <div className={styles.cover}>
+                                                <Image src={track?.album?.cover || '0'} width={40} height={40} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} width={40} height={40}/>}/>
                                             </div>
-                                            <div className={styles.artist}>
-                                                <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}>
-                                                    {track?.album?.artist?.name}
+                                            <div className={styles.info}>
+                                                <div className={styles.title}>
+                                                    <Link href={'/album/[id]'} as={`/album/${track?.album?._id}#${track._id}`} className={styles.titleInner}>
+                                                        {track?.title}
+                                                    </Link>
+                                                    {track?.explicit ? (
+                                                        <TooltipHandler title={'Explicit content'}>
+                                                            <ExplicitIcon fill={'#eee'}/>
+                                                        </TooltipHandler>
+                                                    ) : ''}
+                                                </div>
+                                                <div className={styles.artist}>
+                                                    <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}>
+                                                        {track?.album?.artist?.name}
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                            <div className={styles.album}>
+                                                <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`}>
+                                                    {track?.album?.title}
                                                 </Link>
                                             </div>
+                                            <button className={styles.add} onClick={() => handleAddTrack(track)}>
+                                                <AddIcon stroke={'#282828'} strokeRate={1.5}/>
+                                            </button>
                                         </div>
-                                        <div className={styles.album}>
-                                            <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`}>
-                                                {track?.album?.title}
-                                            </Link>
-                                        </div>
-                                        <button className={styles.add} onClick={() => handleAddTrack(track)}>
-                                            <AddIcon stroke={'#282828'} strokeRate={1.5}/>
-                                        </button>
-                                    </div>
-                                )) : ''}
+                                    )) : ''}
+                                </div>
                             </div>
-                        </div>
+                        ) : ''}
                     </div>
                 </div>
             </CustomScrollbar>

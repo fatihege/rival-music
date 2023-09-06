@@ -9,18 +9,17 @@ export default function DownArrowIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeLinecap: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 64 64"
+            viewBox="0 0 32 32"
         >
-            <g transform="matrix(9.79034e-18,0.159888,-0.159888,9.79034e-18,52.4657,21.2094)">
-                <path
-                    d="M0,0L134.977,128L0,256"
-                    style={{
-                        fill: "none",
-                        stroke,
-                        strokeWidth: `${32.57 * strokeRate}px`,
-                    }}
-                />
-            </g>
+            <path
+                d="m0 0 134.977 128L0 256"
+                style={{
+                    fill: "none",
+                    stroke,
+                    strokeWidth: `${32.57 * strokeRate}px`,
+                }}
+                transform="matrix(0 .07994 -.07994 0 26.233 10.605)"
+            />
         </svg>
     )
 }

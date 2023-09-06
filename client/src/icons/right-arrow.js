@@ -10,16 +10,16 @@ export default function RightArrowIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
             <path
                 d="m0 0 178.742 121.097a8.34 8.34 0 0 1 0 13.806L0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${32 * strokeRate}px`,
+                    strokeWidth: `${32.57 * strokeRate}px`,
                 }}
-                transform="matrix(.63955 0 0 .63955 77.585 46.137)"
+                transform="matrix(-.07994 0 0 .07994 22.041 5.767)"
             />
         </svg>
     )

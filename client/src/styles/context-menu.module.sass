@@ -1,0 +1,71 @@
+@import "variables"
+
+.contextMenu,
+.subMenu
+  position: absolute
+  z-index: 9999
+  background-color: #191919
+  border: 1px solid #222222
+  box-shadow: 0 4px 16px 0 rgba(8, 8, 8, .3)
+  border-radius: 10px
+  padding: 4px
+  min-width: 200px
+  max-width: 300px
+
+  .separator
+    position: relative
+    left: -4px
+    width: calc(100% + 8px)
+    height: 1px
+    background-color: #222222
+    margin: 4px 0
+
+  .item
+    display: flex
+    align-items: center
+    padding: 8px 12px
+    cursor: pointer
+    color: #eee
+    font-size: .9rem
+    font-weight: 500
+    border-radius: 6px
+    position: relative
+
+    &:hover
+      background-color: rgba(255, 255, 255, .07)
+
+      & > .subMenu
+        display: block
+
+    &.disabled
+      pointer-events: none
+      cursor: default
+      opacity: .5
+
+      &:hover
+        background-color: transparent
+
+    .text
+      flex: 1
+      margin: 0 8px
+
+    svg
+      width: 18px
+      height: 18px
+
+    .hasSub
+      display: inline-block
+      width: 16px
+      height: 16px
+      margin-left: 10px
+
+    .subMenu
+      position: absolute
+      display: none
+      top: -5px
+      left: 100%
+      width: max-content
+
+      &.reverse
+        left: auto
+        right: 100%

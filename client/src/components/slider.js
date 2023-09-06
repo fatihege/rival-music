@@ -5,6 +5,8 @@ import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
 import {ModalContext} from '@/contexts/modal'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
+import {ContextMenuContext} from '@/contexts/context-menu'
+import TrackContextMenu from '@/components/context-menus/track'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
@@ -22,15 +24,16 @@ import Skeleton from 'react-loading-skeleton'
  * @constructor
  */
 export default function Slider({type, title, items = []}) {
+    const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get user from auth context
     const {setQueue, setQueueIndex, handlePlayPause, showQueuePanel} = useContext(QueueContext) // Queue context
     const [, setModal] = useContext(ModalContext) // Modal context
     const [navbarWidth] = useContext(NavigationBarContext) // Navigation bar width
+    const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const [albumWidth, setAlbumWidth] = useState(0) // Album width
     const [artistWidth, setArtistWidth] = useState(0) // Artist width
     const albumWidthRef = useRef(albumWidth) // Album width reference
     const artistWidthRef = useRef(artistWidth) // Artist width reference
-    const router = useRouter() // Router instance
     const isScrolling = useRef(false) // Is slider scrolling
     const containerRef = useRef() // Slider container
     const sliderRef = useRef() // Slider wrapper
@@ -100,6 +103,7 @@ export default function Slider({type, title, items = []}) {
         }
 
         const handleMouseDown = (e) => {
+            if (e.button !== 0) return // If mouse button is not left, return
             e.stopPropagation() // Stop propagation
             slider.style.scrollBehavior = 'unset' // Disable smooth scroll
             isDown = true // Mouse is down
@@ -222,6 +226,7 @@ export default function Slider({type, title, items = []}) {
     }
 
     const handleItemMouseUp = (e, item) => {
+        if (e.button !== 0 || e.target.classList.contains(styles.button)) return // If mouse button is not left or target is button, return
         if (!isScrolling.current) { // If not scrolling, change route
             if ((item?.type && item.type === 'artist') || (!item?.type && type === 'artist')) router.push('/artist/[id]', `/artist/${item?._id}`)
             else if ((item?.type && item.type === 'album') || (!item?.type && type === 'album')) router.push('/album/[id]', `/album/${item?._id}`)
@@ -229,6 +234,17 @@ export default function Slider({type, title, items = []}) {
             else if ((item?.type && item.type === 'track') || (!item?.type && type === 'track')) router.push('/album/[id]', `/album/${item?.album?._id}#${item?._id}`)
         }
         else isScrolling.current = false // Set is scrolling to false
+    }
+
+    const handleTrackContextMenu = (e, track) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setContextMenu({
+            menu: <TrackContextMenu tracks={[track]}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
     }
 
     return (
@@ -255,7 +271,7 @@ export default function Slider({type, title, items = []}) {
                                      style={{width: albumWidth || ''}}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
-                                        <Image src={item?.cover || '0'} width={250} height={250} format={'webp'}
+                                        <Image src={item?.cover || '0'} width={300} height={300} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
                                                loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
@@ -314,17 +330,17 @@ export default function Slider({type, title, items = []}) {
                                 </div>
                             ) : (item?.type && item.type === 'track') || (!item?.type && type === 'track') ? (
                                 <div className={`${styles.item} ${styles.track}`} key={i} ref={i === 0 ? referenceSlideRef : null}
-                                     style={{width: albumWidth || ''}}>
+                                     style={{width: albumWidth || ''}} onContextMenu={e => handleTrackContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
-                                        <Image src={item?.album?.cover || '0'} width={250} height={250} format={'webp'}
+                                        <Image src={item?.album?.cover || '0'} width={300} height={300} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
                                                loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'track', i)}>
                                                 <PlayIcon/>
                                             </button>
-                                            <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
+                                            <button className={`${styles.button} ${styles.options}`} onClick={e => handleTrackContextMenu(e, item)}>
                                                 <OptionsIcon/>
                                             </button>
                                         </div>

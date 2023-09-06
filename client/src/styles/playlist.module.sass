@@ -18,6 +18,10 @@
   grid-template-columns: repeat(2, 1fr)
   grid-template-rows: repeat(2, 1fr)
 
+  &.single
+    grid-template-columns: 1fr
+    grid-template-rows: 1fr
+
 .container
   padding: 0 0 150px 0
 
@@ -211,6 +215,22 @@
                 height: 1rem
                 margin-right: .25rem
 
+          .delete
+            font-size: .9rem
+            font-weight: 500
+            color: #eee
+            opacity: .7
+            background: none
+            border: none
+            cursor: pointer
+            width: max-content
+            position: absolute
+            bottom: 40px
+
+            &:hover
+              opacity: 1
+              text-decoration: underline
+
         .adminControls
           position: absolute
           right: 48px
@@ -272,11 +292,8 @@
 
             .id,
             .cover,
-            .infoColumn,
-            .album,
-            .lastColumn .like,
             .lastColumn .duration
-              opacity: .6
+              opacity: .5
               pointer-events: none
 
           &.highlight
@@ -344,7 +361,7 @@
           .cover
             width: 40px
             height: 40px
-            margin-right: 16px
+            margin-right: 12px
             border-radius: 4px
             overflow: hidden
             position: relative

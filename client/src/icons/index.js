@@ -23,7 +23,6 @@ import RightArrowIcon from '@/icons/right-arrow'
 import LeftArrowIcon from '@/icons/left-arrow'
 import CloseIcon from '@/icons/close'
 import MicrophoneIcon from '@/icons/microphone'
-import DownloadIcon from '@/icons/download'
 import PanelPrevTrackIcon from '@/icons/panel-prev-track'
 import PanelNextTrackIcon from '@/icons/panel-next-track'
 import OptionsIcon from '@/icons/options'
@@ -36,6 +35,10 @@ import EditIcon from '@/icons/edit'
 import ExplicitIcon from '@/icons/explicit'
 import PrevThinIcon from '@/icons/prev-thin'
 import NextThinIcon from '@/icons/next-thin'
+import DiscIcon from '@/icons/disc'
+import PersonIcon from '@/icons/person'
+import PlaylistIcon from '@/icons/playlist'
+import ShareIcon from '@/icons/share'
 
 export {
     Logo,
@@ -63,7 +66,6 @@ export {
     LeftArrowIcon,
     CloseIcon,
     MicrophoneIcon,
-    DownloadIcon,
     PanelPrevTrackIcon,
     PanelNextTrackIcon,
     OptionsIcon,
@@ -76,4 +78,8 @@ export {
     ExplicitIcon,
     PrevThinIcon,
     NextThinIcon,
+    DiscIcon,
+    PersonIcon,
+    PlaylistIcon,
+    ShareIcon,
 }

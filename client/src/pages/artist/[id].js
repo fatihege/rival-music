@@ -86,7 +86,7 @@ export default function ArtistProfilePage({id}) {
                     <div className={styles.content}>
                         <div className={`${styles.profileSection} ${load && !artist?.banner ? styles.noBanner : ''}`}>
                             <div className={styles.banner}>
-                                <Image src={artist.banner} width={2400} height={933} format={'webp'} alt={`${artist?.name} Banner`} loading={<Skeleton height={500} style={{top: '-3px'}}/>}/>
+                                <Image src={artist.banner || '0'} width={2400} height={933} format={'webp'} alt={`${artist?.name} Banner`} loading={<Skeleton height={500} style={{top: '-3px'}}/>}/>
                             </div>
                             <div className={styles.artistInfo}>
                                 <button className={styles.playButton}>

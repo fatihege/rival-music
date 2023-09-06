@@ -120,12 +120,13 @@
         position: absolute
         top: 2.5rem
         right: 0
+        background-color: #191919
+        border: 1px solid #222222
+        box-shadow: 0 4px 16px 0 rgba(8, 8, 8, .3)
+        border-radius: 10px
+        padding: 4px
         width: 150px
-        padding: .5rem
-        background-color: #0c0c0c
-        border-radius: .5rem
         cursor: default
-        box-shadow: 0 5px 10px 0 rgba(5, 5, 5, .4)
         display: none
 
         &.show
@@ -142,19 +143,21 @@
           li
             display: block
             width: 100%
-            border-radius: .25rem
+            border-radius: 6px
 
             &:not(.separator):hover
-              background-color: rgba(37, 37, 37, .5)
+              background-color: rgba(255, 255, 255, .07)
 
             &:not(.separator):active
-              background-color: rgba(37, 37, 37, .3)
+              background-color: rgba(255, 255, 255, .12)
 
             &.separator
               padding: 0
-              width: 100%
+              position: relative
+              left: -4px
+              width: calc(100% + 8px)
               height: 1px
-              background: rgba(108, 108, 108, .2)
+              background-color: #222222
 
             a,
             span

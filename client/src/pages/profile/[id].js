@@ -39,7 +39,6 @@ export default function UserProfilePage({id}) {
         const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:followedArtists,count:followedUsers,count:followers', user?.id) // Get user's profile properties from API
 
         if (userData?.id) setActiveUser(userData) // If user's id is defined, set active user
-        setLoad(true) // Set load state to true
     }
 
     useEffect(() => {
@@ -49,10 +48,11 @@ export default function UserProfilePage({id}) {
         getUserInfo() // Otherwise, get user info from API
 
         if (user?.loaded && user?.id === id) {
-            getUserLibrary() // Get user library
+            getUserLibrary().then(() => setLoad(true)) // Get user library
             setActiveUser({...activeUser, ...user}) // If the current user's id is equal to active user's id, merge them
         } else if (user?.loaded && user?.id !== id) {
             getLibraryById(id).then((library) => {
+                setLoad(true)
                 setActiveUser(prev => ({...prev, ...library})) // Otherwise, get user library by ID
             }).catch(e => console.error(e))
         }

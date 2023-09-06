@@ -1,4 +1,4 @@
-export default function DownloadIcon({stroke = '#fff', strokeRate = 1}) {
+export default function PlaylistIcon({stroke = '#fff', strokeRate = 1}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -10,25 +10,28 @@ export default function DownloadIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
-            <path
-                d="M256 0H0v256"
+            <circle
+                cx={300}
+                cy={300}
+                r={46.512}
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${36.42 * strokeRate}px`,
+                    strokeWidth: `${19.48 * strokeRate}px`,
                 }}
-                transform="scale(-.40045) rotate(45 460.767 -642.89)"
+                transform="translate(-26.575 -17.333) scale(.13342)"
             />
             <path
-                d="M128 195.232V50.773"
+                d="m354.264 300-17.83-171.318M336.434 128.682s1.55 46.899 62.403 46.899"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${13.53 * strokeRate}px`,
+                    strokeWidth: `${22.72 * strokeRate}px`,
+                    strokeLinecap: "butt",
                 }}
-                transform="translate(-10.01 -4.621) scale(1.0782)"
+                transform="translate(-20.857 -11.615) scale(.11436)"
             />
         </svg>
     )

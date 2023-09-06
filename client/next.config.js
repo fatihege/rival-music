@@ -16,6 +16,7 @@ const nextConfig = {
     ACCENT_COLOR: '#00ff78',
     API_URL: process.env.API_URL,
     IMAGE_CDN: `${process.env.API_URL}/uploads`,
+    APP_URL: process.env.APP_URL,
     PP_FILETYPES: ['image/png', 'image/jpg', 'image/jpeg'],
     PP_MAXSIZE: 5000000,
     SHOW_ADMIN_BADGE: true,

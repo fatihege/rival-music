@@ -9,16 +9,16 @@ export default function NextIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeLinecap: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
             <path
                 d="m0 0 134.977 128L0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${32 * strokeRate}px`,
+                    strokeWidth: `${32.57 * strokeRate}px`,
                 }}
-                transform="matrix(.63955 0 0 .63955 84.837 46.137)"
+                transform="matrix(.07994 0 0 .07994 10.605 5.767)"
             />
         </svg>
     )

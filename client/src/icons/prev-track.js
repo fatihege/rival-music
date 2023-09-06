@@ -10,7 +10,7 @@ export default function PrevTrackIcon({stroke = '#fff', strokeRate = 1, width = 
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 64 64"
+            viewBox="0 0 32 32"
             width={width}
             height={height}
         >
@@ -21,16 +21,16 @@ export default function PrevTrackIcon({stroke = '#fff', strokeRate = 1, width = 
                     stroke,
                     strokeWidth: `${26.44 * strokeRate}px`,
                 }}
-                transform="matrix(-.19696 0 0 .19696 54.979 6.789)"
+                transform="matrix(-.09848 0 0 .09848 27.49 3.394)"
             />
             <path
                 d="M239.917 34.353h-19.646a22.743 22.743 0 0 0-22.744 22.744v141.806a22.743 22.743 0 0 0 22.744 22.744h19.646"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${23.7 * strokeRate}px`,
+                    strokeWidth: `${23.69 * strokeRate}px`,
                 }}
-                transform="matrix(-.21984 0 0 .21984 61.765 3.86)"
+                transform="matrix(-.10992 0 0 .10992 30.882 1.93)"
             />
         </svg>
     )

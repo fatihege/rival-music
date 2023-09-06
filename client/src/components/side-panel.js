@@ -35,13 +35,13 @@ export default function SidePanel() {
         {
             href: '/',
             icon: <HomeIcon/>,
-            activeIcon: <HomeIcon filled={true} fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
+            activeIcon: <HomeIcon fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
             label: 'Home',
         },
         {
             href: '/explore',
             icon: <SearchIcon/>,
-            activeIcon: <SearchIcon filled={true} fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
+            activeIcon: <SearchIcon fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
             label: 'Explore',
         },
     ]
@@ -153,12 +153,15 @@ export default function SidePanel() {
     }
 
     const handleCreatePlaylist = () => {
-        axios.post(`${process.env.API_URL}/playlist/create`, {}, {
+        axios.post(`${process.env.API_URL}/playlist/create`, {}, { // Create playlist
             headers: {
                 Authorization: `Bearer ${user?.token}`,
             }
         }).then(res => {
-            if (res.data?.status === 'OK') router.push('/playlist/[id]', `/playlist/${res.data?.id}`)
+            if (res.data?.status === 'OK') {
+                getUserLibrary() // Update user library
+                router.push('/playlist/[id]', `/playlist/${res.data?.id}`) // Redirect to playlist page
+            }
         }).catch(e => {
             console.error(e)
             setAlert({

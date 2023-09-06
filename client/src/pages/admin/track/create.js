@@ -22,6 +22,7 @@ export default function CreateTrackPage() {
         explicit: false,
         album: null,
         duration: 0,
+        disc: 1,
         order: 0,
         genres: [''],
         lyrics: [],
@@ -153,6 +154,7 @@ export default function CreateTrackPage() {
             formData.append('album', track.album) // Append the album ID to the form data
             formData.append('artists', track?.artists?.toString()) // Append the artists to the form data
             formData.append('duration', track.duration) // Append the duration to the form data
+            formData.append('disc', track.disc) // Append the disc to the form data
             formData.append('order', track.order) // Append the order to the form data
             formData.append('genres', track.genres.toString()) // Append the genres to the form data
             formData.append('lyrics', JSON.stringify(track.lyrics)) // Append the lyrics to the form data
@@ -342,6 +344,8 @@ export default function CreateTrackPage() {
                             </div>
                         ) : ''}
                     </div>
+                    <Input placeholder="Disc" className={styles.formField} value={track?.disc || 1}
+                           onChange={disc => setTrack({...track, disc: parseInt(disc)})}/>
                     <Input placeholder="Order" className={styles.formField} value={track?.order || 0}
                            onChange={order => setTrack({...track, order: parseInt(order)})}/>
                     <div>

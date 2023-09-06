@@ -90,7 +90,7 @@ export default function EditPlaylistModal({id, setPlaylist}) {
             if (file) formData.append('image', file) // If image state is defined, add an entry to the form data
             else if (!image && !file) formData.append('noImage', 'true') // Otherwise, set noImage entry to true if image and file states are not defined
 
-            if (titleRef.current?.trim() !== user?.name) formData.append('title', titleRef.current) // If name is changed, add an entry to the form data
+            if (titleRef.current?.trim() !== user?.name) formData.append('title', titleRef.current?.trim()?.slice(0, 50)) // If title state is not equal to user's name, add an entry to the form data
 
             const response = await axios.post(`${process.env.API_URL}/playlist/update/${id}`, formData, { // Send POST request to the API and get response
                 headers: {
@@ -113,7 +113,7 @@ export default function EditPlaylistModal({id, setPlaylist}) {
             setAlert({ // Show an alert
                 active: true,
                 title: 'Something went wrong',
-                description: 'An error occurred while saving your new profile photo.',
+                description: 'An error occurred while updating playlist.',
                 button: 'OK',
                 type: '',
             })

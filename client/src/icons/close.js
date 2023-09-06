@@ -10,25 +10,25 @@ export default function CloseIcon({stroke = '#fff', strokeRate = 1}) {
                 strokeLinejoin: "round",
                 strokeMiterlimit: 1.5,
             }}
-            viewBox="0 0 256 256"
+            viewBox="0 0 32 32"
         >
             <path
                 d="M256 0 0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${32 * strokeRate}px`,
+                    strokeWidth: `${31.05 * strokeRate}px`,
                 }}
-                transform="translate(62.603 62.603) scale(.51091)"
+                transform="matrix(.0671 0 0 .0671 7.412 7.412)"
             />
             <path
                 d="M256 0 0 256"
                 style={{
                     fill: "none",
                     stroke,
-                    strokeWidth: `${32 * strokeRate}px`,
+                    strokeWidth: `${31.05 * strokeRate}px`,
                 }}
-                transform="rotate(-90 128 65.397) scale(.51091)"
+                transform="matrix(0 -.0671 .0671 0 7.412 24.588)"
             />
         </svg>
     )

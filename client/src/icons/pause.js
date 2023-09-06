@@ -9,7 +9,7 @@ export default function PauseIcon({fill = '#fff', width = null, height = null}) 
                 strokeLinejoin: "round",
                 strokeMiterlimit: 2,
             }}
-            viewBox="0 0 64 64"
+            viewBox="0 0 32 32"
             width={width}
             height={height}
         >
@@ -18,14 +18,14 @@ export default function PauseIcon({fill = '#fff', width = null, height = null}) 
                 style={{
                     fill,
                 }}
-                transform="matrix(.32938 0 0 .35217 7.372 -13.078)"
+                transform="matrix(.1647 0 0 .17608 3.686 -6.539)"
             />
             <path
                 d="M155.933 63.259c0-14.428-12.505-26.124-27.931-26.124h-.004c-15.426 0-27.931 11.696-27.931 26.124v129.482c0 14.428 12.505 26.124 27.931 26.124h.004c15.426 0 27.931-11.696 27.931-26.124V63.259Z"
                 style={{
                     fill,
                 }}
-                transform="matrix(.32938 0 0 .35217 -27.694 -13.078)"
+                transform="matrix(.1647 0 0 .17608 -13.847 -6.539)"
             />
         </svg>
     )

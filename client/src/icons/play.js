@@ -9,7 +9,7 @@ export default function PlayIcon({fill = '#fff', rounded = false, width = null, 
                 strokeLinejoin: "round",
                 strokeMiterlimit: 2,
             }}
-            viewBox="0 0 64 64"
+            viewBox="0 0 32 32"
             width={width}
             height={height}
         >
@@ -18,7 +18,7 @@ export default function PlayIcon({fill = '#fff', rounded = false, width = null, 
                 style={{
                     fill,
                 }}
-                transform="translate(11.336) scale(.25)"
+                transform="translate(5.668) scale(.125)"
             />
         </svg>
     ) : (
@@ -32,13 +32,15 @@ export default function PlayIcon({fill = '#fff', rounded = false, width = null, 
                 strokeMiterlimit: 2,
             }}
             viewBox="0 0 64 64"
+            width={width}
+            height={height}
         >
             <path
-                d="M0 26.02a14.464 14.464 0 0 1 22.1-12.286l164.108 101.98a14.465 14.465 0 0 1 0 24.572L22.1 242.266A14.464 14.464 0 0 1 0 229.98V26.02Z"
+                d="M0 34.662a19.27 19.27 0 0 1 29.441-16.367l150.2 93.338a19.27 19.27 0 0 1 0 32.734l-150.2 93.338A19.27 19.27 0 0 1 0 221.338V34.662Z"
                 style={{
                     fill,
                 }}
-                transform="translate(11.336) scale(.25)"
+                transform="matrix(.25 0 0 .25 8.408 0)"
             />
         </svg>
     )
