@@ -93,7 +93,9 @@ export default function TrackContextMenu({tracks, playlist, setPlaylist, toggleL
     const handleRemoveFromPlaylist = async () => {
         if (!playlist) return // If playlist is not exist, return
         try {
-            await axios.post(`${process.env.API_URL}/playlist/remove-tracks/${playlist._id}`, {tracks}, {
+            await axios.post(`${process.env.API_URL}/playlist/remove-tracks/${playlist._id}`, {
+                tracks: typeof tracks[0] !== 'string' ? tracks.map(t => t._id) : tracks
+            }, {
                 headers: {
                     Authorization: `Bearer ${user.token}`
                 }
@@ -163,14 +165,18 @@ export default function TrackContextMenu({tracks, playlist, setPlaylist, toggleL
                 </div>
             ) : ''}
             <div className={styles.separator}></div>
-            <div className={styles.item} onClick={() => router.push('/album/[id]', `/album/${track?.album?._id}`)}>
-                <DiscIcon stroke={'#eee'}/>
-                <span className={styles.text}>Go to album</span>
-            </div>
-            <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${track?.album?.artist?._id}`)}>
-                <PersonIcon stroke={'#eee'}/>
-                <span className={styles.text}>Go to artist</span>
-            </div>
+            {tracks?.length === 1 ? (
+                <>
+                    <div className={styles.item} onClick={() => router.push('/album/[id]', `/album/${track?.album?._id}`)}>
+                        <DiscIcon stroke={'#eee'}/>
+                        <span className={styles.text}>Go to album</span>
+                    </div>
+                    <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${track?.album?.artist?._id}`)}>
+                        <PersonIcon stroke={'#eee'}/>
+                        <span className={styles.text}>Go to artist</span>
+                    </div>
+                </>
+            ) : ''}
             <div className={`${styles.item} ${tracks?.length > 1 ? styles.disabled : ''}`}>
                 <ShareIcon stroke={'#eee'}/>
                 <span className={styles.text}>Share</span>

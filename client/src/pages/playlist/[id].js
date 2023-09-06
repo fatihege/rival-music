@@ -490,7 +490,7 @@ export default function PlaylistPage({id}) {
                                                 </Link>
                                             </div>
                                             <button className={styles.add} onClick={() => handleAddTrack(track)}>
-                                                <AddIcon stroke={'#282828'} strokeRate={1.5}/>
+                                                <AddIcon stroke={process.env.ACCENT_COLOR} strokeRate={1.5}/>
                                             </button>
                                         </div>
                                     )) : ''}
