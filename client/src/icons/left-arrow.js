@@ -19,7 +19,7 @@ export default function LeftArrowIcon({stroke = '#fff', strokeRate = 1}) {
                     stroke,
                     strokeWidth: `${32.57 * strokeRate}px`,
                 }}
-                transform="matrix(.07994 0 0 .07994 9.698 5.767)"
+                transform="matrix(-.07994 0 0 .07994 22.041 5.767)"
             />
         </svg>
     )
