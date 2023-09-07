@@ -15,19 +15,21 @@ import formatTime from '@/utils/format-time'
 import {AlbumDefault, DiscIcon, ExplicitIcon, LikeIcon, OptionsIcon, PauseIcon, PlayIcon} from '@/icons'
 import styles from '@/styles/tracks.module.sass'
 
-export const handlePlay = (id = null, user, list, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause) => {
+export const handlePlay = (id = null, user, list, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, items = null) => {
     if (!user || !user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
         active: <AskLoginModal/>,
         canClose: true,
     })
-    if (id && !list?.tracks?.find(t => t._id === id)?.audio) return // If track ID is defined and track audio is not exists, return
+
+    const tracks = items?.[1] || list?.tracks // Get tracks
+    if (id && !tracks?.find(t => t._id === id)?.audio) return // If track ID is defined and track audio is not exists, return
 
     if (id && queue?.length && queue?.findIndex(t => t.id === id) === queueIndex) { // If track ID is defined and track is already in the queue
         handlePlayPause(true) // Play track
         return
     }
 
-    const filteredTracks = list?.tracks?.filter(t => !!t.audio) // Filter tracks that have audio
+    const filteredTracks = tracks?.filter(t => !!t.audio) // Filter tracks that have audio
     const index = id ? filteredTracks?.findIndex(t => t._id === id) : 0
 
     setQueue(filteredTracks?.map(t => ({id: t._id, audio: t.audio})) || []) // Set queue to the list tracks
@@ -35,7 +37,7 @@ export const handlePlay = (id = null, user, list, setModal, queue, setQueue, que
     handlePlayPause(true) // Play track
 }
 
-export default function Tracks({playlist, album}) {
+export default function Tracks({playlist, album, items, noPadding = false}) {
     const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get user data from AuthContext
     const {
@@ -65,13 +67,13 @@ export default function Tracks({playlist, album}) {
 
     const handleSelectTrack = (e, id) => {
         if (e.button !== 0) return // If mouse button is not left, return
-        const list = playlist?.length ? playlist : album?.length ? album : [] // Get list data
+        const list = playlist?.length ? playlist : album?.length ? album : {tracks: items[0]} // Get list data
 
         if (e.ctrlKey || e.metaKey) {
             if (selectedTracks.includes(id)) setSelectedTracks(selectedTracks.filter(t => t !== id))
             else setSelectedTracks([...selectedTracks, id])
         } else if (e.shiftKey) {
-            const tracks = list[0]?.tracks?.filter(t => t?.audio)?.map(t => t?._id)
+            const tracks = list?.tracks?.filter(t => t?.audio)?.map(t => t?._id)
             const firstIndex = tracks?.indexOf(selectedTracks[0])
             const lastIndex = tracks?.indexOf(id)
             const selected = tracks?.slice(Math.min(firstIndex, lastIndex), Math.max(firstIndex, lastIndex) + 1)
@@ -84,31 +86,31 @@ export default function Tracks({playlist, album}) {
         e.preventDefault()
         e.stopPropagation()
 
-        const list = playlist?.length ? playlist : album?.length ? album : [] // Get list data
+        const list = playlist?.length ? playlist[0] : album?.length ? album[0] : {tracks: items[0]} // Get list data
         const tracks = [] // Tracks array
         if (typeof _tracks[0] === 'string') {
             _tracks.map(t => {
-                const foundTrack = list[0].tracks.find(tr => tr._id === t)
+                const foundTrack = list.tracks.find(tr => tr._id === t)
                 if (foundTrack) tracks.push(foundTrack)
             })
         } else tracks.push(_tracks[0])
 
         setContextMenu({
-            menu: <TrackContextMenu tracks={tracks} playlist={playlist?.length ? playlist : []} album={album?.length ? album[0] : null} toggleLikeTrack={toggleLikeTrack}/>,
+            menu: <TrackContextMenu tracks={tracks} likedTracks={items?.[2]} playlist={playlist?.length ? playlist : []} album={album?.length ? album[0] : null} toggleLikeTrack={toggleLikeTrack}/>,
             x: e.clientX,
             y: e.clientY,
         })
     }
 
     const toggleLikeTrack = async (trackId) => {
-        const list = playlist?.length ? playlist : album?.length ? album : [] // Get list data
-        if (!trackId || !list[0]?.tracks?.find(t => t._id === trackId)?.audio) return // If track ID is not defined or track audio is not exists, return
+        const list = playlist?.length ? playlist : album?.length ? album : items // Get list data
+        if (!trackId || (!items?.length && !list[0]?.tracks?.find(t => t._id === trackId)?.audio)) return // If track ID is not defined or track audio is not exists, return
         if (!user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
             active: <AskLoginModal/>,
             canClose: true,
         })
 
-        const liked = list[0]?.likes?.includes(trackId) // Check if track is liked
+        const liked = !items?.length ? list[0]?.likes?.includes(trackId) : !!items[2]?.find(t => t._id === trackId) // Check if track is liked
         const response = await axios.post(`${process.env.API_URL}/track/like/${trackId}`, { // Send POST request to the API
             like: liked ? -1 : 1,
         }, {
@@ -121,14 +123,18 @@ export default function Tracks({playlist, album}) {
             const updatedList = {...list[0]} // Create updated list data
             if (response.data?.liked && !updatedList?.likes?.includes(trackId)) updatedList?.likes?.push(trackId) // If track is liked, push track ID to the likes array
             else if (updatedList?.likes) updatedList.likes = updatedList?.likes?.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
-            list[1](updatedList) // Set list data to the updated list data
+            if (!items?.length) list[1](updatedList) // Set list data to the updated list data
+            else items[3](prev => ({
+                ...prev,
+                tracks: response.data?.liked ? [...prev?.tracks, items[0].find(t => t._id === trackId)] : prev?.tracks?.filter(t => t._id !== trackId)
+            })) // Set list data to the updated list data
 
             if (contextTrack && contextTrack._id === trackId) setIsLiked(response.data?.liked) // If track is defined and track ID is equal to the liked track ID, set isLiked state to the response data
         }
     }
 
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} ${noPadding ? styles.noPadding : ''}`}>
             {playlist?.length ? (playlist[0]?.tracks?.length ? playlist[0].tracks.map((track, index) => (
                 <div key={index} id={track?._id}
                      onContextMenu={e => handleContextMenu(e, selectedTracks?.length && selectedTracks?.includes(track?._id) ? selectedTracks : [track])}
@@ -197,7 +203,8 @@ export default function Tracks({playlist, album}) {
                                 fill={playlist[0]?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
                                 stroke={playlist[0]?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
                         </button>
-                        <div className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
+                        <div
+                            className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
                         <button onClick={e => handleContextMenu(e, [track])}>
                             <OptionsIcon
                                 fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
@@ -274,9 +281,11 @@ export default function Tracks({playlist, album}) {
                                             fill={album[0]?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
                                             stroke={album[0]?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
                                     </button>
-                                    <div className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
+                                    <div
+                                        className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
                                     <button onClick={e => handleContextMenu(e, [track])}>
-                                        <OptionsIcon fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
+                                        <OptionsIcon
+                                            fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
                                     </button>
                                 </div>
                             </div>
@@ -291,7 +300,83 @@ export default function Tracks({playlist, album}) {
                         There are no discs in this album.
                     </div>
                 )
-            ) : (
+            ) : items?.length ? items[0]?.map((track, index) => (
+                <div key={index} id={track?._id}
+                     onContextMenu={e => handleContextMenu(e, selectedTracks?.length && selectedTracks?.includes(track?._id) ? selectedTracks : [track])}
+                     onMouseDown={e => track?.audio ? handleSelectTrack(e, track?._id) : e.preventDefault()}
+                     className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
+                    <div className={styles.id}>
+                        {contextTrack?._id === track?._id && isPlaying ? (
+                            <span className={styles.playing}>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        ) : (
+                            <span>
+                                {index + 1}
+                            </span>
+                        )}
+                    </div>
+                    <div className={styles.cover}>
+                        <Image src={track?.album?.cover || '0'} width={40} height={40} format={'webp'}
+                               alternative={<AlbumDefault/>}
+                               loading={<Skeleton style={{top: '-3px'}} width={40} height={40}/>}/>
+                        <button className={styles.play} onClick={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            if (contextTrack?._id === track?._id && isPlaying) handlePlayPause(false) // If track is playing, pause track
+                            else handlePlay(track?._id, user, null, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, items) // Otherwise, play track
+                        }}>
+                            {contextTrack?._id === track?._id && isPlaying ? (
+                                <PauseIcon/>
+                            ) : (
+                                <PlayIcon rounded={true}/>
+                            )}
+                        </button>
+                    </div>
+                    <div className={styles.infoColumn}>
+                        <div className={styles.title}>
+                            <p className={styles.titleInner}>
+                                {track?.title}
+                            </p>
+                            {track?.explicit ? (
+                                <TooltipHandler title={'Explicit content'}>
+                                    <ExplicitIcon fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
+                                </TooltipHandler>
+                            ) : ''}
+                        </div>
+                        <div className={styles.artist}>
+                            <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`}
+                                  onClick={e => e.stopPropagation()}>
+                                {track?.album?.artist?.name}
+                            </Link>
+                        </div>
+                    </div>
+                    <div className={styles.album}>
+                        <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`}
+                              onClick={e => e.stopPropagation()}>
+                            {track?.album?.title}
+                        </Link>
+                    </div>
+                    <div className={styles.lastColumn}>
+                        <button className={styles.like} onClick={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            toggleLikeTrack(track?._id)
+                        }}>
+                            <LikeIcon
+                                fill={items[2]?.length && items[2].find(t => t._id === track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
+                                stroke={items[2]?.length && items[2].find(t => t._id === track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
+                        </button>
+                        <div
+                            className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
+                        <button onClick={e => handleContextMenu(e, [track])}>
+                            <OptionsIcon
+                                fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
+                        </button>
+                    </div>
+                </div>
+            )) : (
                 <div className={styles.noTracks}>
                     There are no tracks in this list.
                 </div>

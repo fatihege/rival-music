@@ -32,6 +32,7 @@ export default function Image({src, width, height, format, alternative, loading,
         return () => { // When component is unmounted
             setImage(null) // Reset image state
             setError(false) // Reset error state
+            observer.disconnect() // Disconnect observer
         }
     }, [src])
 

@@ -255,7 +255,7 @@ export default function Slider({type, title, items = []}) {
                     {title}
                 </div>
                 <div className={styles.showAll}>
-                    {Array.isArray(items) && items?.length && items.length > 1 ? (
+                    {Array.isArray(items) && items?.length && items.length > 6 ? (
                         <span onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                     ) : ''}
                 </div>
@@ -268,7 +268,7 @@ export default function Slider({type, title, items = []}) {
                     <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
                         {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
                             (item?.type && item.type === 'album') || (!item?.type && type === 'album') ? (
-                                <div className={`${styles.item} ${styles.album}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
                                      style={{width: albumWidth || ''}}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
@@ -300,7 +300,7 @@ export default function Slider({type, title, items = []}) {
                                     </div>
                                 </div>
                             ) : (item?.type && item.type === 'playlist') || (!item?.type && type === 'playlist') ? (
-                                <div className={`${styles.item} ${styles.playlist}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
                                      style={{width: albumWidth || ''}}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
@@ -330,7 +330,7 @@ export default function Slider({type, title, items = []}) {
                                     </div>
                                 </div>
                             ) : (item?.type && item.type === 'track') || (!item?.type && type === 'track') ? (
-                                <div className={`${styles.item} ${styles.track}`} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
                                      style={{width: albumWidth || ''}} onContextMenu={e => handleTrackContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>

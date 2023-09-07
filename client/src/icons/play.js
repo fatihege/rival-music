@@ -40,7 +40,7 @@ export default function PlayIcon({fill = '#fff', rounded = false, width = null, 
                 style={{
                     fill,
                 }}
-                transform="matrix(.25 0 0 .25 8.408 0)"
+                transform="matrix(.25 0 0 .25 10.408 0)"
             />
         </svg>
     )

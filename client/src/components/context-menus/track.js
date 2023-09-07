@@ -19,7 +19,7 @@ import {
 } from '@/icons'
 import styles from '@/styles/context-menu.module.sass'
 
-export default function TrackContextMenu({tracks, playlist: [playlist, setPlaylist] = [], album, toggleLikeTrack}) {
+export default function TrackContextMenu({tracks, playlist: [playlist, setPlaylist] = [], album, likedTracks = null, toggleLikeTrack}) {
     const router = useRouter() // Get router
     const [user] = useContext(AuthContext) // Get user from auth context
     const [contextMenu] = useContext(ContextMenuContext) // Get context menu state
@@ -44,7 +44,8 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
             return
         }
 
-        if (playlist) setIsLiked(playlist?.likes?.includes(tracks[0]?._id)) // Set isLiked state
+        if (likedTracks) setIsLiked(!!likedTracks?.find(t => t?._id === tracks[0]?._id)) // Set isLiked state
+        else if (playlist) setIsLiked(playlist?.likes?.includes(tracks[0]?._id)) // Set isLiked state
         else if (album) setIsLiked(album?.likes?.includes(tracks[0]?._id)) // Set isLiked state
         else if (tracks?.length === 1) setIsLiked(!!tracks[0]?.liked) // Set isLiked state
     }, [tracks, playlist, album])

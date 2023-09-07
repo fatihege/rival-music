@@ -13,11 +13,12 @@ import FollowedUsersModal from '@/components/modals/followed-users'
 import FollowedArtistsModal from '@/components/modals/followed-artists'
 import {RGBtoHSL, RGBtoString} from '@/utils/color-converter'
 import getUserData from '@/utils/get-user-data'
-import {AddIcon, LikeIcon} from '@/icons'
+import {EditIcon, LikeIcon} from '@/icons'
 import styles from '@/styles/profile.module.sass'
 import {LibraryContext} from '@/contexts/library'
 import Skeleton from 'react-loading-skeleton'
 import NotFoundPage from '@/pages/404'
+import ExtensibleTracks from '@/components/extensible-tracks'
 
 export function getServerSideProps(context) {
     return {
@@ -29,7 +30,7 @@ export function getServerSideProps(context) {
 
 export default function UserProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user from auth context
-    const [library, , getUserLibrary, getLibraryById] = useContext(LibraryContext) // Get library from library context
+    const [library, setLibrary, getUserLibrary, getLibraryById] = useContext(LibraryContext) // Get library from library context
     const [, setModal] = useContext(ModalContext) // Use modal context
     const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
@@ -103,8 +104,8 @@ export default function UserProfilePage({id}) {
                                     {activeUser?.id === user?.id ? (
                                         <div className={styles.imageOverlay}
                                              onClick={() => setModal({canClose: true, active: <ChangeProfileModal/>})}>
-                                            <AddIcon/>
-                                            <span>Upload Photo</span>
+                                            <EditIcon/>
+                                            <span>Edit Profile</span>
                                         </div>
                                     ) : ''}
                                 </div>
@@ -143,20 +144,23 @@ export default function UserProfilePage({id}) {
                             <div className={styles.innerContent}>
                                 {activeUser?.id === user?.id ? (
                                     <>
-                                        <Slider type={'playlist'} title="Playlists" items={library ? library.playlists : null} />
-                                        <Slider type={'track'} title="Last listened tracks" items={library ? library.lastListenedTracks : null} />
+                                        {library?.playlists?.length > 0 ? (
+                                            <Slider type={'playlist'} title="Playlists" items={library ? library.playlists : null} />
+                                        ) : ''}
+                                        <ExtensibleTracks title="Last listened tracks" items={library?.lastListenedTracks} likedTracks={library?.tracks} set={setLibrary}/>
+                                        <ExtensibleTracks title="Liked tracks" items={library?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
                                         <Slider type={'album'} title="Liked albums" items={library ? library.albums : null} />
-                                        <Slider type={'track'} title="Liked tracks" items={library ? library.tracks : null} />
                                     </>
-                                ) : ''}
-                                {activeUser?.id !== user?.id ? (
+                                ) : (
                                     <>
-                                        <Slider type={'playlist'} title="Playlists" items={activeUser?.playlists} />
-                                        <Slider type={'track'} title="Last listened tracks" items={activeUser?.lastListenedTracks} />
+                                        {activeUser?.playlists?.length > 0 ? (
+                                            <Slider type={'playlist'} title="Playlists" items={activeUser?.playlists} />
+                                        ) : ''}
+                                        <ExtensibleTracks title="Last listened tracks" items={activeUser?.lastListenedTracks} likedTracks={library?.tracks} set={setLibrary}/>
+                                        <ExtensibleTracks title="Liked tracks" items={activeUser?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
                                         <Slider type={'album'} title="Liked albums" items={activeUser?.albums} />
-                                        <Slider type={'track'} title="Liked tracks" items={activeUser?.tracks} />
                                     </>
-                                ) : ''}
+                                )}
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,46 @@
+.container
+  margin-bottom: 80px
+
+  .header
+    display: flex
+    align-items: center
+    justify-content: space-between
+
+    .title
+      font-size: 1.25rem
+      font-weight: 500
+      margin-bottom: 1rem
+
+  .footer
+    width: 100%
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 1rem 0
+
+    .button
+      padding: .5rem 1rem
+      background-color: rgba(255, 255, 255, .05)
+
+  .button
+    display: flex
+    align-items: center
+    justify-content: center
+    color: #eee
+    border: none
+    background: none
+    cursor: pointer
+    padding: .25rem .5rem
+    border-radius: 8px
+    line-height: 1
+    text-align: center
+    transition: .15s ease-out
+    transition-property: opacity, background-color
+
+    &:hover,
+    &:focus-visible
+      background-color: rgba(255, 255, 255, .15)
+
+    &:active,
+    &:focus-visible
+      transform: scale(.9)
