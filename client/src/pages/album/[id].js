@@ -9,8 +9,10 @@ import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
 import {LibraryContext} from '@/contexts/library'
 import {ModalContext} from '@/contexts/modal'
+import {ContextMenuContext} from '@/contexts/context-menu'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import AskLoginModal from '@/components/modals/ask-login'
+import AlbumContextMenu from '@/components/context-menus/album'
 import Tracks, {handlePlay} from '@/components/tracks'
 import NotFoundPage from '@/pages/404'
 import getAlbumData from '@/utils/get-album-data'
@@ -40,6 +42,7 @@ export default function AlbumPage({id}) {
     } = useContext(QueueContext) // Get queue data from QueueContext
     const [, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
+    const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const [album, setAlbum] = useState(null) // Album data
 
     const getAlbumInfo = async () => {
@@ -101,6 +104,16 @@ export default function AlbumPage({id}) {
         }
     }, [isLiked, contextTrack])
 
+    const handleContextMenu = e => {
+        e.preventDefault()
+        e.stopPropagation()
+        setContextMenu({
+            menu: <AlbumContextMenu album={album}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return load && !album?._id && !album?.id ? <NotFoundPage/> : (
         <>
             <Head>
@@ -126,7 +139,7 @@ export default function AlbumPage({id}) {
                     </div>
                     <div className={styles.content}>
                         <div className={styles.coverSection}>
-                            <div className={styles.coverWrapper}>
+                            <div className={styles.coverWrapper} onContextMenu={handleContextMenu}>
                                 <div className={styles.cover}>
                                     <Image src={album?.cover || '0'} width={300} height={300} format={'webp'}
                                            alternative={<AlbumDefault/>}

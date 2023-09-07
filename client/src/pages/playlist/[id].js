@@ -10,10 +10,12 @@ import {QueueContext} from '@/contexts/queue'
 import {LibraryContext} from '@/contexts/library'
 import {ModalContext} from '@/contexts/modal'
 import {DialogueContext} from '@/contexts/dialogue'
+import {ContextMenuContext} from '@/contexts/context-menu'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
 import Input from '@/components/form/input'
 import PlaylistImage from '@/components/playlist-image'
+import PlaylistContextMenu from '@/components/context-menus/playlist'
 import AskLoginModal from '@/components/modals/ask-login'
 import EditPlaylistModal from '@/components/modals/edit-playlist'
 import Tracks, {handlePlay} from '@/components/tracks'
@@ -46,6 +48,7 @@ export default function PlaylistPage({id}) {
     const [, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
     const [, setDialogue] = useContext(DialogueContext) // Get setDialogue function from DialogueContext
+    const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const [playlist, setPlaylist] = useState(null) // Playlist data
     const [searchResults, setSearchResults] = useState([]) // Search results
     const searchRef = useRef('') // Search ref
@@ -170,6 +173,16 @@ export default function PlaylistPage({id}) {
         })
     }
 
+    const handleContextMenu = e => {
+        e.preventDefault()
+        e.stopPropagation()
+        setContextMenu({
+            menu: <PlaylistContextMenu playlist={playlist}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return load && !playlist?._id && !playlist?.id ? <NotFoundPage/> : (
         <>
             <Head>
@@ -209,7 +222,7 @@ export default function PlaylistPage({id}) {
                     </div>
                     <div className={styles.content}>
                         <div className={styles.coverSection}>
-                            <div className={styles.coverWrapper}>
+                            <div className={styles.coverWrapper} onContextMenu={handleContextMenu}>
                                 <div className={styles.cover}>
                                     <PlaylistImage playlist={playlist}/>
                                     {playlist?.owner?._id === user?.id || user?.admin ? (

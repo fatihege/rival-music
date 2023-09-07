@@ -12,6 +12,7 @@ import {ContextMenuContext} from '@/contexts/context-menu'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import PlaylistImage from '@/components/playlist-image'
 import PlaylistContextMenu from '@/components/context-menus/playlist'
+import AlbumContextMenu from '@/components/context-menus/album'
 import {TooltipHandler} from '@/components/tooltip'
 import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
@@ -187,6 +188,16 @@ export default function SidePanel() {
         })
     }
 
+    const handleAlbumContextMenu = (e, album) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setContextMenu({
+            menu: <AlbumContextMenu album={album}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return (
         <>
             <div className={`${styles.sidePanel} ${isMinimized ? styles.minimized : ''} ${!user?.loaded || !user?.id || !user?.token ? styles.notLoggedIn : ''}`}
@@ -290,7 +301,7 @@ export default function SidePanel() {
                                         ))}
                                         {library?.albums?.map(item => (
                                             <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`}
-                                                  key={item?.id || item?._id}>
+                                                  key={item?.id || item?._id} onContextMenu={e => handleAlbumContextMenu(e, item)}>
                                                 <div className={styles.listItem}>
                                                     <div className={styles.image}>
                                                         <Image src={item?.cover} width={48} height={48} format={'webp'}

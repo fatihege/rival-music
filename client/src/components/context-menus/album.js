@@ -15,14 +15,15 @@ import {
 } from '@/icons'
 import styles from '@/styles/context-menu.module.sass'
 
-export default function PlaylistContextMenu({playlist}) {
+export default function AlbumContextMenu({album}) {
     const router = useRouter() // Get router
     const [user] = useContext(AuthContext) // Get user from auth context
     const [contextMenu] = useContext(ContextMenuContext) // Get context menu state
     const {queue, queueIndex, setQueue, dontChangeRef, handlePlayPause} = useContext(QueueContext) // Get queue state from queue context
     const [, , getUserLibrary] = useContext(LibraryContext) // Get library
     const [position, setPosition] = useState({x: -9999, y: -9999, subMenuReverse: false}) // Context menu position
-    const [isLiked, setIsLiked] = useState(null) // Is playlist liked
+    const [isLiked, setIsLiked] = useState(null) // Is album liked
+    const [tracks, setTracks] = useState([]) // Tracks
     const menuRef = useRef() // Menu reference
 
     useEffect(() => {
@@ -32,47 +33,52 @@ export default function PlaylistContextMenu({playlist}) {
             subMenuReverse: contextMenu.x + menuRef.current?.clientWidth + 200 > window.innerWidth
         })
 
-        if (playlist?._id || playlist?.id) { // If playlist is exist
-            axios.get(`${process.env.API_URL}/playlist/is-liked/${playlist?._id || playlist?.id}`, { // Get is playlist liked
+        if (album?._id || album?.id) { // If album is exist
+            axios.get(`${process.env.API_URL}/album/is-liked/${album?._id || album?.id}`, { // Get is album liked
                 headers: {
                     Authorization: `Bearer ${user?.token}`
                 }
             }).then(res => {
-                setIsLiked(!!res.data?.isLiked) // Set is playlist liked
+                setIsLiked(!!res.data?.isLiked) // Set is album liked
                 getUserLibrary() // Get user library
             }).catch(e => console.error(e))
+
+            if (!album?.tracks?.length)
+                axios.get(`${process.env.API_URL}/track/album/${album?._id || album?.id}?onlyAudio=1`).then(res => { // Get tracks by album
+                    setTracks(res.data?.tracks) // Set tracks
+                }).catch(e => console.error(e))
         }
     }, [menuRef, contextMenu])
 
     const handlePlay = () => {
-        const filteredTracks = playlist?.tracks.filter(t => !!t.audio) // Filter tracks
+        const filteredTracks = (album?.tracks?.length ? album?.tracks : tracks).filter(t => !!t.audio) // Filter tracks
         if (!filteredTracks.length) return // If tracks is not exist, return
         setQueue([...queue.slice(0, queueIndex), ...filteredTracks, ...queue.slice(queueIndex)]) // Set queue to filtered tracks
         handlePlayPause(true) // Play tracks
     }
 
     const handleAddToQueue = () => { // Add track to the queue
-        const filteredTracks = playlist?.tracks.filter(t => !!t.audio) // Filter tracks
+        const filteredTracks = (album?.tracks?.length ? album?.tracks : tracks).filter(t => !!t.audio) // Filter tracks
         if (!filteredTracks.length) return // If tracks is not exist, return
         dontChangeRef.current = true // Set dontChangeRef to true
         setQueue([...queue.slice(0, queueIndex + 1), ...filteredTracks, ...queue.slice(queueIndex + 1)]) // Add track to the queue
     }
 
     const handleCopyLink = () => {
-        if (!navigator.clipboard || (!playlist?.id && !playlist?._id)) return // If navigator clipboard is not exist or playlist is not exist, return
-        navigator.clipboard.writeText(`${process.env.APP_URL}/playlist/${playlist?.id || playlist?._id}`) // Copy link to clipboard
+        if (!navigator.clipboard || (!album?.id && !album?._id)) return // If navigator clipboard is not exist or album is not exist, return
+        navigator.clipboard.writeText(`${process.env.APP_URL}/album/${album?.id || album?._id}`) // Copy link to clipboard
     }
 
     const handleLike = () => {
-        if (isLiked === null || playlist?.owner?._id === user?.id) return // If isLiked is null, return
-        axios.post(`${process.env.API_URL}/playlist/like/${playlist?._id || playlist?.id}`, {
+        if (isLiked === null || album?.owner?._id === user?.id) return // If isLiked is null, return
+        axios.post(`${process.env.API_URL}/album/like/${album?._id || album?.id}`, {
             like: isLiked ? -1 : 1
-        }, { // Like or unlike playlist
+        }, { // Like or unlike album
             headers: {
                 Authorization: `Bearer ${user?.token}`
             }
         }).then(res => {
-            setIsLiked(res.data?.isLiked) // Set is playlist liked
+            setIsLiked(res.data?.isLiked) // Set is album liked
             getUserLibrary() // Get user library
         }).catch(e => console.error(e))
     }
@@ -82,17 +88,17 @@ export default function PlaylistContextMenu({playlist}) {
             top: position.y,
             left: position.x,
         }}>
-            {playlist ? (
-                <div className={`${styles.item} ${!playlist?.tracks?.filter(t => !!t.audio)?.length ? styles.disabled : ''}`} onClick={handlePlay}>
+            {album ? (
+                <div className={`${styles.item} ${!(album?.tracks?.length ? album?.tracks : tracks)?.filter(t => !!t.audio)?.length ? styles.disabled : ''}`} onClick={handlePlay}>
                     <PlayIcon rounded={true} fill={'#eee'}/>
                     <span className={styles.text}>Play</span>
                 </div>
             ) : ''}
-            <div className={`${styles.item} ${(!playlist?.tracks?.filter(t => !!t.audio)?.length || !queue?.length) ? styles.disabled : ''}`} onClick={handleAddToQueue}>
+            <div className={`${styles.item} ${(!(album?.tracks?.length ? album?.tracks : tracks)?.filter(t => !!t.audio)?.length || !queue?.length) ? styles.disabled : ''}`} onClick={handleAddToQueue}>
                 <QueueIcon stroke={'#eee'}/>
                 <span className={styles.text}>Add to queue</span>
             </div>
-            {playlist?.owner?._id !== user?.id ? (
+            {album?.owner?._id !== user?.id ? (
                 <div className={`${styles.item} ${isLiked === null ? styles.disabled : ''}`} onClick={() => handleLike()}>
                     <LikeIcon stroke={'#eee'} fill={isLiked ? '#eee' : 'none'}/>
                     <span className={styles.text}>{
@@ -101,10 +107,10 @@ export default function PlaylistContextMenu({playlist}) {
                 </div>
             ) : ''}
             <div className={styles.separator}></div>
-            {playlist?.owner?._id ? (
-                <div className={styles.item} onClick={() => router.push('/profile/[id]', `/profile/${playlist?.owner?._id}`)}>
+            {album?.artist?._id ? (
+                <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${album?.artist?._id}`)}>
                     <PersonIcon stroke={'#eee'}/>
-                    <span className={styles.text}>Go to creator</span>
+                    <span className={styles.text}>Go to artist</span>
                 </div>
             ) : ''}
             <div className={styles.item}>

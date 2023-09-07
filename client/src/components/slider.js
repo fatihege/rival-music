@@ -8,6 +8,7 @@ import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {ContextMenuContext} from '@/contexts/context-menu'
 import TrackContextMenu from '@/components/context-menus/track'
 import PlaylistContextMenu from '@/components/context-menus/playlist'
+import AlbumContextMenu from '@/components/context-menus/album'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
@@ -222,11 +223,6 @@ export default function Slider({type, title, items = []}) {
         }
     }
 
-    const handleOptions = e => {
-        e.stopPropagation() // Prevent click on parent element
-        // TODO: Show options
-    }
-
     const handleItemMouseUp = (e, item) => {
         if (e.button !== 0 || e.target.classList.contains(styles.button)) return // If mouse button is not left or target is button, return
         if (!isScrolling.current) { // If not scrolling, change route
@@ -260,6 +256,17 @@ export default function Slider({type, title, items = []}) {
         })
     }
 
+    const handleAlbumContextMenu = (e, album) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setContextMenu({
+            menu: <AlbumContextMenu album={album}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return (
         <div className={`${styles.container} ${showAllRef.current ? styles.all : ''}`} ref={containerRef}>
             <div className={styles.header}>
@@ -281,7 +288,7 @@ export default function Slider({type, title, items = []}) {
                         {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
                             (item?.type && item.type === 'album') || (!item?.type && type === 'album') ? (
                                 <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
-                                     style={{width: albumWidth || ''}}>
+                                     style={{width: albumWidth || ''}} onContextMenu={e => handleAlbumContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
                                         <Image src={item?.cover || '0'} width={300} height={300} format={'webp'}
@@ -291,7 +298,7 @@ export default function Slider({type, title, items = []}) {
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'album', i)}>
                                                 <PlayIcon/>
                                             </button>
-                                            <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
+                                            <button className={`${styles.button} ${styles.options}`} onClick={e => handleAlbumContextMenu(e, item)}>
                                                 <OptionsIcon/>
                                             </button>
                                         </div>

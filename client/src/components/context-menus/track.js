@@ -162,7 +162,7 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
                     </div>
                 </div>
             </div>
-            <div className={`${styles.item} ${!tracks.filter(t => !!t.audio)?.length ? styles.disabled : ''}`} onClick={handleAddToQueue}>
+            <div className={`${styles.item} ${(!tracks.filter(t => !!t.audio)?.length || !queue?.length) ? styles.disabled : ''}`} onClick={handleAddToQueue}>
                 <QueueIcon stroke={'#eee'}/>
                 <span className={styles.text}>Add to queue</span>
             </div>
