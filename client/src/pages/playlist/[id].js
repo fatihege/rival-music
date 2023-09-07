@@ -245,7 +245,7 @@ export default function PlaylistPage({id}) {
                                                 <span className={styles.likeCount}>{
                                                     playlist?.likedUsers === 1 ?
                                                         '1 like' :
-                                                        `${playlist?.likedUsers} likes`
+                                                        `${playlist?.likedUsers || 0} likes`
                                                 }</span>
                                                 <span className={styles.trackCount}>{
                                                     playlist?.tracks?.length === 1 ?
@@ -277,86 +277,13 @@ export default function PlaylistPage({id}) {
                             </div>
                         </div>
                         <div className={styles.tracksSection}>
-                            <div className={styles.tracks}>
-                                {!load ? (
-                                    <>
-                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
-                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
-                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
-                                    </>
-                                ) : /*playlist && playlist?.tracks?.length ? playlist?.tracks?.map((track, index) => (
-                                    <div key={index} id={track?._id} onContextMenu={e => handleTrackContextMenu(e, selectedTracks?.length && selectedTracks?.includes(track?._id) ? selectedTracks : [track])}
-                                         onMouseDown={e => track?.audio ? handleSelectTrack(e, track?._id) : e.preventDefault()}
-                                         className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
-                                        <div className={styles.id}>
-                                            {contextTrack?._id === track?._id && isPlaying ? (
-                                                <span className={styles.playing}>
-                                                    <span></span>
-                                                    <span></span>
-                                                </span>
-                                            ) : (
-                                                <span>
-                                                    {index + 1}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className={styles.cover}>
-                                            <Image src={track?.album?.cover || '0'} width={40} height={40} format={'webp'} alternative={<AlbumDefault/>} loading={<Skeleton style={{top: '-3px'}} width={40} height={40}/>}/>
-                                            <button className={styles.play} onClick={e => {
-                                                e.preventDefault()
-                                                e.stopPropagation()
-                                                if (contextTrack?._id === track?._id && isPlaying) handlePlayPause(false) // If track is playing, pause track
-                                                else handlePlay(track?._id) // Otherwise, play track
-                                            }}>
-                                                {contextTrack?._id === track?._id && isPlaying ? (
-                                                    <PauseIcon/>
-                                                ) : (
-                                                    <PlayIcon rounded={true}/>
-                                                )}
-                                            </button>
-                                        </div>
-                                        <div className={styles.infoColumn}>
-                                            <div className={styles.title}>
-                                                <p className={styles.titleInner}>
-                                                    {track?.title}
-                                                </p>
-                                                {track?.explicit ? (
-                                                    <TooltipHandler title={'Explicit content'}>
-                                                        <ExplicitIcon fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                                    </TooltipHandler>
-                                                ) : ''}
-                                            </div>
-                                            <div className={styles.artist}>
-                                                <Link href={'/artist/[id]'} as={`/artist/${track?.album?.artist?._id}`} onClick={e => e.stopPropagation()}>
-                                                    {track?.album?.artist?.name}
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className={styles.album}>
-                                            <Link href={'/album/[id]'} as={`/album/${track?.album?._id}`} onClick={e => e.stopPropagation()}>
-                                                {track?.album?.title}
-                                            </Link>
-                                        </div>
-                                        <div className={styles.lastColumn}>
-                                            <button className={styles.like} onClick={e => {
-                                                e.preventDefault()
-                                                e.stopPropagation()
-                                                toggleLikeTrack(track?._id)
-                                            }}>
-                                                <LikeIcon
-                                                    fill={playlist?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
-                                                    stroke={playlist?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                            </button>
-                                            <div
-                                                className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
-                                            <button onClick={e => handleTrackContextMenu(e, [track])}>
-                                                <OptionsIcon
-                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))*/ <Tracks playlist={[playlist, setPlaylist]}/>}
-                            </div>
+                            {!load ? (
+                                <>
+                                    <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                    <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                    <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                </>
+                            ) : <Tracks playlist={[playlist, setPlaylist]}/>}
                         </div>
                         {user?.loaded && playlist?.owner?._id === user?.id || user?.admin ? (
                             <div className={styles.addTrackForm}>

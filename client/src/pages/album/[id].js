@@ -10,12 +10,11 @@ import {QueueContext} from '@/contexts/queue'
 import {LibraryContext} from '@/contexts/library'
 import {ModalContext} from '@/contexts/modal'
 import CustomScrollbar from '@/components/custom-scrollbar'
-import {TooltipHandler} from '@/components/tooltip'
 import AskLoginModal from '@/components/modals/ask-login'
+import Tracks, {handlePlay} from '@/components/tracks'
 import NotFoundPage from '@/pages/404'
 import getAlbumData from '@/utils/get-album-data'
-import formatTime from '@/utils/format-time'
-import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon, DiscIcon} from '@/icons'
+import {AlbumDefault, PlayIcon, LikeIcon} from '@/icons'
 import styles from '@/styles/album.module.sass'
 
 export function getServerSideProps(context) {
@@ -35,16 +34,13 @@ export default function AlbumPage({id}) {
         setQueue,
         queueIndex,
         setQueueIndex,
-        isPlaying,
         handlePlayPause,
         track: contextTrack,
         isLiked,
-        setIsLiked,
     } = useContext(QueueContext) // Get queue data from QueueContext
     const [, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
     const [album, setAlbum] = useState(null) // Album data
-    const [selectedTracks, setSelectedTracks] = useState([]) // Selected tracks
 
     const getAlbumInfo = async () => {
         if (!id) return // If ID property is not defined, return
@@ -61,30 +57,8 @@ export default function AlbumPage({id}) {
         return () => { // When component is unmounted
             setAlbum(null) // Reset album data
             setLoad(false) // Reset load state
-            setSelectedTracks([]) // Reset selected tracks
         }
     }, [id, user])
-
-
-    const handlePlay = (id = null) => {
-        if (!user || !user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
-            active: <AskLoginModal/>,
-            canClose: true,
-        })
-        if (id && !album?.tracks?.find(t => t._id === id)?.audio) return // If track ID is defined and track audio is not exists, return
-
-        if (id && queue?.length && queue?.findIndex(t => t.id === id) === queueIndex) { // If track ID is defined and track is already in the queue
-            handlePlayPause(true) // Play track
-            return
-        }
-
-        const filteredTracks = album?.tracks?.filter(t => !!t.audio) // Filter tracks that have audio
-        const index = id ? filteredTracks?.findIndex(t => t._id === id) : 0
-
-        setQueue(filteredTracks?.map(t => ({id: t._id, audio: t.audio})) || []) // Set queue to the album tracks
-        setQueueIndex(index) // Set queue index to the track index
-        handlePlayPause(true)
-    }
 
     const handleLikeAlbum = async () => {
         if (!album?._id) return // If album ID is not defined, return
@@ -112,32 +86,6 @@ export default function AlbumPage({id}) {
         }
     }
 
-    const toggleLikeTrack = async (trackId) => {
-        if (!trackId || !album?.tracks?.find(t => t._id === trackId)?.audio) return // If track ID is not defined or track audio is not exists, return
-        if (!user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
-            active: <AskLoginModal/>,
-            canClose: true,
-        })
-
-        const liked = album?.likes?.includes(trackId) // Check if track is liked
-        const response = await axios.post(`${process.env.API_URL}/track/like/${trackId}`, { // Send POST request to the API
-            like: liked ? -1 : 1,
-        }, {
-            headers: {
-                Authorization: `Bearer ${user.token}`,
-            }
-        })
-
-        if (response.data?.status === 'OK') { // If there is a response
-            const updatedAlbum = {...album} // Create updated album data
-            if (response.data?.liked && !updatedAlbum.likes.includes(trackId)) updatedAlbum.likes.push(trackId) // If track is liked, push track ID to the likes array
-            else updatedAlbum.likes = updatedAlbum.likes.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
-            setAlbum(updatedAlbum) // Set album data to the updated album data
-
-            if (contextTrack && contextTrack._id === trackId) setIsLiked(response.data?.liked) // If track is defined and track ID is equal to the liked track ID, set isLiked state to the response data
-        }
-    }
-
     useEffect(() => {
         if (!contextTrack) return // If track is not defined, return
 
@@ -152,24 +100,6 @@ export default function AlbumPage({id}) {
             }) // Otherwise, remove track ID from the likes array
         }
     }, [isLiked, contextTrack])
-
-    useEffect(() => {
-        const hash = router?.asPath?.split('#')[1] // Get hash from the URL
-        if (hash) setSelectedTracks([hash]) // If hash is defined, set selected tracks to the hash
-    }, [router.asPath])
-
-    const handleSelectTrack = (e, id) => {
-        if (e.ctrlKey || e.metaKey) { // If CTRL or CMD key is pressed
-            if (selectedTracks.includes(id)) setSelectedTracks(selectedTracks.filter(t => t !== id)) // If track is already selected, remove it from the selected tracks
-            else setSelectedTracks([...selectedTracks, id]) // Otherwise, add it to the selected tracks
-        } else if (e.shiftKey) { // If SHIFT key is pressed
-            const tracks = album?.tracks?.filter(t => t?.audio)?.map(t => t?._id) // Get tracks that have audio
-            const firstIndex = tracks?.indexOf(selectedTracks[0]) // Get first selected track index
-            const lastIndex = tracks?.indexOf(id) // Get last selected track index
-            const selected = tracks?.slice(Math.min(firstIndex, lastIndex), Math.max(firstIndex, lastIndex) + 1) // Get selected tracks between first and last selected track
-            setSelectedTracks(selected) // Set selected tracks to the selected tracks
-        } else setSelectedTracks([id]) // Otherwise, set selected tracks to the track ID
-    }
 
     return load && !album?._id && !album?.id ? <NotFoundPage/> : (
         <>
@@ -230,7 +160,7 @@ export default function AlbumPage({id}) {
                                     <div className={styles.buttons}>
                                         <button
                                             className={`${styles.play} ${!album?.tracks?.length || !album?.tracks?.filter(t => !!t.audio).length ? styles.disabled : ''}`}
-                                            onClick={() => handlePlay()}>
+                                            onClick={() => handlePlay(null, user, album, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause)}>
                                             <PlayIcon fill={'#1c1c1c'} rounded={true}/> Play
                                         </button>
                                         {album !== null && (
@@ -245,104 +175,19 @@ export default function AlbumPage({id}) {
                                 {user?.id && user?.token && user?.admin ? (
                                     <div className={styles.adminControls}>
                                         <Link href={`/admin/track/create#${album?._id || album?.id}`}>Add Track</Link>
-                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit
-                                            Album</Link>
+                                        <Link href={'/admin/album/[id]'} as={`/admin/album/${album?._id || album?.id}`}>Edit Album</Link>
                                     </div>
                                 ) : ''}
                             </div>
                         </div>
                         <div className={styles.tracksSection}>
-                            <div className={styles.tracks}>
-                                {!load ? (
-                                    <>
-                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
-                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
-                                        <Skeleton width={'100%'} height={52} borderRadius={8}/>
-                                    </>
-                                ) : album && album?.discs?.length ? album?.discs?.map((disc, index) => (
-                                    <div key={index} className={styles.disc}>
-                                        {album?.discs?.length > 1 ? (
-                                            <div className={styles.discTitle}>
-                                                <DiscIcon stroke={'#eee'}/>
-                                                <span>Disc {index + 1}</span>
-                                            </div>
-                                        ) : ''}
-                                        {disc?.length ? disc?.map((track, index) => (
-                                            <div key={index} id={track?._id}
-                                                 onClick={e => handleSelectTrack(e, track?._id)}
-                                                 className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
-                                                <div className={styles.id}>
-                                                    {contextTrack?._id === track?._id && isPlaying ? (
-                                                        <>
-                                                        <span className={styles.playing}>
-                                                            <span></span>
-                                                            <span></span>
-                                                        </span>
-                                                            <button onClick={e => {
-                                                                e.preventDefault()
-                                                                e.stopPropagation()
-                                                                handlePlayPause(false)
-                                                            }}>
-                                                                <PauseIcon
-                                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}/>
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                        <span>
-                                                            {index + 1}
-                                                        </span>
-                                                            <button onClick={e => {
-                                                                e.preventDefault()
-                                                                e.stopPropagation()
-                                                                handlePlay(track?._id)
-                                                            }}>
-                                                                <PlayIcon
-                                                                    fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}
-                                                                    rounded={true}/>
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                </div>
-                                                <div className={styles.title}>
-                                                    {track?.title}
-                                                    {track?.explicit ? (
-                                                        <TooltipHandler title={'Explicit content'}>
-                                                            <ExplicitIcon
-                                                                fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                                        </TooltipHandler>
-                                                    ) : ''}
-                                                </div>
-                                                <div className={styles.lastColumn}>
-                                                    <button className={styles.like} onClick={e => {
-                                                        e.preventDefault()
-                                                        e.stopPropagation()
-                                                        toggleLikeTrack(track?._id)
-                                                    }}>
-                                                        <LikeIcon
-                                                            fill={album?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
-                                                            stroke={album?.likes?.includes(track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
-                                                    </button>
-                                                    <div
-                                                        className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
-                                                    <button>
-                                                        <OptionsIcon
-                                                            fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : track?.audio ? process.env.ACCENT_COLOR : '#eee'}/>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )) : (
-                                            <div className={styles.noTracks}>
-                                                There are no tracks in this disc.
-                                            </div>
-                                        )}
-                                    </div>
-                                )) : (
-                                    <div className={styles.noTracks}>
-                                        There are no tracks in this album.
-                                    </div>
-                                )}
-                            </div>
+                            {!load ? (
+                                <>
+                                    <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                    <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                    <Skeleton width={'100%'} height={52} borderRadius={8}/>
+                                </>
+                            ) : <Tracks album={[album, setAlbum]}/>}
                         </div>
                     </div>
                 </div>

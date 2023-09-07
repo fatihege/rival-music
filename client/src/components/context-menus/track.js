@@ -19,7 +19,7 @@ import {
 } from '@/icons'
 import styles from '@/styles/context-menu.module.sass'
 
-export default function TrackContextMenu({tracks, playlist: [playlist, setPlaylist], toggleLikeTrack}) {
+export default function TrackContextMenu({tracks, playlist: [playlist, setPlaylist], album, toggleLikeTrack}) {
     const router = useRouter() // Get router
     const [user] = useContext(AuthContext) // Get user from auth context
     const [contextMenu] = useContext(ContextMenuContext) // Get context menu state
@@ -31,8 +31,8 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
 
     useEffect(() => {
         if (menuRef.current) setPosition({ // Set context menu position
-            x: contextMenu.x + menuRef.current?.clientWidth + 20 > window.innerWidth ? contextMenu.x - menuRef.current?.clientWidth : contextMenu.x,
-            y: contextMenu.y + menuRef.current?.clientHeight + 20 > window.innerHeight ? contextMenu.y - menuRef.current?.clientHeight : contextMenu.y,
+            x: Math.max(20, contextMenu.x + menuRef.current?.clientWidth + 20 > window.innerWidth ? contextMenu.x - menuRef.current?.clientWidth : contextMenu.x),
+            y: Math.max(20, contextMenu.y + menuRef.current?.clientHeight + 20 > window.innerHeight ? contextMenu.y - menuRef.current?.clientHeight : contextMenu.y),
             subMenuReverse: contextMenu.x + menuRef.current?.clientWidth + 200 > window.innerWidth
         })
     }, [menuRef, contextMenu])
@@ -113,11 +113,12 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
     const handleCopyLink = () => {
         if (tracks.length > 1) return // If tracks length is more than 1, return
         const track = tracks[0]
-        if (!navigator.clipboard || !track?._id || !track?.album?._id) return // If navigator clipboard is not exist or track is not exist, return
-        navigator.clipboard.writeText(`${process.env.APP_URL}/album/${track?.album?._id}#${track?._id}`) // Copy link to clipboard
+        const albumId = playlist ? track?.album?._id : album ? album?._id : null
+        if (!navigator.clipboard || !track?._id || !albumId) return // If navigator clipboard is not exist or track is not exist, return
+        navigator.clipboard.writeText(`${process.env.APP_URL}/album/${albumId}#${track?._id}`) // Copy link to clipboard
     }
 
-    return (
+    return user?.loaded && user?.id && user?.token ? (
         <div className={styles.contextMenu} ref={menuRef} style={{
             top: position.y,
             left: position.x,
@@ -133,12 +134,12 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
                     <NextIcon/>
                 </span>
                 <div className={`${styles.subMenu} ${position.subMenuReverse ? styles.reverse : ''}`}>
-                    {library.playlists.map(pl => (pl._id !== playlist?._id) || !playlist ? (
+                    {library?.playlists ? library.playlists?.map(pl => (pl._id !== playlist?._id) || !playlist ? (
                         <div className={styles.item} key={pl._id} onClick={() => handleAddPlaylist(pl._id)}>
                             <span>{pl.title}</span>
                         </div>
-                    ) : '')}
-                    {library.playlists?.length > 1 && (
+                    ) : '') : ''}
+                    {library?.playlists?.length > 1 && (
                         <div className={styles.separator}></div>
                     )}
                     <div className={styles.item} onClick={handleCreatePlaylist}>
@@ -152,9 +153,9 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
             </div>
             {tracks?.length === 1 && toggleLikeTrack ? (
                 <div className={styles.item} onClick={() => toggleLikeTrack(tracks[0]?._id || tracks[0]?.id)}>
-                    <LikeIcon stroke={'#eee'} fill={playlist.likes.includes(tracks[0]._id) ? '#eee' : 'none'}/>
+                    <LikeIcon stroke={'#eee'} fill={playlist ? (playlist?.likes?.includes(tracks[0]._id) ? '#eee' : 'none') : album ? (album?.likes?.includes(tracks[0]._id) ? '#eee' : 'none') : 'none'}/>
                     <span className={styles.text}>{
-                        playlist.likes.includes(tracks[0]._id) ? 'Unlike' : 'Like'
+                        playlist ? (playlist?.likes?.includes(tracks[0]._id) ? 'Unlike' : 'Like') : album ? (album?.likes?.includes(tracks[0]._id) ? 'Unlike' : 'Like') : 'Like'
                     }</span>
                 </div>
             ) : ''}
@@ -167,11 +168,13 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
             <div className={styles.separator}></div>
             {tracks?.length === 1 ? (
                 <>
-                    <div className={styles.item} onClick={() => router.push('/album/[id]', `/album/${tracks[0]?.album?._id}`)}>
-                        <DiscIcon stroke={'#eee'}/>
-                        <span className={styles.text}>Go to album</span>
-                    </div>
-                    <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${tracks[0]?.album?.artist?._id}`)}>
+                    {!album ? (
+                        <div className={styles.item} onClick={() => router.push('/album/[id]', `/album/${tracks[0]?.album?._id}`)}>
+                            <DiscIcon stroke={'#eee'}/>
+                            <span className={styles.text}>Go to album</span>
+                        </div>
+                    ) : ''}
+                    <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${playlist ? tracks[0]?.album?.artist?._id : album ? album?.artist?._id : ''}`)}>
                         <PersonIcon stroke={'#eee'}/>
                         <span className={styles.text}>Go to artist</span>
                     </div>
@@ -190,5 +193,5 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
                 </div>
             </div>
         </div>
-    )
+    ) : ''
 }
