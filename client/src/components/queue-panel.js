@@ -93,6 +93,8 @@ export default function QueuePanel() {
     const clearQueue = () => {
         setQueue([])
         setQueueData([])
+        localStorage.removeItem('queue')
+        localStorage.removeItem('queueIndex')
     }
 
     const dragStart = track => {

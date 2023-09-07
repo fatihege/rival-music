@@ -10,18 +10,16 @@ import {QueueContext} from '@/contexts/queue'
 import {LibraryContext} from '@/contexts/library'
 import {ModalContext} from '@/contexts/modal'
 import {DialogueContext} from '@/contexts/dialogue'
-import {ContextMenuContext} from '@/contexts/context-menu'
-import TrackContextMenu from '@/components/context-menus/track'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
 import Input from '@/components/form/input'
 import PlaylistImage from '@/components/playlist-image'
 import AskLoginModal from '@/components/modals/ask-login'
 import EditPlaylistModal from '@/components/modals/edit-playlist'
+import Tracks, {handlePlay} from '@/components/tracks'
 import NotFoundPage from '@/pages/404'
 import getPlaylistData from '@/utils/get-playlist-data'
-import formatTime from '@/utils/format-time'
-import {AlbumDefault, OptionsIcon, PauseIcon, PlayIcon, ExplicitIcon, LikeIcon, EditIcon, AddIcon} from '@/icons'
+import {AlbumDefault, PlayIcon, ExplicitIcon, LikeIcon, EditIcon, AddIcon} from '@/icons'
 import styles from '@/styles/playlist.module.sass'
 
 export function getServerSideProps(context) {
@@ -36,23 +34,19 @@ export default function PlaylistPage({id}) {
     const router = useRouter() // Router instance
     const [load, setLoad] = useState(false) // Is profile loaded
     const [user] = useContext(AuthContext) // Get user data from AuthContext
-    const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const {
         queue,
         setQueue,
         queueIndex,
         setQueueIndex,
-        isPlaying,
         handlePlayPause,
         track: contextTrack,
         isLiked,
-        setIsLiked,
     } = useContext(QueueContext) // Get queue data from QueueContext
     const [, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
     const [, setDialogue] = useContext(DialogueContext) // Get setDialogue function from DialogueContext
     const [playlist, setPlaylist] = useState(null) // Playlist data
-    const [selectedTracks, setSelectedTracks] = useState([]) // Selected tracks
     const [searchResults, setSearchResults] = useState([]) // Search results
     const searchRef = useRef('') // Search ref
     const searchTimeoutRef = useRef()
@@ -72,30 +66,8 @@ export default function PlaylistPage({id}) {
         return () => { // When component is unmounted
             setPlaylist(null) // Reset playlist data
             setLoad(false) // Reset load state
-            setSelectedTracks([]) // Reset selected tracks
         }
     }, [id, user])
-
-
-    const handlePlay = (id = null) => {
-        if (!user || !user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
-            active: <AskLoginModal/>,
-            canClose: true,
-        })
-        if (id && !playlist?.tracks?.find(t => t._id === id)?.audio) return // If track ID is defined and track audio is not exists, return
-
-        if (id && queue?.length && queue?.findIndex(t => t.id === id) === queueIndex) { // If track ID is defined and track is already in the queue
-            handlePlayPause(true) // Play track
-            return
-        }
-
-        const filteredTracks = playlist?.tracks?.filter(t => !!t.audio) // Filter tracks that have audio
-        const index = id ? filteredTracks?.findIndex(t => t._id === id) : 0
-
-        setQueue(filteredTracks?.map(t => ({id: t._id, audio: t.audio})) || []) // Set queue to the playlist tracks
-        setQueueIndex(index) // Set queue index to the track index
-        handlePlayPause(true)
-    }
 
     const handleLikePlaylist = async () => {
         if (!playlist?._id) return // If playlist ID is not defined, return
@@ -123,31 +95,6 @@ export default function PlaylistPage({id}) {
         }
     }
 
-    const toggleLikeTrack = async (trackId) => {
-        if (!user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
-            active: <AskLoginModal/>,
-            canClose: true,
-        })
-
-        const liked = playlist?.likes?.includes(trackId) // Check if track is liked
-        const response = await axios.post(`${process.env.API_URL}/track/like/${trackId}`, { // Send POST request to the API
-            like: liked ? -1 : 1,
-        }, {
-            headers: {
-                Authorization: `Bearer ${user.token}`,
-            }
-        })
-
-        if (response.data?.status === 'OK') { // If there is a response
-            const updatedPlaylist = {...playlist} // Create updated playlist data
-            if (response.data?.liked && !updatedPlaylist?.likes?.includes(trackId)) updatedPlaylist?.likes?.push(trackId) // If track is liked, push track ID to the likes array
-            else if (updatedPlaylist?.likes) updatedPlaylist.likes = updatedPlaylist?.likes?.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
-            setPlaylist(updatedPlaylist) // Set playlist data to the updated playlist data
-
-            if (contextTrack && contextTrack._id === trackId) setIsLiked(response.data?.liked) // If track is defined and track ID is equal to the liked track ID, set isLiked state to the response data
-        }
-    }
-
     useEffect(() => {
         if (!contextTrack) return
 
@@ -156,26 +103,6 @@ export default function PlaylistPage({id}) {
             else if (!isLiked && playlist?.likes?.includes(contextTrack?._id)) setPlaylist({...playlist, likes: (playlist?.likes || [])?.filter(t => t !== contextTrack?._id)}) // Otherwise, remove track ID from the likes array
         }
     }, [isLiked, contextTrack])
-
-    useEffect(() => {
-        const hash = router?.asPath?.split('#')[1]
-        if (hash) setSelectedTracks([hash])
-    }, [router.asPath])
-
-    const handleSelectTrack = (e, id) => {
-        if (e.button !== 0) return // If mouse button is not left, return
-        if (e.ctrlKey || e.metaKey) {
-            if (selectedTracks.includes(id)) setSelectedTracks(selectedTracks.filter(t => t !== id))
-            else setSelectedTracks([...selectedTracks, id])
-        } else if (e.shiftKey) {
-            const tracks = playlist?.tracks?.filter(t => t?.audio)?.map(t => t?._id)
-            const firstIndex = tracks?.indexOf(selectedTracks[0])
-            const lastIndex = tracks?.indexOf(id)
-            const selected = tracks?.slice(Math.min(firstIndex, lastIndex), Math.max(firstIndex, lastIndex) + 1)
-            setSelectedTracks(selected)
-        } else if (selectedTracks?.includes(id)) setSelectedTracks([])
-        else setSelectedTracks([id])
-    }
 
     const handleSearch = async () => {
         if (!searchRef.current?.trim()?.length) return setSearchResults([]) // If search query is empty, return
@@ -222,25 +149,6 @@ export default function PlaylistPage({id}) {
         } catch (e) {
             console.error(e)
         }
-    }
-
-    const handleTrackContextMenu = (e, _tracks) => {
-        e.preventDefault()
-        e.stopPropagation()
-
-        const tracks = []
-        if (typeof _tracks[0] === 'string') {
-            _tracks.map(t => {
-                const foundTrack = playlist.tracks.find(tr => tr._id === t)
-                if (foundTrack) tracks.push(foundTrack)
-            })
-        } else tracks.push(_tracks[0])
-
-        setContextMenu({
-            menu: <TrackContextMenu tracks={tracks} playlist={playlist} setPlaylist={setPlaylist} toggleLikeTrack={toggleLikeTrack}/>,
-            x: e.clientX,
-            y: e.clientY,
-        })
     }
 
     const handleConfirmDelete = () => {
@@ -350,7 +258,7 @@ export default function PlaylistPage({id}) {
                                     <div className={styles.buttons}>
                                         <button
                                             className={`${styles.play} ${!playlist?.tracks?.length || !playlist?.tracks?.filter(t => !!t.audio).length ? styles.disabled : ''}`}
-                                            onClick={() => handlePlay()}>
+                                            onClick={() => handlePlay(null, user, playlist, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause)}>
                                             <PlayIcon fill={'#1c1c1c'} rounded={true}/> Play
                                         </button>
                                         {playlist !== null && playlist?.owner?._id !== user?.id ? (
@@ -376,7 +284,7 @@ export default function PlaylistPage({id}) {
                                         <Skeleton width={'100%'} height={52} borderRadius={8}/>
                                         <Skeleton width={'100%'} height={52} borderRadius={8}/>
                                     </>
-                                ) : playlist && playlist?.tracks?.length ? playlist?.tracks?.map((track, index) => (
+                                ) : /*playlist && playlist?.tracks?.length ? playlist?.tracks?.map((track, index) => (
                                     <div key={index} id={track?._id} onContextMenu={e => handleTrackContextMenu(e, selectedTracks?.length && selectedTracks?.includes(track?._id) ? selectedTracks : [track])}
                                          onMouseDown={e => track?.audio ? handleSelectTrack(e, track?._id) : e.preventDefault()}
                                          className={`${styles.track} ${!track?.audio ? styles.disabled : ''} ${selectedTracks?.includes(track?._id) ? styles.highlight : ''}`}>
@@ -447,11 +355,7 @@ export default function PlaylistPage({id}) {
                                             </button>
                                         </div>
                                     </div>
-                                )) : (
-                                    <div className={styles.noTracks}>
-                                        There are no tracks in this playlist.
-                                    </div>
-                                )}
+                                ))*/ <Tracks playlist={[playlist, setPlaylist]}/>}
                             </div>
                         </div>
                         {user?.loaded && playlist?.owner?._id === user?.id || user?.admin ? (

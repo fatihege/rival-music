@@ -19,7 +19,7 @@ import {
 } from '@/icons'
 import styles from '@/styles/context-menu.module.sass'
 
-export default function TrackContextMenu({tracks, playlist, setPlaylist, toggleLikeTrack}) {
+export default function TrackContextMenu({tracks, playlist: [playlist, setPlaylist], toggleLikeTrack}) {
     const router = useRouter() // Get router
     const [user] = useContext(AuthContext) // Get user from auth context
     const [contextMenu] = useContext(ContextMenuContext) // Get context menu state
@@ -167,11 +167,11 @@ export default function TrackContextMenu({tracks, playlist, setPlaylist, toggleL
             <div className={styles.separator}></div>
             {tracks?.length === 1 ? (
                 <>
-                    <div className={styles.item} onClick={() => router.push('/album/[id]', `/album/${track?.album?._id}`)}>
+                    <div className={styles.item} onClick={() => router.push('/album/[id]', `/album/${tracks[0]?.album?._id}`)}>
                         <DiscIcon stroke={'#eee'}/>
                         <span className={styles.text}>Go to album</span>
                     </div>
-                    <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${track?.album?.artist?._id}`)}>
+                    <div className={styles.item} onClick={() => router.push('/artist/[id]', `/artist/${tracks[0]?.album?.artist?._id}`)}>
                         <PersonIcon stroke={'#eee'}/>
                         <span className={styles.text}>Go to artist</span>
                     </div>
