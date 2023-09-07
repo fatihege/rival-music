@@ -282,11 +282,11 @@ export default function EditTrackPage({id}) {
             active: true,
             title: 'Delete Track',
             description: 'Are you sure you want to delete this track?',
-            button: 'Delete Album',
+            button: 'Delete Track',
             type: 'danger',
-            callback: () => {
+            callback: async () => {
                 try {
-                    axios.delete(`${process.env.API_URL}/admin/${user.token}/track/${track?.id || track?._id}`, {
+                    await axios.delete(`${process.env.API_URL}/admin/${user.token}/track/${track?.id || track?._id}`, {
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },

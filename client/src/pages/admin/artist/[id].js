@@ -168,9 +168,9 @@ export default function EditArtistPage({id}) {
             description: 'Are you sure you want to delete this artist?',
             button: 'Delete Artist',
             type: 'danger',
-            callback: () => {
+            callback: async () => {
                 try {
-                    axios.delete(`${process.env.API_URL}/admin/${user.token}/artist/${artist?.id}`, {
+                    await axios.delete(`${process.env.API_URL}/admin/${user.token}/artist/${artist?.id}`, {
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },

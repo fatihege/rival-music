@@ -9,7 +9,7 @@ import {DialogueContext} from '@/contexts/dialogue'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
 import formatTime from '@/utils/format-time'
-import {AddIcon, CloseIcon, NextIcon} from '@/icons'
+import {AddIcon, CloseIcon, DiscIcon, NextIcon} from '@/icons'
 import styles from '@/styles/admin/create-album.module.sass'
 
 // Overlay component
@@ -42,7 +42,7 @@ export default function EditAlbumPage({id}) {
         releaseYear: '',
         artist: null,
         genres: [''],
-        tracks: [],
+        discs: [],
     })
     const [artist, setArtist] = useState(null) // Artist state
     const [artistQuery, setArtistQuery] = useState('') // Artist query state
@@ -77,7 +77,7 @@ export default function EditAlbumPage({id}) {
                     releaseYear: releaseYear.toString(),
                     artist: artist?._id || artist?.id,
                     genres,
-                    tracks: response.data.album?.tracks,
+                    discs: response.data.album?.discs,
                 })
                 setArtist(artist) // Set artist state
             }
@@ -195,9 +195,9 @@ export default function EditAlbumPage({id}) {
             description: 'Are you sure you want to delete this album?',
             button: 'Delete Album',
             type: 'danger',
-            callback: () => {
+            callback: async () => {
                 try {
-                    axios.delete(`${process.env.API_URL}/admin/${user.token}/album/${album?.id}`, {
+                    await axios.delete(`${process.env.API_URL}/admin/${user.token}/album/${album?.id}`, {
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },
@@ -237,7 +237,9 @@ export default function EditAlbumPage({id}) {
                 <div className={styles.albumPreview}>
                     <span className={styles.recommendation}>Recommended dimensions are 800x800</span>
                     <div className={styles.cover}>
-                        {coverImage ? <img src={coverImage} alt={'Album Cover Preview'}/> : album?.cover ? <img src={`${process.env.API_URL}/uploads/${album?.cover}`} alt={'Album Cover Preview'}/> : ''}
+                        {coverImage ? <img src={coverImage} alt={'Album Cover Preview'}/> : album?.cover ?
+                            <img src={`${process.env.API_URL}/uploads/${album?.cover}`}
+                                 alt={'Album Cover Preview'}/> : ''}
                         <Overlay handler={() => coverRef.current?.click()}/>
                     </div>
                     {album?.cover || coverImage ? <button onClick={() => {
@@ -316,7 +318,8 @@ export default function EditAlbumPage({id}) {
                     <Button value="Update album" className={`${styles.formField} ${styles.submitButton}`}
                             icon={<NextIcon stroke={'#1c1c1c'}/>} disabled={disableSubmit}
                             onClick={() => handleSubmit()}/>
-                    <Button value="Delete album" type="danger" className={styles.formField} onClick={() => handleDeleteAlbum()}/>
+                    <Button value="Delete album" type="danger" className={styles.formField}
+                            onClick={() => handleDeleteAlbum()}/>
                     <input type="file" ref={coverRef} className="hide" onChange={handleCoverSelect}
                            accept=".png,.jpg,.jpeg"/>
                     <div className={styles.tracks}>
@@ -324,15 +327,26 @@ export default function EditAlbumPage({id}) {
                         <Link href={`/admin/track/create#${album?.id || album?._id}`} className={styles.addLink}>
                             Add Track
                         </Link>
-                        {album?.tracks?.length ? album.tracks.map((t, i) => (
-                            <Link href={'/admin/track/[id]'} as={`/admin/track/${t._id}`} key={i} className={styles.track}>
-                                <div className={styles.trackInfo}>
-                                    <div className={styles.trackNumber}>{i + 1}</div>
-                                    <div className={styles.trackTitle}>{t?.title}</div>
-                                </div>
-                                <div className={styles.trackDuration}>{formatTime(t?.duration)}</div>
-                            </Link>
-                        )) : <div className={styles.noTracks}>No tracks found.</div>}
+                        {album?.discs?.map((disc, i) => (
+                            <div className={styles.disc} key={i}>
+                                {album?.discs?.length > 1 ? (
+                                    <div className={styles.discTitle}>
+                                        <DiscIcon stroke={'#eee'}/>
+                                        Disc {i + 1}
+                                    </div>
+                                ) : ''}
+                                {disc?.length ? disc.map((t, j) => (
+                                    <Link href={'/admin/track/[id]'} as={`/admin/track/${t._id}`} key={j}
+                                          className={styles.track}>
+                                        <div className={styles.trackInfo}>
+                                            <div className={styles.trackNumber}>{j + 1}</div>
+                                            <div className={styles.trackTitle}>{t?.title}</div>
+                                        </div>
+                                        <div className={styles.trackDuration}>{formatTime(t?.duration)}</div>
+                                    </Link>
+                                )) : <div className={styles.noTracks}>No tracks found.</div>}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

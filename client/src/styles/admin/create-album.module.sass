@@ -160,8 +160,8 @@ $placeholderColor: rgba(13, 13, 13, .6)
     .tracks
       .addLink
         display: inline-block
-        font-size: 1rem
-        font-weight: 500
+        font-size: .9rem
+        font-weight: 600
         padding: .5rem 1rem
         border-radius: .5rem
         background: #eeeeee
@@ -174,39 +174,55 @@ $placeholderColor: rgba(13, 13, 13, .6)
         color: #eeeeee
         opacity: .8
 
-      .track
-        width: 600px
-        padding: .5rem
-        display: flex
-        align-items: center
-        font-size: .9rem
-        font-weight: 500
-        color: #eeeeee
-        background-color: #1c1c1c
-        border-radius: .5rem
-        margin-bottom: .25rem
+      .disc
+        margin-bottom: 20px
 
-        &:hover
-          background-color: #262626
-
-        &:active
-          background-color: #303030
-
-        .trackInfo
+        .discTitle
           display: flex
           align-items: center
+          column-gap: 6px
+          color: #eee
+          font-size: 1rem
+          font-weight: 500
+          margin-bottom: 8px
 
-          .trackNumber
-            display: inline-block
-            width: 32px
-            text-align: center
+          svg
+            height: 24px
+            width: 24px
 
-          .trackTitle
-            margin-left: .5rem
-            max-width: 400px
-            overflow: hidden
-            text-overflow: ellipsis
-            white-space: nowrap
+        .track
+          width: 600px
+          padding: .5rem
+          display: flex
+          align-items: center
+          font-size: .9rem
+          font-weight: 500
+          color: #eeeeee
+          background-color: #1c1c1c
+          border-radius: .5rem
+          margin-bottom: .25rem
 
-        .trackDuration
-          margin-left: auto
+          &:hover
+            background-color: #262626
+
+          &:active
+            background-color: #303030
+
+          .trackInfo
+            display: flex
+            align-items: center
+
+            .trackNumber
+              display: inline-block
+              width: 32px
+              text-align: center
+
+            .trackTitle
+              margin-left: .5rem
+              max-width: 400px
+              overflow: hidden
+              text-overflow: ellipsis
+              white-space: nowrap
+
+          .trackDuration
+            margin-left: auto

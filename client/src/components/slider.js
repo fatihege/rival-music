@@ -190,14 +190,15 @@ export default function Slider({type, title, items = []}) {
 
         if (!itemType) itemType = type
         if (itemType === 'track') {
-            setQueue(items.filter(i => !i?.type || i?.type === 'track').map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with tracks
+            setQueue(items.filter(i => !i?.type || i?.type === 'track').map(i => ({id: i?._id, audio: i?.audio})) || []) // Set queue with tracks
             setQueueIndex(index || 0) // Set queue index to 0
             handlePlayPause(true) // Play track
         } else if (itemType === 'album') {
             try {
                 axios.get(`${process.env.API_URL}/album/${items[index]?._id}?tracks=1`).then(response => {
                     if (response.data.status === 'OK' && response.data?.album) {
-                        setQueue(response.data?.album?.tracks?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with album tracks
+                        const tmpQueue = response.data?.album?.discs?.map(d => d?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Get tracks from album
+                        setQueue(tmpQueue?.[0] || []) // Set queue with album tracks
                         setQueueIndex(0) // Set queue index to 0
                         handlePlayPause(true) // Play tracks
                     }
