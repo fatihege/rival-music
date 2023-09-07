@@ -3,11 +3,13 @@ import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {TrackPanelContext} from '@/contexts/track-panel'
 import {QueueContext} from '@/contexts/queue'
+import {ContextMenuContext} from '@/contexts/context-menu'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import Player from '@/components/player'
 import Volume from '@/components/volume'
 import {TooltipHandler} from '@/components/tooltip'
+import TrackContextMenu from '@/components/context-menus/track'
 import {
     AlbumDefault,
     CloseIcon,
@@ -48,6 +50,7 @@ export default function NowPlayingBar() {
         handlePrevTrack,
         handleNextTrack,
     } = useContext(QueueContext) // Audio controls context
+    const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const [trackPanel, setTrackPanel] = useContext(TrackPanelContext) // Track panel state
     const [isResizing, _setIsResizing] = useState(false) // Is now playing bar resizing
     const [resizingSide, setResizingSide] = useState(0) // Side of now playing bar to resize
@@ -195,6 +198,17 @@ export default function NowPlayingBar() {
         }
     }
 
+    const handleContextMenu = e => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setContextMenu({
+            menu: <TrackContextMenu tracks={[{...track, liked: isLiked}]} toggleLikeTrack={handleLike}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return user?.loaded && user?.id && user?.token && track ? (
         <>
             <div
@@ -251,7 +265,7 @@ export default function NowPlayingBar() {
                     </div>
                     <div className={`${styles.layoutResizer} ${styles.left}`}
                          onMouseDown={e => handleResizeDown(e, 1)}></div>
-                    <div className={styles.track}>
+                    <div className={styles.track} onContextMenu={handleContextMenu}>
                         <div className={`${styles.trackImage} ${showAlbumCover ? styles.hide : ''}`}>
                             <Image src={track?.album?.cover} width={100} height={100} alt={track?.title} format={'webp'}
                                    alternative={<AlbumDefault/>} loading={<Skeleton width={63} height={63} style={{top: '-3px'}}/>}/>

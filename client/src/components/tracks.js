@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {useRouter} from 'next/router'
-import {useContext, useEffect, useRef, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
@@ -94,7 +94,7 @@ export default function Tracks({playlist, album}) {
         } else tracks.push(_tracks[0])
 
         setContextMenu({
-            menu: <TrackContextMenu tracks={tracks} playlist={playlist?.length ? playlist : []} album={album?.length ? album : []} toggleLikeTrack={toggleLikeTrack}/>,
+            menu: <TrackContextMenu tracks={tracks} playlist={playlist?.length ? playlist : []} album={album?.length ? album[0] : null} toggleLikeTrack={toggleLikeTrack}/>,
             x: e.clientX,
             y: e.clientY,
         })
