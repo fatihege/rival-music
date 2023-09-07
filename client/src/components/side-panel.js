@@ -8,8 +8,10 @@ import {AuthContext} from '@/contexts/auth'
 import {AlertContext} from '@/contexts/alert'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {LibraryContext} from '@/contexts/library'
+import {ContextMenuContext} from '@/contexts/context-menu'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import PlaylistImage from '@/components/playlist-image'
+import PlaylistContextMenu from '@/components/context-menus/playlist'
 import {TooltipHandler} from '@/components/tooltip'
 import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
@@ -25,6 +27,7 @@ export default function SidePanel() {
     const [, setAlert] = useContext(AlertContext) // Use alert context for displaying alerts
     const [, setNavBarWidth] = useContext(NavigationBarContext) // Navigation bar width
     const [library, , getUserLibrary] = useContext(LibraryContext) // Get user library
+    const [, setContextMenu] = useContext(ContextMenuContext) // Context menu
     const [activeLink, setActiveLink] = useState(router.pathname || '/') // Active link
     const [isResizing, setIsResizing] = useState(false) // Is resizing active
     const [offset, setOffset] = useState(0) // Offset of mouse from layout resizer
@@ -174,6 +177,16 @@ export default function SidePanel() {
         })
     }
 
+    const handlePlaylistContextMenu = (e, playlist) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setContextMenu({
+            menu: <PlaylistContextMenu playlist={playlist}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return (
         <>
             <div className={`${styles.sidePanel} ${isMinimized ? styles.minimized : ''} ${!user?.loaded || !user?.id || !user?.token ? styles.notLoggedIn : ''}`}
@@ -237,7 +250,7 @@ export default function SidePanel() {
                                     <>
                                         {library?.playlists?.map(item => (
                                             <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
-                                                  key={item?.id || item?._id}>
+                                                  key={item?.id || item?._id} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
                                                 <div className={styles.listItem}>
                                                     <div className={styles.image}>
                                                         <PlaylistImage playlist={item} width={48} height={48}/>
@@ -257,7 +270,7 @@ export default function SidePanel() {
                                         ))}
                                         {library?.likedPlaylists?.map(item => (
                                             <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
-                                                  key={item?.id || item?._id}>
+                                                  key={item?.id || item?._id} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
                                                 <div className={styles.listItem}>
                                                     <div className={styles.image}>
                                                         <PlaylistImage playlist={item} width={48} height={48}/>

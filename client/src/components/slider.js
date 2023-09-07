@@ -7,6 +7,7 @@ import {ModalContext} from '@/contexts/modal'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {ContextMenuContext} from '@/contexts/context-menu'
 import TrackContextMenu from '@/components/context-menus/track'
+import PlaylistContextMenu from '@/components/context-menus/playlist'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
@@ -248,6 +249,17 @@ export default function Slider({type, title, items = []}) {
         })
     }
 
+    const handlePlaylistContextMenu = (e, playlist) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setContextMenu({
+            menu: <PlaylistContextMenu playlist={playlist}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
     return (
         <div className={`${styles.container} ${showAllRef.current ? styles.all : ''}`} ref={containerRef}>
             <div className={styles.header}>
@@ -301,7 +313,7 @@ export default function Slider({type, title, items = []}) {
                                 </div>
                             ) : (item?.type && item.type === 'playlist') || (!item?.type && type === 'playlist') ? (
                                 <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
-                                     style={{width: albumWidth || ''}}>
+                                     style={{width: albumWidth || ''}} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
                                         <PlaylistImage playlist={item} width={250} height={250}/>
@@ -309,7 +321,7 @@ export default function Slider({type, title, items = []}) {
                                             <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'playlist', i)}>
                                                 <PlayIcon/>
                                             </button>
-                                            <button className={`${styles.button} ${styles.options}`} onMouseUp={handleOptions}>
+                                            <button className={`${styles.button} ${styles.options}`} onClick={e => handlePlaylistContextMenu(e, item)}>
                                                 <OptionsIcon/>
                                             </button>
                                         </div>

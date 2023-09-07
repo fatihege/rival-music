@@ -144,6 +144,7 @@ export default function QueuePanel() {
         dontChangeRef.current = true // Set dontChangeRef to true
         setQueue(newQueue)
         setQueueData(queueData.filter(t => t?.id !== track?.id))
+        localStorage.setItem('queue', JSON.stringify(newQueue))
     }
 
     return (
