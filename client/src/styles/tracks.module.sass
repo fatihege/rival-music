@@ -12,6 +12,48 @@
     opacity: 0
     transform: scale(1.25)
 
+.dragPreview
+  position: fixed
+  top: -50px
+  left: -50px
+  width: 40px
+  height: 40px
+  border-radius: 4px
+  background-color: #1e1e1e
+  border: 1px solid #222
+  z-index: 9999
+  pointer-events: none
+  opacity: 0
+  transform: translate(-50%, -50%)
+
+  &.show
+    opacity: .6
+
+  img,
+  svg
+    display: block
+    width: 100%
+    height: 100%
+    object-fit: cover
+    border-radius: 4px
+
+  .count
+    position: absolute
+    top: -7px
+    right: -7px
+    width: 20px
+    height: 20px
+    border-radius: 50%
+    background-color: $accentColor
+    border: 1px solid $accentColorDark
+    color: #1c1c1c
+    font-size: .8rem
+    font-weight: 700
+    display: flex
+    justify-content: center
+    align-items: center
+    z-index: 1
+
 .container
   padding: 0 80px
 
@@ -67,8 +109,12 @@
         .playing span
           background-color: #1c1c1c
 
+    &.dragging
+      background-color: #252525
+      outline: 2px solid #343434
+
     .id
-      width: 2rem
+      width: 2.5rem
       padding-left: 4px
       display: flex
       align-items: center

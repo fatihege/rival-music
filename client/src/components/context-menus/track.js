@@ -154,7 +154,7 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
                             <span>{pl.title}</span>
                         </div>
                     ) : '') : ''}
-                    {library?.playlists?.length > 1 && (
+                    {library?.playlists?.filter(pl => pl._id !== playlist?._id)?.length > 0 && (
                         <div className={styles.separator}></div>
                     )}
                     <div className={styles.item} onClick={handleCreatePlaylist}>

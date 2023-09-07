@@ -21,11 +21,9 @@ export default function QueuePanel() {
     const [queueData, setQueueData] = useState([]) // Queue data
     const [clicked, _setClicked] = useState(null) // Clicked state
     const [dragItem, _setDragItem] = useState(null) // Drag item state
-    const [dragIndex, _setDragIndex] = useState(null) // Drag index state
     const [animatedDragItem, _setAnimatedDragItem] = useState(null) // Animated drag item state
     const clickedRef = useRef(clicked) // Clicked reference
     const dragItemRef = useRef(dragItem) // Drag item reference
-    const dragIndexRef = useRef(dragIndex) // Drag index reference
     const dragPreviewRef = useRef() // Drag preview reference
     const animatedDragItemRef = useRef(animatedDragItem) // Animated drag item reference
 
@@ -37,11 +35,6 @@ export default function QueuePanel() {
     const setDragItem = value => {
         dragItemRef.current = value
         _setDragItem(value)
-    }
-
-    const setDragIndex = value => {
-        dragIndexRef.current = value
-        _setDragIndex(value)
     }
 
     const setAnimatedDragItem = value => {
@@ -102,11 +95,6 @@ export default function QueuePanel() {
             setDragItem(track) // Set drag item to track
             setClicked(null) // Reset clicked reference
         }
-    }
-
-    const mouseLeave = track => {
-        if (!dragItemRef.current) return // If drag item is not exist, return
-        if (dragIndexRef.current === queueData.findIndex(t => t?.id === track?.id)) setDragIndex(null) // If drag index is equal to target element's index, set drag index to null
     }
 
     const dragEnd = track => {
@@ -177,7 +165,7 @@ export default function QueuePanel() {
                             {queueData.map((track, index) => (
                                 <div key={index}>
                                     <div className={`${styles.track} ${dragItem && dragItem.id === track?.id ? styles.dragging : ''} ${animatedDragItem && animatedDragItem.id === track?.id ? styles.animated : ''}`}
-                                         onMouseDown={() => setClicked(track)} onMouseMove={() => dragStart(track)} onMouseLeave={() => mouseLeave(track)} onMouseUp={() => dragEnd(track)}>
+                                         onMouseDown={() => setClicked(track)} onMouseMove={() => dragStart(track)} onMouseUp={() => dragEnd(track)}>
                                         <div className={styles.trackInfo}>
                                             <div className={styles.cover}>
                                                 <Image src={track?.album?.cover} alt={track?.title} width={40} height={40} format={'webp'}

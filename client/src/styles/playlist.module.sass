@@ -203,21 +203,32 @@
                 height: 1rem
                 margin-right: .25rem
 
-          .delete
-            font-size: .9rem
-            font-weight: 500
-            color: #eee
-            opacity: .7
-            background: none
+          .options
+            background-color: #252525
             border: none
+            width: 36px
+            height: 36px
+            border-radius: 50%
+            display: flex
+            align-items: center
+            justify-content: center
             cursor: pointer
-            width: max-content
             position: absolute
             bottom: 40px
 
             &:hover
-              opacity: 1
-              text-decoration: underline
+              background-color: $accentColor
+              transform: scale(1.1)
+
+              svg *
+                fill: #1c1c1c !important
+
+            &:active
+              transform: scale(1)
+
+            svg
+              width: 16px
+              height: 16px
 
         .adminControls
           position: absolute

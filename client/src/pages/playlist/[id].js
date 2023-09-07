@@ -9,7 +9,6 @@ import {AuthContext} from '@/contexts/auth'
 import {QueueContext} from '@/contexts/queue'
 import {LibraryContext} from '@/contexts/library'
 import {ModalContext} from '@/contexts/modal'
-import {DialogueContext} from '@/contexts/dialogue'
 import {ContextMenuContext} from '@/contexts/context-menu'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import {TooltipHandler} from '@/components/tooltip'
@@ -21,7 +20,7 @@ import EditPlaylistModal from '@/components/modals/edit-playlist'
 import Tracks, {handlePlay} from '@/components/tracks'
 import NotFoundPage from '@/pages/404'
 import getPlaylistData from '@/utils/get-playlist-data'
-import {AlbumDefault, PlayIcon, ExplicitIcon, LikeIcon, EditIcon, AddIcon} from '@/icons'
+import {AlbumDefault, PlayIcon, ExplicitIcon, LikeIcon, EditIcon, AddIcon, OptionsIcon} from '@/icons'
 import styles from '@/styles/playlist.module.sass'
 
 export function getServerSideProps(context) {
@@ -47,7 +46,6 @@ export default function PlaylistPage({id}) {
     } = useContext(QueueContext) // Get queue data from QueueContext
     const [, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setModal] = useContext(ModalContext) // Get setModal function from ModalContext
-    const [, setDialogue] = useContext(DialogueContext) // Get setDialogue function from DialogueContext
     const [, setContextMenu] = useContext(ContextMenuContext) // Get setContextMenu function from ContextMenuContext
     const [playlist, setPlaylist] = useState(null) // Playlist data
     const [searchResults, setSearchResults] = useState([]) // Search results
@@ -152,25 +150,6 @@ export default function PlaylistPage({id}) {
         } catch (e) {
             console.error(e)
         }
-    }
-
-    const handleConfirmDelete = () => {
-        setDialogue({
-            active: true,
-            title: 'Delete playlist',
-            description: 'Are you sure you want to delete this playlist?',
-            button: 'Delete',
-            type: 'danger',
-            callback: () => {
-                axios.delete(`${process.env.API_URL}/playlist/${playlist?._id}`, {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    }
-                }).catch(e => console.error(e))
-                getUserLibrary()
-                router.push('/library')
-            },
-        })
     }
 
     const handleContextMenu = e => {
@@ -282,8 +261,8 @@ export default function PlaylistPage({id}) {
                                         ) : ''}
                                     </div>
                                     {user?.loaded && playlist?.owner?._id === user?.id || user?.admin ? (
-                                        <button className={styles.delete} onClick={handleConfirmDelete}>
-                                            Delete
+                                        <button className={styles.options} onClick={handleContextMenu}>
+                                            <OptionsIcon/>
                                         </button>
                                     ) : ''}
                                 </div>

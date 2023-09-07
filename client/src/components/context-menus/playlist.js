@@ -4,8 +4,10 @@ import {useContext, useEffect, useRef, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {ContextMenuContext} from '@/contexts/context-menu'
 import {QueueContext} from '@/contexts/queue'
+import {DialogueContext} from '@/contexts/dialogue'
 import {LibraryContext} from '@/contexts/library'
 import {
+    DeleteIcon,
     LikeIcon,
     NextIcon,
     PersonIcon,
@@ -20,6 +22,7 @@ export default function PlaylistContextMenu({playlist}) {
     const [user] = useContext(AuthContext) // Get user from auth context
     const [contextMenu] = useContext(ContextMenuContext) // Get context menu state
     const {queue, queueIndex, setQueue, dontChangeRef, handlePlayPause} = useContext(QueueContext) // Get queue state from queue context
+    const [, setDialogue] = useContext(DialogueContext) // Get setDialogue function from DialogueContext
     const [, , getUserLibrary] = useContext(LibraryContext) // Get library
     const [position, setPosition] = useState({x: -9999, y: -9999, subMenuReverse: false}) // Context menu position
     const [isLiked, setIsLiked] = useState(null) // Is playlist liked
@@ -77,6 +80,25 @@ export default function PlaylistContextMenu({playlist}) {
         }).catch(e => console.error(e))
     }
 
+    const handleConfirmDelete = () => {
+        setDialogue({
+            active: true,
+            title: 'Delete playlist',
+            description: 'Are you sure you want to delete this playlist?',
+            button: 'Delete',
+            type: 'danger',
+            callback: () => {
+                axios.delete(`${process.env.API_URL}/playlist/${playlist?._id}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    }
+                }).catch(e => console.error(e))
+                getUserLibrary()
+                router.push('/library')
+            },
+        })
+    }
+
     return user?.loaded && user?.id && user?.token ? (
         <div className={styles.contextMenu} ref={menuRef} style={{
             top: position.y,
@@ -119,6 +141,15 @@ export default function PlaylistContextMenu({playlist}) {
                     </div>
                 </div>
             </div>
+            {playlist?.owner?._id === user?.id || user?.admin ? (
+                <>
+                    <div className={styles.separator}></div>
+                    <div className={styles.item} onClick={handleConfirmDelete}>
+                        <DeleteIcon stroke={'#eee'}/>
+                        <span className={styles.text}>Delete</span>
+                    </div>
+                </>
+            ) : ''}
         </div>
     ) : ''
 }

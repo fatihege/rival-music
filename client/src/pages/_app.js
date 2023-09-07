@@ -11,7 +11,6 @@ import {AlertProvider} from '@/contexts/alert'
 import {DialogueProvider} from '@/contexts/dialogue'
 import {TooltipProvider} from '@/contexts/tooltip'
 import {LibraryProvider} from '@/contexts/library'
-import {DragDropProvider} from '@/contexts/drag-drop'
 import {ContextMenuProvider} from '@/contexts/context-menu'
 import Wrapper from '@/components/wrapper'
 import Main from '@/components/main'
@@ -85,31 +84,29 @@ export default function App({Component, pageProps}) {
         <AlertProvider>
             <AuthProvider>
                 <LibraryProvider>
-                    <DragDropProvider>
-                        <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
-                            <Wrapper load={load}>
-                                <TooltipProvider>
-                                    <DialogueProvider>
-                                        <AudioProvider>
-                                            <ModalProvider>
-                                                <QueueProvider>
-                                                    <ContextMenuProvider>
-                                                        <TrackPanelProvider>
-                                                            <NavigationBarProvider>
-                                                                <Main>
-                                                                    <Component {...pageProps}/>
-                                                                </Main>
-                                                            </NavigationBarProvider>
-                                                        </TrackPanelProvider>
-                                                    </ContextMenuProvider>
-                                                </QueueProvider>
-                                            </ModalProvider>
-                                        </AudioProvider>
-                                    </DialogueProvider>
-                                </TooltipProvider>
-                            </Wrapper>
-                        </SkeletonTheme>
-                    </DragDropProvider>
+                    <SkeletonTheme baseColor={'rgb(33,33,33)'} highlightColor={'rgb(45,45,45)'}>
+                        <Wrapper load={load}>
+                            <TooltipProvider>
+                                <DialogueProvider>
+                                    <AudioProvider>
+                                        <ModalProvider>
+                                            <QueueProvider>
+                                                <ContextMenuProvider>
+                                                    <TrackPanelProvider>
+                                                        <NavigationBarProvider>
+                                                            <Main>
+                                                                <Component {...pageProps}/>
+                                                            </Main>
+                                                        </NavigationBarProvider>
+                                                    </TrackPanelProvider>
+                                                </ContextMenuProvider>
+                                            </QueueProvider>
+                                        </ModalProvider>
+                                    </AudioProvider>
+                                </DialogueProvider>
+                            </TooltipProvider>
+                        </Wrapper>
+                    </SkeletonTheme>
                 </LibraryProvider>
             </AuthProvider>
         </AlertProvider>
