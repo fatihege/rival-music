@@ -99,7 +99,7 @@ export default function AdminPage() {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Administration Panel — Rival Music</title>
+                <title>Administration Panel {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={`${styles.mainContainer} ${styles.adminContainer}`}>
                 <h1 className={styles.mainTitle}>Administration Panel</h1>

@@ -9,7 +9,7 @@ export default function NotFoundPage() {
     return (
         <>
             <Head>
-                <title>Page Not Found — Rival Music</title>
+                <title>Page Not Found {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.errorContainer}>
                 <h2 className={styles.title}>Page Not Found</h2>

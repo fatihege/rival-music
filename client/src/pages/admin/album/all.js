@@ -124,7 +124,7 @@ export default function ViewAlbumsPage() {
     return user?.loaded && user?.id && user?.token && user?.admin && (
         <>
             <Head>
-                <title>Albums — Rival Music</title>
+                <title>Albums {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer} ref={contentRef}>
                 <h1 className={styles.mainTitle}>Albums</h1>

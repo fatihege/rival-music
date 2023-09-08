@@ -161,7 +161,7 @@ export default function ResetPasswordPage({token}) {
     return (
         <>
             <Head>
-                <title>Reset Your Password — Rival Music</title>
+                <title>Reset Your Password {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             {showForm && (
                 <div className={styles.container}>

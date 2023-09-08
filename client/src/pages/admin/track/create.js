@@ -276,7 +276,7 @@ export default function CreateTrackPage() {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Create Track — Rival Music</title>
+                <title>Create Track {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer}>
                 <h1 className={styles.mainTitle}>Create Track</h1>

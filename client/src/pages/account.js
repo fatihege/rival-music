@@ -161,7 +161,7 @@ export default function AccountPage() {
     return (
         <>
             <Head>
-                <title>Account — Rival Music</title>
+                <title>Account {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>

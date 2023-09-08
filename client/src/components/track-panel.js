@@ -109,7 +109,7 @@ export default function TrackPanel() {
     return (
         <>
             <Head>
-                <title>{track?.title ? `${track.title} by ${track?.album?.artist?.name} — ` : ''}Rival Music</title>
+                <title>{track?.title ? `${track.title?.toString()} by ${track?.album?.artist?.name?.toString()} ${process.env.SEPARATOR} ` : ''}{process.env.APP_NAME}</title>
             </Head>
             <div className={`${styles.container} ${fade ? styles.fadeIn : ''}`}>
                 <div className={styles.background}>

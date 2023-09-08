@@ -125,7 +125,7 @@ export default function CreateArtistPage() {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Create Artist — Rival Music</title>
+                <title>Create Artist {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer}>
                 <h1 className={styles.mainTitle}>Create Artist</h1>

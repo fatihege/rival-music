@@ -37,7 +37,7 @@ export default function HomePage() {
     return (
         <>
             <Head>
-                <title>Rival Music</title>
+                <title>{process.env.APP_NAME}</title>
             </Head>
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>

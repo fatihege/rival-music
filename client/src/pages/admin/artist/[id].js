@@ -193,7 +193,7 @@ export default function EditArtistPage({id}) {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Edit Artist{artist?.name ? `: ${artist?.name}` : ''} — Rival Music</title>
+                <title>Edit Artist{artist?.name ? `: ${artist?.name?.toString()}` : ''} {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer}>
                 <h1 className={styles.mainTitle}>Edit Artist</h1>

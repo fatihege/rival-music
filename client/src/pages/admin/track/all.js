@@ -125,7 +125,7 @@ export default function ViewTracksPage() {
     return user?.loaded && user?.id && user?.token && user?.admin && (
         <>
             <Head>
-                <title>Tracks — Rival Music</title>
+                <title>Tracks {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer} ref={contentRef}>
                 <h1 className={styles.mainTitle}>Tracks</h1>

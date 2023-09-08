@@ -79,7 +79,7 @@ export default function ArtistProfilePage({id}) {
     return load && !artist?._id && !artist?.id ? <NotFoundPage/> : (
         <>
             <Head>
-                <title>{artist?.name ? `${artist.name} — ` : ''}Rival Music</title>
+                <title>{artist?.name ? `${artist.name?.toString()} ${process.env.SEPARATOR} ` : ''}{process.env.APP_NAME}</title>
             </Head>
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>

@@ -230,7 +230,7 @@ export default function EditAlbumPage({id}) {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Edit Album{album?.title ? `: ${album?.title}` : ''} — Rival Music</title>
+                <title>Edit Album{album?.title ? `: ${album?.title?.toString()}` : ''} {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer}>
                 <h1 className={styles.mainTitle}>Edit Album</h1>

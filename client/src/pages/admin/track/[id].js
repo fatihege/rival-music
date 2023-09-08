@@ -330,7 +330,7 @@ export default function EditTrackPage({id}) {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Edit Track — Rival Music</title>
+                <title>Edit Track{track?.title ? `: ${track?.title?.toString()}` : ''} {process.env.SEPARATOR} {process.env.APP_NAME}</title>
             </Head>
             <div className={styles.mainContainer}>
                 <h1 className={styles.mainTitle}>Edit Track</h1>

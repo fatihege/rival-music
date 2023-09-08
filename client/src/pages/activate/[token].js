@@ -71,7 +71,7 @@ export default function ActivationPage({token}) {
 
     return (
         <Head>
-            <title>Account Activation — Rival Music</title>
+            <title>Account Activation {process.env.SEPARATOR} {process.env.APP_NAME}</title>
         </Head>
     )
 }

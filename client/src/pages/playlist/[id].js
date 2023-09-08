@@ -165,7 +165,7 @@ export default function PlaylistPage({id}) {
     return load && !playlist?._id && !playlist?.id ? <NotFoundPage/> : (
         <>
             <Head>
-                <title>{playlist?.title ? `${playlist.title} by ${playlist?.owner?.name} — ` : ''}Rival Music</title>
+                <title>{playlist?.title ? `${playlist.title} by ${playlist?.owner?.name?.toString()} ${process.env.SEPARATOR} ` : ''}{process.env.APP_NAME}</title>
             </Head>
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>
