@@ -49,9 +49,9 @@ The application will be running at `localhost:3000`.
 | GET /explore           | Explore music genres                        |   ✅   |
 | GET /search/:query     | Search for music using a query string       |   ❌   |
 | GET /library           | User's library of saved songs and playlists |   ✅   |
-| GET /library/playlists | User's saved playlists                      |   ❌   |
-| GET /library/likes     | User's liked songs                          |   ❌   |
-| GET /library/saved     | User's saved songs                          |   ❌   |
+| GET /library/playlists | User's liked and created playlists          |   ✅   |
+| GET /library/tracks    | User's liked tracks                         |   ✅   |
+| GET /library/albums    | User's liked albums                         |   ✅   |
 | GET /playlist/:id      | A playlist with the given ID                |   ✅   |
 | GET /artist/:id        | An artist with the given ID                 |   ✅   |
 | GET /album/:id         | Album page with the given ID                |   ✅   |
