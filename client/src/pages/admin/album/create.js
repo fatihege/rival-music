@@ -160,7 +160,7 @@ export default function CreateAlbumPage() {
     return user.loaded && user?.admin ? (
         <>
             <Head>
-                <title>Create Album {process.env.SEPARATOR} {process.env.APP_NAME}</title>
+                <title>Create Album — Rival Music</title>
             </Head>
             <div className={styles.mainContainer}>
                 <h1 className={styles.mainTitle}>Create Album</h1>

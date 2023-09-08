@@ -1,0 +1,44 @@
+@import "variables"
+@import "home.module"
+
+.topSection
+  margin: 20px 0
+  display: flex
+  align-items: center
+  column-gap: 20px
+
+  a
+    font-size: .9rem
+    font-weight: 500
+    color: #eee
+    opacity: .7
+    background-color: transparent
+    border: 1px solid rgba(255, 255, 255, .1)
+    padding: 6px 12px
+    border-radius: 8px
+    transition: .15s ease-out
+    transition-property: opacity, background-color
+
+    &:hover,
+    &:focus-visible
+      opacity: 1
+      background-color: rgba(255, 255, 255, .05)
+
+    &:active,
+    &:focus-visible
+      transform: scale(.9)
+
+.loadingContainer
+  width: 100%
+  padding: 2rem 0
+  display: flex
+  align-items: center
+  justify-content: center
+
+  .loading
+    width: 2rem
+    height: 2rem
+    border-radius: 50%
+    border: 2px solid #efefef
+    border-top-color: transparent
+    animation: spin .5s linear infinite

@@ -41,6 +41,7 @@ export default function SidePanel() {
             icon: <HomeIcon/>,
             activeIcon: <HomeIcon fill={process.env.ACCENT_COLOR} stroke={process.env.ACCENT_COLOR}/>,
             label: 'Home',
+            auth: true,
         },
         {
             href: '/explore',
@@ -208,20 +209,19 @@ export default function SidePanel() {
                             {isMinimized ? <LogoIcon/> : <Logo/>}
                         </Link>
                     </div>
-                    {links.map(({href, icon, activeIcon, label}, index) => (
-                            <Link href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`}
-                                      key={index}>
-                                <div className={styles.icon}>
-                                    {activeLink === href ? activeIcon : icon}
+                    {links.map(({href, icon, activeIcon, label, auth}, index) => (auth && user?.loaded && user?.id && user?.token) || !auth ? (
+                        <Link href={href} className={`${styles.link} ${activeLink === href ? styles.active : ''}`}
+                                  key={index}>
+                            <div className={styles.icon}>
+                                {activeLink === href ? activeIcon : icon}
+                            </div>
+                            {!isMinimized && (
+                                <div className={styles.label}>
+                                    {label}
                                 </div>
-                                {!isMinimized && (
-                                    <div className={styles.label}>
-                                        {label}
-                                    </div>
-                                )}
-                            </Link>
-                        )
-                    )}
+                            )}
+                        </Link>
+                    ) : '')}
                 </div>
                 {user?.loaded && user?.id && user?.token ? (
                     <div className={`${styles.section} ${styles.librarySection}`}>
@@ -260,67 +260,73 @@ export default function SidePanel() {
                                 {library ? (
                                     <>
                                         {library?.playlists?.map(item => (
-                                            <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
-                                                  key={item?.id || item?._id} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
-                                                <div className={styles.listItem}>
-                                                    <div className={styles.image}>
-                                                        <PlaylistImage playlist={item} width={48} height={48}/>
-                                                    </div>
-                                                    {!isMinimized && (
-                                                        <div className={styles.info}>
-                                                            <div className={styles.name}>
-                                                                {item?.title}
-                                                            </div>
-                                                            <div className={styles.creator}>
-                                                                {item?.owner?.name}
-                                                            </div>
+                                            <TooltipHandler title={item?.title} key={item?.id || item?._id}>
+                                                <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
+                                                      key={item?.id || item?._id} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
+                                                    <div className={styles.listItem}>
+                                                        <div className={styles.image}>
+                                                            <PlaylistImage playlist={item} width={48} height={48}/>
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </Link>
+                                                        {!isMinimized && (
+                                                            <div className={styles.info}>
+                                                                <div className={styles.name}>
+                                                                    {item?.title}
+                                                                </div>
+                                                                <div className={styles.creator}>
+                                                                    {item?.owner?.name}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Link>
+                                            </TooltipHandler>
                                         ))}
                                         {library?.likedPlaylists?.map(item => (
-                                            <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
-                                                  key={item?.id || item?._id} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
-                                                <div className={styles.listItem}>
-                                                    <div className={styles.image}>
-                                                        <PlaylistImage playlist={item} width={48} height={48}/>
-                                                    </div>
-                                                    {!isMinimized && (
-                                                        <div className={styles.info}>
-                                                            <div className={styles.name}>
-                                                                {item?.title}
-                                                            </div>
-                                                            <div className={styles.creator}>
-                                                                {item?.owner?.name}
-                                                            </div>
+                                            <TooltipHandler title={item?.title} key={item?.id || item?._id}>
+                                                <Link href={'/playlist/[id]'} as={`/playlist/${item?.id || item?._id}`}
+                                                      key={item?.id || item?._id} onContextMenu={e => handlePlaylistContextMenu(e, item)}>
+                                                    <div className={styles.listItem}>
+                                                        <div className={styles.image}>
+                                                            <PlaylistImage playlist={item} width={48} height={48}/>
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </Link>
+                                                        {!isMinimized && (
+                                                            <div className={styles.info}>
+                                                                <div className={styles.name}>
+                                                                    {item?.title}
+                                                                </div>
+                                                                <div className={styles.creator}>
+                                                                    {item?.owner?.name}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Link>
+                                            </TooltipHandler>
                                         ))}
                                         {library?.albums?.map(item => (
-                                            <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`}
-                                                  key={item?.id || item?._id} onContextMenu={e => handleAlbumContextMenu(e, item)}>
-                                                <div className={styles.listItem}>
-                                                    <div className={styles.image}>
-                                                        <Image src={item?.cover} width={48} height={48} format={'webp'}
-                                                               alt={item?.title} alternative={<AlbumDefault/>}
-                                                               loading={<Skeleton width={48} height={48}
-                                                                                  style={{top: '-2px'}}/>}/>
-                                                    </div>
-                                                    {!isMinimized && (
-                                                        <div className={styles.info}>
-                                                            <div className={styles.name}>
-                                                                {item?.title}
-                                                            </div>
-                                                            <div className={styles.creator}>
-                                                                {item?.artist?.name}
-                                                            </div>
+                                            <TooltipHandler title={item?.title} key={item?.id || item?._id}>
+                                                <Link href={'/album/[id]'} as={`/album/${item?.id || item?._id}`}
+                                                      key={item?.id || item?._id} onContextMenu={e => handleAlbumContextMenu(e, item)}>
+                                                    <div className={styles.listItem}>
+                                                        <div className={styles.image}>
+                                                            <Image src={item?.cover} width={48} height={48} format={'webp'}
+                                                                   alt={item?.title} alternative={<AlbumDefault/>}
+                                                                   loading={<Skeleton width={48} height={48}
+                                                                                      style={{top: '-2px'}}/>}/>
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </Link>
+                                                        {!isMinimized && (
+                                                            <div className={styles.info}>
+                                                                <div className={styles.name}>
+                                                                    {item?.title}
+                                                                </div>
+                                                                <div className={styles.creator}>
+                                                                    {item?.artist?.name}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Link>
+                                            </TooltipHandler>
                                         ))}
                                     </>
                                     ) : (

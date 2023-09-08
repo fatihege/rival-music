@@ -22,10 +22,11 @@ import Skeleton from 'react-loading-skeleton'
  * @param {'artist' | 'album' | 'playlist' | 'track'} type
  * @param {string} title
  * @param {Array} items
+ * @param {boolean} scrollable
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Slider({type, title, items = []}) {
+export default function Slider({type, title, items = [], scrollable = true}) {
     const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get user from auth context
     const {setQueue, setQueueIndex, handlePlayPause, showQueuePanel} = useContext(QueueContext) // Queue context
@@ -268,23 +269,25 @@ export default function Slider({type, title, items = []}) {
     }
 
     return (
-        <div className={`${styles.container} ${showAllRef.current ? styles.all : ''}`} ref={containerRef}>
+        <div className={`${styles.container} ${showAllRef.current || !scrollable ? styles.all : ''} ${!scrollable ? styles.noBackground : ''}`} ref={containerRef}>
             <div className={styles.header}>
                 <div className={styles.title}>
                     {title}
                 </div>
                 <div className={styles.showAll}>
-                    {Array.isArray(items) && items?.length && items.length > 6 ? (
+                    {Array.isArray(items) && items?.length && items.length > 6 && scrollable ? (
                         <span onClick={() => setShowAll(!showAllRef.current)}>{showAllRef.current ? 'Minimize' : 'View all'}</span>
                     ) : ''}
                 </div>
             </div>
             <div className={styles.fading} ref={fadingRef}>
-                <button className={`${styles.control} ${styles.left} ${showAllRef.current ? styles.hide : ''}`} ref={prevButtonRef}>
-                    <PrevThinIcon/>
-                </button>
+                {scrollable ? (
+                    <button className={`${styles.control} ${styles.left} ${showAllRef.current ? styles.hide : ''}`} ref={prevButtonRef}>
+                        <PrevThinIcon/>
+                    </button>
+                ) : ''}
                 <div className={styles.wrapper} ref={sliderRef}>
-                    <div className={`${styles.slides} ${showAllRef.current ? styles.wrap : ''}`} ref={slidesRef}>
+                    <div className={`${styles.slides} ${showAllRef.current || !scrollable ? styles.wrap : ''}`} ref={slidesRef}>
                         {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
                             (item?.type && item.type === 'album') || (!item?.type && type === 'album') ? (
                                 <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
@@ -438,9 +441,11 @@ export default function Slider({type, title, items = []}) {
                         })()}
                     </div>
                 </div>
-                <button className={`${styles.control} ${styles.right} ${showAllRef.current ? styles.hide : ''}`} ref={nextButtonRef}>
-                    <NextThinIcon/>
-                </button>
+                {scrollable ? (
+                    <button className={`${styles.control} ${styles.right} ${showAllRef.current ? styles.hide : ''}`} ref={nextButtonRef}>
+                        <NextThinIcon/>
+                    </button>
+                ) : ''}
             </div>
         </div>
     )

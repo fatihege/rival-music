@@ -1,11 +1,15 @@
+import {useRouter} from 'next/router'
 import Head from 'next/head'
-import {useEffect, useRef, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import axios from 'axios'
+import {AuthContext} from '@/contexts/auth'
 import Slider from '@/components/slider'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import styles from '@/styles/home.module.sass'
 
 export default function HomePage() {
+    const router = useRouter()
+    const [user] = useContext(AuthContext)
     const [artists, setArtists] = useState(null) // State of artists
     const [latestAlbums, setLatestAlbums] = useState(null) // State of albums
 
@@ -30,14 +34,19 @@ export default function HomePage() {
     }
 
     useEffect(() => {
+        if (user?.loaded && (!user?.id || !user?.token)) {
+            router.push('/explore')
+            return
+        }
+
         getArtists() // Get artists from the API
         getLatestAlbums() // Get albums from the API
-    }, [])
+    }, [user])
 
     return (
         <>
             <Head>
-                <title>{process.env.APP_NAME}</title>
+                <title>Rival Music</title>
             </Head>
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>

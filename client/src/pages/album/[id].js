@@ -117,7 +117,7 @@ export default function AlbumPage({id}) {
     return load && !album?._id && !album?.id ? <NotFoundPage/> : (
         <>
             <Head>
-                <title>{album?.title ? `${album.title?.toString()} by ${album?.artist?.name?.toString()} ${process.env.SEPARATOR} ` : ''}{process.env.APP_NAME}</title>
+                <title>{album?.title ? `${album.title?.toString()} by ${album?.artist?.name?.toString()} — ` : ''}Rival Music</title>
             </Head>
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>

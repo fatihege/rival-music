@@ -13,8 +13,6 @@ const nextConfig = {
     return config
   },
   env: {
-    APP_NAME: 'Rival Music',
-    SEPARATOR: '—',
     ACCENT_COLOR: '#00ff78',
     API_URL: process.env.API_URL,
     IMAGE_CDN: `${process.env.API_URL}/uploads`,

@@ -5,7 +5,7 @@ export default function ExplorePage() {
     return (
         <>
             <Head>
-                <title>Explore {process.env.SEPARATOR} {process.env.APP_NAME}</title>
+                <title>Explore — Rival Music</title>
             </Head>
             <div className={styles.container}>
                 <h1 className={styles.pageTitle}>EXPLORE PAGE</h1>

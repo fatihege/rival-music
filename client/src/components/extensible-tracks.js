@@ -15,13 +15,19 @@ export default function ExtensibleTracks({title = '', items = [], likedTracks = 
                     </button>
                 )}
             </div>
-            <Tracks items={[showMore ? items : items.slice(0, 5), items, likedTracks, set]} noPadding={true}/>
-            {showMore && (
-                <div className={styles.footer}>
-                    <button className={styles.button} onClick={() => setShowMore(!showMore)}>
-                        Show less
-                    </button>
-                </div>
+            {items?.length ? (
+                <>
+                    <Tracks items={[showMore ? items : items.slice(0, 5), items, likedTracks, set]} noPadding={true}/>
+                    {showMore && (
+                        <div className={styles.footer}>
+                            <button className={styles.button} onClick={() => setShowMore(!showMore)}>
+                                Show less
+                            </button>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <p className={styles.nothing}>Nothing to show.</p>
             )}
         </div>
     )

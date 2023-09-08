@@ -123,7 +123,7 @@ export default function ViewArtistsPage() {
     return user?.loaded && user?.id && user?.token && user?.admin && (
         <>
             <Head>
-                <title>Artists {process.env.SEPARATOR} {process.env.APP_NAME}</title>
+                <title>Artists — Rival Music</title>
             </Head>
             <div className={styles.mainContainer} ref={contentRef}>
                 <h1 className={styles.mainTitle}>Artists</h1>

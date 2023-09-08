@@ -86,7 +86,7 @@ export default function UserProfilePage({id}) {
     return load && (!activeUser?.id || !activeUser?.name) ? <NotFoundPage/> : load ? (
         <>
             <Head>
-                <title>{user?.loaded && user?.id && user?.token && activeUser?.name ? `${activeUser.name?.toString()} ${process.env.SEPARATOR} ` : ''}{process.env.APP_NAME}</title>
+                <title>{user?.loaded && user?.id && user?.token && activeUser?.name ? `${activeUser.name?.toString()} — ` : ''}Rival Music</title>
             </Head>
             {user?.loaded && user?.id && user?.token ? (
                 <CustomScrollbar scrollbarPadding={4}>
