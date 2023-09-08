@@ -9,6 +9,7 @@ import {ContextMenuContext} from '@/contexts/context-menu'
 import TrackContextMenu from '@/components/context-menus/track'
 import PlaylistContextMenu from '@/components/context-menus/playlist'
 import AlbumContextMenu from '@/components/context-menus/album'
+import ArtistContextMenu from '@/components/context-menus/artist'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {TooltipHandler} from '@/components/tooltip'
@@ -201,6 +202,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                 axios.get(`${process.env.API_URL}/album/${items[index]?._id}?tracks=1`).then(response => {
                     if (response.data.status === 'OK' && response.data?.album) {
                         const tmpQueue = response.data?.album?.discs?.map(d => d?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Get tracks from album
+                        console.log(tmpQueue)
                         setQueue(tmpQueue?.[0] || []) // Set queue with album tracks
                         setQueueIndex(0) // Set queue index to 0
                         handlePlayPause(true) // Play tracks
@@ -222,6 +224,19 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                                 Authorization: `Bearer ${user?.token}`
                             }
                         }).catch(e => console.error(e))
+                    }
+                }).catch(e => console.error(e))
+            } catch (e) {
+                console.error(e)
+            }
+        } else if (itemType === 'artist') {
+            try {
+                axios.get(`${process.env.API_URL}/artist/essentials/${items[index]?._id}?only=tracks`).then(response => {
+                    if (response.data.status === 'OK' && response.data?.essentials?.mostListenedTracks?.length) {
+                        const tmpQueue = response.data.essentials.mostListenedTracks?.map(i => ({id: i?._id, audio: i?.audio})) // Get tracks from artist
+                        setQueue(tmpQueue || []) // Set queue with artist tracks
+                        setQueueIndex(0) // Set queue index to 0
+                        handlePlayPause(true) // Play tracks
                     }
                 }).catch(e => console.error(e))
             } catch (e) {
@@ -269,6 +284,17 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
 
         setContextMenu({
             menu: <AlbumContextMenu album={album}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
+    const handleArtistContextMenu = (e, artist) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setContextMenu({
+            menu: <ArtistContextMenu artist={artist}/>,
             x: e.clientX,
             y: e.clientY,
         })
@@ -397,7 +423,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                                 </div>
                             ) : (item?.type && item.type === 'artist') || (!item?.type && type === 'artist') ? (
                                 <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}
-                                     style={{width: artistWidth || ''}}>
+                                     style={{width: artistWidth || ''}} onContextMenu={e => handleArtistContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: artistWidth || '', height: artistWidth || ''}}>
                                         <Image src={item?.image || '0'} width={200} height={200} format={'webp'} alt={item?.title} alternative={

@@ -1,17 +1,20 @@
 import axios from 'axios'
 import Head from 'next/head'
+import Skeleton from 'react-loading-skeleton'
 import Link from '@/components/link'
 import Image from '@/components/image'
 import {useContext, useEffect, useState} from 'react'
-import CustomScrollbar from '@/components/custom-scrollbar'
-import Slider from '@/components/slider'
-import {AuthContext} from '@/contexts/auth'
 import NotFoundPage from '@/pages/404'
+import {AuthContext} from '@/contexts/auth'
+import {QueueContext} from '@/contexts/queue'
+import {ContextMenuContext} from '@/contexts/context-menu'
+import ArtistContextMenu from '@/components/context-menus/artist'
+import CustomScrollbar from '@/components/custom-scrollbar'
+import ExtensibleTracks from '@/components/extensible-tracks'
+import Slider from '@/components/slider'
 import getArtistData from '@/utils/get-artist-data'
 import {LikeIcon, PlayIcon} from '@/icons'
 import styles from '@/styles/artist.module.sass'
-import Skeleton from 'react-loading-skeleton'
-import ExtensibleTracks from '@/components/extensible-tracks'
 
 export function getServerSideProps(context) {
     return {
@@ -24,6 +27,8 @@ export function getServerSideProps(context) {
 export default function ArtistProfilePage({id}) {
     const [load, setLoad] = useState(false) // Is profile loaded
     const [user] = useContext(AuthContext) // Get user data from AuthContext
+    const {setQueue, setQueueIndex, handlePlayPause} = useContext(QueueContext) // Queue context
+    const [, setContextMenu] = useContext(ContextMenuContext) // Get context menu state
     const [artist, setArtist] = useState({}) // Artist data
     const [showDescription, setShowDescription] = useState(false) // Show full description
     const [essentialAlbums, setEssentialAlbums] = useState(null) // Essential albums
@@ -95,6 +100,25 @@ export default function ArtistProfilePage({id}) {
         }
     }
 
+    const handleContextMenu = e => {
+        e.preventDefault() // Prevent default event
+        e.stopPropagation() // Stop propagation
+
+        setContextMenu({ // Set context menu state
+            menu: <ArtistContextMenu artist={artist}/>,
+            x: e.clientX,
+            y: e.clientY,
+        })
+    }
+
+    const handlePlay = () => {
+        if (!artist?._id && !artist?.id) return // If artist is not exist, return
+        const tmpQueue = essentialTracks?.map(i => ({id: i?._id, audio: i?.audio})) // Get tracks from artist
+        setQueue(tmpQueue || []) // Set queue with artist tracks
+        setQueueIndex(0) // Set queue index to 0
+        handlePlayPause(true) // Play tracks
+    }
+
     return load && !artist?._id && !artist?.id ? <NotFoundPage/> : (
         <>
             <Head>
@@ -103,12 +127,12 @@ export default function ArtistProfilePage({id}) {
             <CustomScrollbar scrollbarPadding={4}>
                 <div className={styles.container}>
                     <div className={styles.content}>
-                        <div className={`${styles.profileSection} ${load && !artist?.banner ? styles.noBanner : ''}`}>
+                        <div className={`${styles.profileSection} ${load && !artist?.banner ? styles.noBanner : ''}`} onContextMenu={handleContextMenu}>
                             <div className={styles.banner}>
                                 <Image src={artist.banner || '0'} width={2400} height={933} format={'webp'} alt={`${artist?.name} Banner`} loading={<Skeleton height={500} style={{top: '-3px'}}/>}/>
                             </div>
                             <div className={styles.artistInfo}>
-                                <button className={styles.playButton}>
+                                <button className={styles.playButton} onClick={handlePlay}>
                                     <PlayIcon/>
                                 </button>
                                 <div className={styles.info}>
@@ -150,7 +174,7 @@ export default function ArtistProfilePage({id}) {
                                 </>
                             ) : ''}
                         </div>
-                        <div className={styles.content}>
+                        <div className={styles.albumsSection}>
                             <ExtensibleTracks items={essentialTracks} title="Top Tracks" likedTracks={essentialTracks?.filter(t => t?.liked)} set={setEssentialTracks}/>
                             <Slider type={'album'} title="Essential Albums" items={essentialAlbums} noName={true} count={5}/>
                             <Slider type={'album'} title="Albums" items={albums}/>
