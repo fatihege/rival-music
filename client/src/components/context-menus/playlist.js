@@ -59,6 +59,11 @@ export default function PlaylistContextMenu({playlist}) {
         if (!filteredTracks.length) return // If tracks is not exist, return
         dontChangeRef.current = true // Set dontChangeRef to true
         setQueue([...queue.slice(0, queueIndex + 1), ...filteredTracks, ...queue.slice(queueIndex + 1)]) // Add track to the queue
+        axios.post(`${process.env.API_URL}/playlist/play/${playlist?._id || playlist?.id}`, {}, { // Increase playlist plays
+            headers: {
+                Authorization: `Bearer ${user?.token}`
+            }
+        }).catch(e => console.error(e))
     }
 
     const handleCopyLink = () => {

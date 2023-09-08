@@ -15,7 +15,7 @@ import formatTime from '@/utils/format-time'
 import {AlbumDefault, DiscIcon, ExplicitIcon, LikeIcon, OptionsIcon, PauseIcon, PlayIcon} from '@/icons'
 import styles from '@/styles/tracks.module.sass'
 
-export const handlePlay = (id = null, user, list, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, items = null) => {
+export const handlePlay = (id = null, user, list, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, items = null, type = null) => {
     if (!user || !user?.id || !user?.token) return setModal({ // If track ID is not defined or user is not logged in, open ask login modal
         active: <AskLoginModal/>,
         canClose: true,
@@ -35,6 +35,13 @@ export const handlePlay = (id = null, user, list, setModal, queue, setQueue, que
     setQueue(filteredTracks?.map(t => ({id: t._id, audio: t.audio})) || []) // Set queue to the list tracks
     setQueueIndex(index) // Set queue index to the track index
     handlePlayPause(true) // Play track
+
+    if (type && type === 'playlist')
+        axios.post(`${process.env.API_URL}/playlist/play/${list._id}`, {}, {
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            }
+        }).catch(e => console.error(e))
 }
 
 export default function Tracks({playlist, album, items, noPadding = false}) {
@@ -155,10 +162,15 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
             if (response.data?.liked && !updatedList?.likes?.includes(trackId)) updatedList?.likes?.push(trackId) // If track is liked, push track ID to the likes array
             else if (updatedList?.likes) updatedList.likes = updatedList?.likes?.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
             if (!items?.length) list[1](updatedList) // Set list data to the updated list data
-            else items[3](prev => ({
+            else items[3](prev => !Array.isArray(prev) ? ({
                 ...prev,
                 tracks: response.data?.liked ? [...prev?.tracks, items[0].find(t => t._id === trackId)] : prev?.tracks?.filter(t => t._id !== trackId)
-            })) // Set list data to the updated list data
+            }) : ([
+                ...prev.map(p => ({
+                    ...p,
+                    liked: p._id === trackId ? response.data?.liked : p.liked,
+                }))
+            ])) // Set list data to the updated list data
 
             if (contextTrack && contextTrack._id === trackId) setIsLiked(response.data?.liked) // If track is defined and track ID is equal to the liked track ID, set isLiked state to the response data
         }
@@ -244,7 +256,7 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
                                 e.preventDefault()
                                 e.stopPropagation()
                                 if (contextTrack?._id === track?._id && isPlaying) handlePlayPause(false) // If track is playing, pause track
-                                else handlePlay(track?._id, user, playlist[0], setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause) // Otherwise, play track
+                                else handlePlay(track?._id, user, playlist[0], setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, null, 'playlist') // Otherwise, play track
                             }}>
                                 {contextTrack?._id === track?._id && isPlaying ? (
                                     <PauseIcon/>
@@ -337,7 +349,7 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
                                                 <button onClick={e => {
                                                     e.preventDefault()
                                                     e.stopPropagation()
-                                                    handlePlay(track?._id, user, album[0], setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause)
+                                                    handlePlay(track?._id, user, album[0], setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, null, 'album')
                                                 }}>
                                                     <PlayIcon
                                                         fill={selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR}
@@ -409,7 +421,7 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
                                 e.preventDefault()
                                 e.stopPropagation()
                                 if (contextTrack?._id === track?._id && isPlaying) handlePlayPause(false) // If track is playing, pause track
-                                else handlePlay(track?._id, user, null, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, items) // Otherwise, play track
+                                else handlePlay(track?._id, user, null, setModal, queue, setQueue, queueIndex, setQueueIndex, handlePlayPause, items, 'track') // Otherwise, play track
                             }}>
                                 {contextTrack?._id === track?._id && isPlaying ? (
                                     <PauseIcon/>

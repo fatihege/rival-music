@@ -205,7 +205,7 @@ export default function Slider({type, title, items = [], scrollable = true}) {
                         setQueueIndex(0) // Set queue index to 0
                         handlePlayPause(true) // Play tracks
                     }
-                })
+                }).catch(e => console.error(e))
             } catch (e) {
                 console.error(e)
             }
@@ -216,8 +216,14 @@ export default function Slider({type, title, items = [], scrollable = true}) {
                         setQueue(response.data?.playlist?.tracks?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Set queue with playlist tracks
                         setQueueIndex(0) // Set queue index to 0
                         handlePlayPause(true) // Play tracks
+
+                        axios.post(`${process.env.API_URL}/playlist/play/${items[index]?._id}`, {}, { // Increase playlist plays
+                            headers: {
+                                Authorization: `Bearer ${user?.token}`
+                            }
+                        }).catch(e => console.error(e))
                     }
-                })
+                }).catch(e => console.error(e))
             } catch (e) {
                 console.error(e)
             }
