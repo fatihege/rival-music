@@ -21,8 +21,20 @@ export default function AdminPage() {
         tracks: 0,
         nonAudioTracks: 0,
         playlists: 0,
+        genres: 0,
     })
-    const [links, setLinks] = useState([ // Links state
+    const [links] = useState([ // Links state
+        {
+            title: 'App Settings',
+            type: 'title',
+        },
+        {
+            title: 'Manage Genres',
+            href: '/admin/genres',
+        },
+        {
+            type: 'separator',
+        },
         {
             title: 'Artist Management',
             type: 'title',
@@ -62,7 +74,11 @@ export default function AdminPage() {
 
     const getStatistics = async () => {
         try {
-            const response = await axios.get(`${process.env.API_URL}/admin/${user.token}/statistics`) // Get statistics from API
+            const response = await axios.get(`${process.env.API_URL}/admin/statistics`, {
+                headers: {
+                    Authorization: `Bearer ${user?.token}`,
+                }
+            }) // Get statistics from API
 
             if (response.data?.status === 'OK' && response.data?.data) { // If response is OK
                 setStatistics({ // Set statistics state
@@ -138,6 +154,12 @@ export default function AdminPage() {
                         <span>Playlists</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
                             {statistics.loaded ? statistics.playlists : <Skeleton height={22}/>}
+                        </span>
+                    </div>
+                    <div className={styles.stat}>
+                        <span>Genres</span>
+                        <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
+                            {statistics.loaded ? statistics.genres : <Skeleton height={22}/>}
                         </span>
                     </div>
                 </div>

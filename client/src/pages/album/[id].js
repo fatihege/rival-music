@@ -1,5 +1,4 @@
 import axios from 'axios'
-import {useRouter} from 'next/router'
 import Head from 'next/head'
 import Link from '@/components/link'
 import Image from '@/components/image'
@@ -16,6 +15,7 @@ import AlbumContextMenu from '@/components/context-menus/album'
 import Tracks, {handlePlay} from '@/components/tracks'
 import NotFoundPage from '@/pages/404'
 import getAlbumData from '@/utils/get-album-data'
+import nameGenre from '@/utils/name-genre'
 import {AlbumDefault, PlayIcon, LikeIcon} from '@/icons'
 import styles from '@/styles/album.module.sass'
 
@@ -28,7 +28,6 @@ export function getServerSideProps(context) {
 }
 
 export default function AlbumPage({id}) {
-    const router = useRouter() // Router instance
     const [load, setLoad] = useState(false) // Is profile loaded
     const [user] = useContext(AuthContext) // Get user data from AuthContext
     const {
@@ -164,7 +163,7 @@ export default function AlbumPage({id}) {
                                         ) : (
                                             <div className={styles.small}>
                                                 <span className={styles.genre}>{album?.genres?.length ? (
-                                                    album.genres[0].split(' ').map(g => g.charAt(0).toUpperCase() + g.slice(1)).join(' ')
+                                                    nameGenre(album.genres[0])
                                                 ) : ''}</span>
                                                 <span className={styles.releaseYear}>{album?.releaseYear}</span>
                                             </div>

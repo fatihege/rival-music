@@ -40,8 +40,10 @@ export default function EditArtistPage({id}) {
         image: null,
         name: '',
         description: '',
+        debutYear: '',
         genres: [''],
     })
+    const [debutYearAlert, setDebutYearAlert] = useState(null) // Debut year alert state
     const [banner, setBanner] = useState(null) // Banner state
     const [bannerImage, setBannerImage] = useState(null) // Banner image state
     const [profile, setProfile] = useState(null) // Profile state
@@ -66,13 +68,14 @@ export default function EditArtistPage({id}) {
             const response = await axios.get(`${process.env.API_URL}/artist/${id}`) // Get artist data from API
 
             if (response.data?.status === 'OK' && response.data?.artist) { // If response is OK
-                const {_id, banner, image, name, description, genres} = response.data.artist // Get artist data
+                const {_id, banner, image, name, description, debutYear, genres} = response.data.artist // Get artist data
                 setArtist({ // Set artist state
                     id: _id,
                     banner,
                     image,
                     name,
                     description,
+                    debutYear: debutYear?.toString() || '',
                     genres,
                 })
             }
@@ -139,11 +142,13 @@ export default function EditArtistPage({id}) {
             if (!artist.image && !profile) formData.append('noProfile', true) // If there is no profile, add null profile entry to the form data
             formData.append('name', artist.name) // Add artist name entry to the form data
             formData.append('description', artist.description) // Add artist description entry to the form data
+            formData.append('debutYear', artist.debutYear) // Add artist debut year entry to the form data
             formData.append('genres', artist.genres.toString()) // Add artist genres as an entry to the form data
 
-            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/artist/update/${artist?.id}`, formData, { // Send POST request to the API and get response
+            const response = await axios.post(`${process.env.API_URL}/admin/artist/update/${artist?.id}`, formData, { // Send POST request to the API and get response
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${user.token}`,
                 }
             })
 
@@ -170,7 +175,7 @@ export default function EditArtistPage({id}) {
             type: 'danger',
             callback: async () => {
                 try {
-                    await axios.delete(`${process.env.API_URL}/admin/${user.token}/artist/${artist?.id}`, {
+                    await axios.delete(`${process.env.API_URL}/admin/artist/${artist?.id}`, {
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },
@@ -189,6 +194,22 @@ export default function EditArtistPage({id}) {
             }
         })
     }
+
+    const checkDebutYear = () => {
+        const year = parseInt(artist.debutYear) // Parse the debut year to int
+        if (year >= 1700 && year <= new Date().getFullYear()) { // If the year is between 1700 and the current year
+            setDebutYearAlert(null) // Remove the alert
+            return true // Return true
+        } else {
+            setDebutYearAlert('Invalid release year. The year must be a number between 1700 and the current year.') // Set the alert
+            return false // Otherwise, return false
+        }
+    }
+
+    useEffect(() => {
+        if (!artist?.debutYear?.trim()?.length) return // If the debut year is empty, return
+        checkDebutYear() // Otherwise, check the release year
+    }, [artist.debutYear])
 
     return user.loaded && user?.admin ? (
         <>
@@ -231,6 +252,8 @@ export default function EditArtistPage({id}) {
                 <div className={styles.form}>
                     <Input placeholder="Artist name" onChange={name => setArtist({...artist, name})} className={styles.formField} value={artist.name}/>
                     <Textarea placeholder="Artist description" onChange={description => setArtist({...artist, description})} className={styles.formField} value={artist.description}/>
+                    <Input placeholder="Debut year" onChange={debutYear => setArtist({...artist, debutYear})}
+                           className={styles.formField} alert={debutYearAlert} value={artist.debutYear}/>
                     <h3 className={styles.genresTitle}>Genres</h3>
                     {artist.genres.map((genre, i) => {
                         return <Input key={i} placeholder={`Genre ${i + 1}`} className={styles.formField} onChange={value => updateGenre(value, i)} value={artist.genres[i]}/>

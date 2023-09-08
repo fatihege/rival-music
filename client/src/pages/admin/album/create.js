@@ -81,8 +81,7 @@ export default function CreateAlbumPage() {
 
     const checkReleaseYear = () => {
         const year = parseInt(album.releaseYear) // Parse the release year to int
-        if (year >= 1900 && year <= new Date().getFullYear()) // If the year is between 1900 and the current year
-        {
+        if (year >= 1900 && year <= new Date().getFullYear()) { // If the year is between 1900 and the current year
             setReleaseYearAlert(null) // Remove the alert
             return true // Return true
         } else {
@@ -125,9 +124,10 @@ export default function CreateAlbumPage() {
             formData.append('artist', album.artist) // Add album artist entry to the form data
             formData.append('genres', album.genres.toString()) // Add album genres as an entry to the form data
 
-            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/album/create`, formData, { // Send POST request to the API and get response
+            const response = await axios.post(`${process.env.API_URL}/admin/album/create`, formData, { // Send POST request to the API and get response
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${user.token}`,
                 }
             })
 

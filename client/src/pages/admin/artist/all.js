@@ -100,7 +100,7 @@ export default function ViewArtistsPage() {
             type: 'danger',
             callback: () => { // On dialogue button click
                 try {
-                    axios.delete(`${process.env.API_URL}/admin/${user.token}/artist/${artistId}`, { // Delete artist from API
+                    axios.delete(`${process.env.API_URL}/admin/artist/${artistId}`, { // Delete artist from API
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },

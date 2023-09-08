@@ -101,7 +101,7 @@ export default function ViewAlbumsPage() {
             type: 'danger',
             callback: () => { // On dialogue button click
                 try {
-                    axios.delete(`${process.env.API_URL}/admin/${user.token}/album/${albumId}`, { // Delete album from API
+                    axios.delete(`${process.env.API_URL}/admin/album/${albumId}`, { // Delete album from API
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },

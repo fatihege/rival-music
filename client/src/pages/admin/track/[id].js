@@ -184,9 +184,10 @@ export default function EditTrackPage({id}) {
             formData.append('genres', track.genres.toString()) // Append the genres to the form data
             formData.append('lyrics', JSON.stringify(track.lyrics)) // Append the lyrics to the form data
 
-            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/track/update/${id}`, formData, { // Send a POST request to the API
+            const response = await axios.post(`${process.env.API_URL}/admin/track/update/${id}`, formData, { // Send a POST request to the API
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
+                    Authorization: `Bearer ${user.token}`, // Set the authorization header
                 }
             })
 
@@ -286,7 +287,7 @@ export default function EditTrackPage({id}) {
             type: 'danger',
             callback: async () => {
                 try {
-                    await axios.delete(`${process.env.API_URL}/admin/${user.token}/track/${track?.id || track?._id}`, {
+                    await axios.delete(`${process.env.API_URL}/admin/track/${track?.id || track?._id}`, {
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },

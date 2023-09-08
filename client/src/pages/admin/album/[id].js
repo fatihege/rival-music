@@ -125,8 +125,7 @@ export default function EditAlbumPage({id}) {
 
     const checkReleaseYear = () => {
         const year = parseInt(album.releaseYear) // Parse the release year to int
-        if (year >= 1900 && year <= new Date().getFullYear()) // If the year is between 1900 and the current year
-        {
+        if (year >= 1900 && year <= new Date().getFullYear()) { // If the year is between 1900 and the current year
             setReleaseYearAlert(null) // Remove the alert
             return true // Return true
         } else {
@@ -168,9 +167,10 @@ export default function EditAlbumPage({id}) {
             formData.append('artist', album.artist) // Add album artist entry to the form data
             formData.append('genres', album.genres.toString()) // Add album genres as an entry to the form data
 
-            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/album/update/${album.id}`, formData, { // Send POST request to the API and get response
+            const response = await axios.post(`${process.env.API_URL}/admin/album/update/${album.id}`, formData, { // Send POST request to the API and get response
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${user?.token}`,
                 }
             })
 
@@ -197,7 +197,7 @@ export default function EditAlbumPage({id}) {
             type: 'danger',
             callback: async () => {
                 try {
-                    await axios.delete(`${process.env.API_URL}/admin/${user.token}/album/${album?.id}`, {
+                    await axios.delete(`${process.env.API_URL}/admin/album/${album?.id}`, {
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },

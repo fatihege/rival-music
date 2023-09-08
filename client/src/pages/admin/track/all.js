@@ -102,7 +102,7 @@ export default function ViewTracksPage() {
             type: 'danger',
             callback: () => { // On dialogue button click
                 try {
-                    axios.delete(`${process.env.API_URL}/admin/${user.token}/track/${trackId}`, { // Delete track from API
+                    axios.delete(`${process.env.API_URL}/admin/track/${trackId}`, { // Delete track from API
                         headers: {
                             Authorization: `Bearer ${user?.token}`,
                         },
