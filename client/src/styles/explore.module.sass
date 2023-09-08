@@ -1,6 +1,38 @@
 @import "variables"
 @import "home.module"
 
+.search
+  margin: 1rem 0
+  display: flex
+
+  .icon
+    height: 56px
+    padding: 0 1rem
+    display: flex
+    align-items: center
+    justify-content: center
+    background-color: #1c1c1c
+    border: 1px solid #262626
+    border-right: none
+    border-top-left-radius: 12px
+    border-bottom-left-radius: 12px
+
+    svg
+      width: 24px
+      height: 24px
+
+  .searchInput
+    border-top-left-radius: 0
+    border-bottom-left-radius: 0
+    width: 100%
+
+.loading
+  display: flex
+  justify-content: center
+  align-items: center
+  column-gap: 1rem
+  height: 200px
+
 .triple
   display: grid
   grid-template-columns: repeat(3, 1fr)

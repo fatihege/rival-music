@@ -249,6 +249,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
         if (e.button !== 0 || e.target.classList.contains(styles.button)) return // If mouse button is not left or target is button, return
         if (!isScrolling.current) { // If not scrolling, change route
             if ((item?.type && item.type === 'artist') || (!item?.type && type === 'artist')) router.push('/artist/[id]', `/artist/${item?._id}`)
+            else if ((item?.type && item.type === 'user') || (!item?.type && type === 'user')) router.push('/profile/[id]', `/profile/${item?._id}`)
             else if ((item?.type && item.type === 'album') || (!item?.type && type === 'album')) router.push('/album/[id]', `/album/${item?._id}`)
             else if ((item?.type && item.type === 'playlist') || (!item?.type && type === 'playlist')) router.push('/playlist/[id]', `/playlist/${item?._id}`)
             else if ((item?.type && item.type === 'track') || (!item?.type && type === 'track')) router.push('/album/[id]', `/album/${item?.album?._id}#${item?._id}`)
@@ -290,6 +291,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
     }
 
     const handleArtistContextMenu = (e, artist) => {
+        if (type !== 'artist') return // If type is not artist, return
         e.preventDefault()
         e.stopPropagation()
 
@@ -421,7 +423,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                                         </div>
                                     </div>
                                 </div>
-                            ) : (item?.type && item.type === 'artist') || (!item?.type && type === 'artist') ? (
+                            ) : (item?.type && (item.type === 'artist' || item.type === 'user')) || (!item?.type && (type === 'artist' || type === 'user')) ? (
                                 <div className={`${styles.item} ${styles.artist}`} key={i} ref={i === 0 ? referenceSlideRef : null}
                                      style={{width: artistWidth || ''}} onContextMenu={e => handleArtistContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
@@ -429,15 +431,18 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                                         <Image src={item?.image || '0'} width={200} height={200} format={'webp'} alt={item?.title} alternative={
                                             <div className={styles.noImage}>{item?.name?.charAt(0)?.toUpperCase()}</div>
                                         } loading={<Skeleton height={artistWidth} width={artistWidth} borderRadius={'100%'}/>}/>
-                                        <div className={styles.overlay}>
-                                            <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist', i)}>
-                                                <PlayIcon/>
-                                            </button>
-                                        </div>
+                                        {(item?.type && item.type === 'artist') || (type && type === 'artist') ? (
+                                            <div className={styles.overlay}>
+                                                <button className={`${styles.button} ${styles.play}`} onMouseUp={e => handlePlay(e, 'artist', i)}>
+                                                    <PlayIcon/>
+                                                </button>
+                                            </div>
+                                        ) : ''}
                                     </div>
                                     <div className={styles.itemInfo}>
                                         <div className={styles.itemName}>
-                                            <Link href={'/artist/[id]'} as={`/artist/${item._id}`}>
+                                            <Link href={(item?.type && item.type === 'artist') || (type && type === 'artist') ? '/artist/[id]' : '/profile/[id]'}
+                                                  as={(item?.type && item.type === 'artist') || (type && type === 'artist') ? `/artist/${item._id}` : `/profile/${item._id}`}>
                                                 {item.name}
                                             </Link>
                                         </div>
