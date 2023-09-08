@@ -153,7 +153,13 @@
 
         .item
           min-width: 160px
-          max-width: 250px
+
+          &:not(.flex)
+            max-width: 250px
+
+            .itemImage
+              max-width: 250px
+              max-height: 250px
 
           &.loading
             pointer-events: none
@@ -188,8 +194,6 @@
             height: 200px
             min-width: 160px
             min-height: 160px
-            max-width: 250px
-            max-height: 250px
             border-radius: 10px
             overflow: hidden
             display: flex
@@ -280,7 +284,8 @@
             min-width: 160px
             max-width: 250px
 
-            a
+            a,
+            .itemOwner span
               font-size: .9rem
               color: #fff
               text-decoration: none
@@ -294,12 +299,13 @@
               white-space: nowrap
               padding-bottom: 2px
 
-              &:hover
+              &:hover:not(span)
                 text-decoration: underline
 
             .itemName
               font-weight: 600
               opacity: .85
+              margin-bottom: -4px
 
             .itemOwner
               font-weight: 400

@@ -11,6 +11,7 @@ import getArtistData from '@/utils/get-artist-data'
 import {LikeIcon, PlayIcon} from '@/icons'
 import styles from '@/styles/artist.module.sass'
 import Skeleton from 'react-loading-skeleton'
+import ExtensibleTracks from '@/components/extensible-tracks'
 
 export function getServerSideProps(context) {
     return {
@@ -25,6 +26,8 @@ export default function ArtistProfilePage({id}) {
     const [user] = useContext(AuthContext) // Get user data from AuthContext
     const [artist, setArtist] = useState({}) // Artist data
     const [showDescription, setShowDescription] = useState(false) // Show full description
+    const [essentialAlbums, setEssentialAlbums] = useState(null) // Essential albums
+    const [essentialTracks, setEssentialTracks] = useState(null) // Essential tracks
     const [albums, setAlbums] = useState(null) // Artist albums
 
     const getArtistInfo = async () => {
@@ -46,11 +49,27 @@ export default function ArtistProfilePage({id}) {
         }
     }
 
+    const getEssentials = async () => {
+        if (!id) return // If ID property is not defined, return
+
+        try {
+            const response = await axios.get(`${process.env.API_URL}/artist/essentials/${id}${user?.loaded && user?.id ? `?user=${user.id}` : ''}`) // Send GET request to the API
+            if (response.data?.status === 'OK') { // If there is essentials data in the response
+                setEssentialAlbums(response.data?.essentials?.mostListenedAlbums || []) // Set essential albums state
+                setEssentialTracks(response.data?.essentials?.mostListenedTracks || []) // Set essential tracks state
+            }
+            else setAlbums([]) // Otherwise, set albums state to empty array
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     useEffect(() => {
         if (!id || !user?.loaded) return // If query ID is not defined, return
 
         getArtistInfo() // Get artist info from API
         getArtistAlbums() // Get artist albums from API
+        getEssentials() // Get essentials from API
 
         return () => { // When component is unmounted
             setLoad(false) // Set load state to false
@@ -131,8 +150,10 @@ export default function ArtistProfilePage({id}) {
                                 </>
                             ) : ''}
                         </div>
-                        <div className={styles.albums}>
-                            <Slider type={'album'} title="Latest Albums" items={albums}/>
+                        <div className={styles.content}>
+                            <ExtensibleTracks items={essentialTracks} title="Top Tracks" likedTracks={essentialTracks?.filter(t => t?.liked)} set={setEssentialTracks}/>
+                            <Slider type={'album'} title="Essential Albums" items={essentialAlbums} noName={true} count={5}/>
+                            <Slider type={'album'} title="Albums" items={albums}/>
                         </div>
                     </div>
                 </div>

@@ -50,7 +50,7 @@ export default function LibraryPlaylistPage() {
                         Favourite albums
                     </Link>
                 </div>
-                <Slider type={'playlist'} title="Playlists made by you" items={playlists}/>
+                <Slider type={'playlist'} title="Playlists created by you" items={playlists}/>
                 <Slider type={'playlist'} title="Your favourite playlists" items={likedPlaylists}/>
             </div>
         </>

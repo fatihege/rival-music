@@ -26,7 +26,7 @@ import Skeleton from 'react-loading-skeleton'
  * @returns {JSX.Element}
  * @constructor
  */
-export default function Slider({type, title, items = [], scrollable = true}) {
+export default function Slider({type, title, items = [], scrollable = true, noName = false, count = null}) {
     const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get user from auth context
     const {setQueue, setQueueIndex, handlePlayPause, showQueuePanel} = useContext(QueueContext) // Queue context
@@ -174,8 +174,8 @@ export default function Slider({type, title, items = [], scrollable = true}) {
         if (!containerRef.current) return // Check if container is exist
         const container = containerRef.current // Slider container reference
         const containerWidth = container.getBoundingClientRect().width // Get container width
-        const albumWidth = Math.min(Math.max(containerWidth / 6 - 17, 160), 250) // Calculate album width
-        const artistWidth = Math.min(Math.max(containerWidth / 7 - 17, 160), 200) // Calculate artist width
+        const albumWidth = Math.min(Math.max(containerWidth / (count || 6) - 17, 160), count ? 500 : 250) // Calculate album width
+        const artistWidth = Math.min(Math.max(containerWidth / (count || 7) - 17, 160), count ? 500 : 250) // Calculate artist width
 
         setAlbumWidth(albumWidth) // Set album width to calculate slide width
         setArtistWidth(artistWidth) // Set artist width to calculate slide width
@@ -296,11 +296,11 @@ export default function Slider({type, title, items = [], scrollable = true}) {
                     <div className={`${styles.slides} ${showAllRef.current || !scrollable ? styles.wrap : ''}`} ref={slidesRef}>
                         {Array.isArray(items) ? (items?.length ? items.map((item, i) =>
                             (item?.type && item.type === 'album') || (!item?.type && type === 'album') ? (
-                                <div className={styles.item} key={i} ref={i === 0 ? referenceSlideRef : null}
+                                <div className={`${styles.item} ${count ? styles.flex : ''}`} key={i} ref={i === 0 ? referenceSlideRef : null}
                                      style={{width: albumWidth || ''}} onContextMenu={e => handleAlbumContextMenu(e, item)}>
                                     <div className={styles.itemImage} onMouseUp={e => handleItemMouseUp(e, item)}
                                     style={{width: albumWidth || '', height: albumWidth || ''}}>
-                                        <Image src={item?.cover || '0'} width={300} height={300} format={'webp'}
+                                        <Image src={item?.cover || '0'} width={count ? 500 : 300} height={count ? 500 : 300} format={'webp'}
                                                alt={item?.title} alternative={<AlbumDefault/>}
                                                loading={<Skeleton height={albumWidth} width={albumWidth} style={{top: '-2px'}}/>}/>
                                         <div className={styles.overlay}>
@@ -321,9 +321,15 @@ export default function Slider({type, title, items = [], scrollable = true}) {
                                             </Link>
                                         </div>
                                         <div className={styles.itemOwner}>
-                                            <Link href={'/artist/[id]'} as={`/artist/${item?.artist?._id || item?.artist?.id}`}>
-                                                {item?.artist?.name}
-                                            </Link>
+                                            {noName ? (
+                                                <span>
+                                                    {item.releaseYear}
+                                                </span>
+                                            ) : (
+                                                <Link href={'/artist/[id]'} as={`/artist/${item?.artist?._id || item?.artist?.id}`}>
+                                                    {item?.artist?.name}
+                                                </Link>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

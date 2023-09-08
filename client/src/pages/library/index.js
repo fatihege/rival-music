@@ -41,7 +41,7 @@ export default function LibraryPage() {
                     </Link>
                 </div>
                 <ExtensibleTracks title="Your favourite tracks" items={library?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
-                <Slider type={'playlist'} title="Playlists made by you" items={library?.playlists || null}/>
+                <Slider type={'playlist'} title="Playlists created by you" items={library?.playlists || null}/>
                 <Slider type={'playlist'} title="Your favourite playlists" items={library?.likedPlaylists || null}/>
                 <Slider type={'album'} title="Your favourite albums" items={library?.albums || null}/>
             </div>

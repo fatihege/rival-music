@@ -38,7 +38,7 @@ export default function Image({src, width, height, format, alternative, loading,
 
     return (
         <>
-            <img ref={imgRef} src={image?.src} style={!image?.src ? {opacity: 0, position: 'absolute'} : {...props?.styles}} {...props} />
+            <img ref={imgRef} src={image?.src} style={!image?.src ? {opacity: 0, position: 'absolute', transition: 'opacity .15s ease-out'} : {...props?.styles, opacity: 1, transition: 'opacity .15s ease-out'}} {...props} />
             {src === '0' ? (alternative || '') :
                 !image && !error ? (loading || '') :
                     error ? (alternative || '') :
