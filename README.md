@@ -58,8 +58,10 @@ The application will be running at `localhost:3000`.
 | GET /profile           | Users profile                                  |   ✅   |
 
 ## Support
-You can support this project by starring ⭐, sharing 📲, and contributing 👩‍💻.
-And also you can support me by buying me a coffee ☕️.
+You can support this project by starring ⭐, sharing 📲, and contributing 👩‍💻
+
+And also you can support me by buying me a coffee ☕️
+
 [![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/fatihege)
 
 ## License
