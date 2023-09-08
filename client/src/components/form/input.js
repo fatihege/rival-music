@@ -55,7 +55,7 @@ export default function Input({
 
     return (
         <div
-            className={`${styles.input} ${focused ? styles.focused : ''} ${set?.current.length || inputRef.current?.value.length ? styles.filled : ''} ${inputAlert || alert ? styles.danger : ''} ${className}`}
+            className={`${styles.input} ${focused ? styles.focused : ''} ${set?.current?.length || inputRef.current?.value?.length ? styles.filled : ''} ${inputAlert || alert ? styles.danger : ''} ${className}`}
             onClick={() => inputRef.current?.focus()}
             style={focused ? {zIndex: 1} : {}}>
             <span className={styles.placeholder}>{placeholder}</span>

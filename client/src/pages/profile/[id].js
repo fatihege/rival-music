@@ -37,7 +37,7 @@ export default function UserProfilePage({id}) {
 
     const getUserInfo = async () => {
         if (!id) return // If ID property is not defined, return
-        const userData = await getUserData(id, 'id,name,image,admin,profileColor,accentColor,playlists,count:followedArtists,count:followedUsers,count:followers', user?.id) // Get user's profile properties from API
+        const userData = await getUserData(id, `id,name,${user?.admin ? 'email,' : ''}image,admin,profileColor,accentColor,playlists,count:followedArtists,count:followedUsers,count:followers`, user?.id) // Get user's profile properties from API
 
         if (userData?.id) setActiveUser(userData) // If user's id is defined, set active user
     }
@@ -101,9 +101,9 @@ export default function UserProfilePage({id}) {
                                         alternative={<span style={{color: RGBtoString(activeUser.profileColor || [255, 255, 255])}}>
                                             {activeUser?.name?.[0]?.toUpperCase()}</span>}
                                         loading={<Skeleton width={200} height={200} style={{top: '-5px'}}/>}/>
-                                    {activeUser?.id === user?.id ? (
+                                    {activeUser?.id === user?.id || user?.admin ? (
                                         <div className={styles.imageOverlay}
-                                             onClick={() => setModal({canClose: true, active: <ChangeProfileModal/>})}>
+                                             onClick={() => setModal({canClose: true, active: <ChangeProfileModal user={[activeUser, setActiveUser]}/>})}>
                                             <EditIcon/>
                                             <span>Edit Profile</span>
                                         </div>

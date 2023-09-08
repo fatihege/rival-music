@@ -202,7 +202,6 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                 axios.get(`${process.env.API_URL}/album/${items[index]?._id}?tracks=1`).then(response => {
                     if (response.data.status === 'OK' && response.data?.album) {
                         const tmpQueue = response.data?.album?.discs?.map(d => d?.filter(t => !!t?.audio)?.map(i => ({id: i?._id, audio: i?.audio}))) // Get tracks from album
-                        console.log(tmpQueue)
                         setQueue(tmpQueue?.[0] || []) // Set queue with album tracks
                         setQueueIndex(0) // Set queue index to 0
                         handlePlayPause(true) // Play tracks
@@ -233,7 +232,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
             try {
                 axios.get(`${process.env.API_URL}/artist/essentials/${items[index]?._id}?only=tracks`).then(response => {
                     if (response.data.status === 'OK' && response.data?.essentials?.mostListenedTracks?.length) {
-                        const tmpQueue = response.data.essentials.mostListenedTracks?.map(i => ({id: i?._id, audio: i?.audio})) // Get tracks from artist
+                        const tmpQueue = response.data.essentials.mostListenedTracks?.filter(t => !!t.audio)?.map(i => ({id: i?._id, audio: i?.audio})) // Get tracks from artist
                         setQueue(tmpQueue || []) // Set queue with artist tracks
                         setQueueIndex(0) // Set queue index to 0
                         handlePlayPause(true) // Play tracks

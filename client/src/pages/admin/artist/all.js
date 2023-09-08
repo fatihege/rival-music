@@ -131,12 +131,8 @@ export default function ViewArtistsPage() {
                     <Link href={`/admin/artist/create`}>Create Artist</Link>
                     <button onClick={() => setSorting('last-created')} className={sorting === 'last-created' ? styles.active : ''}>Last created</button>
                     <button onClick={() => setSorting('first-created')} className={sorting === 'first-created' ? styles.active : ''}>First created</button>
-                    <button onClick={() => setSorting('most-popular')} className={sorting === 'most-popular' ? styles.active : ''}>Most popular</button>
-                    <button onClick={() => setSorting('least-popular')} className={sorting === 'least-popular' ? styles.active : ''}>Least popular</button>
-                    <button onClick={() => setSorting('most-songs')} className={sorting === 'most-songs' ? styles.active : ''}>Most songs</button>
-                    <button onClick={() => setSorting('least-songs')} className={sorting === 'least-songs' ? styles.active : ''}>Least songs</button>
-                    <button onClick={() => setSorting('most-albums')} className={sorting === 'most-albums' ? styles.active : ''}>Most albums</button>
-                    <button onClick={() => setSorting('least-albums')} className={sorting === 'least-albums' ? styles.active : ''}>Least albums</button>
+                    <button onClick={() => setSorting('last-debuted')} className={sorting === 'last-debuted' ? styles.active : ''}>Last debuted</button>
+                    <button onClick={() => setSorting('first-debuted')} className={sorting === 'first-debuted' ? styles.active : ''}>First debuted</button>
                 </div>
                 <div className={styles.searchContainer}>
                     <Input placeholder="Search artist by name, description, or genre" className={styles.search} onChange={value => setSearch(value)}/>

@@ -133,10 +133,9 @@ export default function ViewTracksPage() {
                     <Link href={`/admin/track/create`}>Create Track</Link>
                     <button onClick={() => setSorting('last-created')} className={sorting === 'last-created' ? styles.active : ''}>Last created</button>
                     <button onClick={() => setSorting('first-created')} className={sorting === 'first-created' ? styles.active : ''}>First created</button>
-                    <button onClick={() => setSorting('last-released')} className={sorting === 'last-released' ? styles.active : ''}>Last released</button>
-                    <button onClick={() => setSorting('first-released')} className={sorting === 'first-released' ? styles.active : ''}>First released</button>
                     <button onClick={() => setSorting('most-popular')} className={sorting === 'most-popular' ? styles.active : ''}>Most popular</button>
                     <button onClick={() => setSorting('least-popular')} className={sorting === 'least-popular' ? styles.active : ''}>Least popular</button>
+                    <button onClick={() => setSorting('non-audio')} className={sorting === 'non-audio' ? styles.active : ''}>Non-audio</button>
                 </div>
                 <div className={styles.searchContainer}>
                     <Input placeholder="Search track by title, album, or artist" className={styles.search} onChange={value => {

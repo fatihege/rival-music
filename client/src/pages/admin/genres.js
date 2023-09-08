@@ -25,7 +25,11 @@ export default function AdminGenres() {
     }
 
     useEffect(() => {
-        if (!user?.loaded || !user?.id || !user?.token) return // If the user is not loaded, has no ID or has no token, return
+        if (!user?.loaded) return
+        if (!user?.id || !user?.token || !user?.admin) { // If the user is not loaded, not logged in, not an admin, or doesn't have an ID, redirect to the 404 page
+            router.push('/404')
+            return
+        }
 
         getGenres() // Get genres from API
     }, [user])
@@ -79,7 +83,7 @@ export default function AdminGenres() {
                     }) : ''}
                     <Button value="Add genre" type="" className={styles.formField} icon={<AddIcon stroke={'#1c1c1c'}/>}
                             onClick={() => handleAddGenre()}/>
-                    <Button value="Update genres" className={styles.formField}
+                    <Button value="Update genres" className={styles.formField} disabled={disableSubmit}
                             icon={<NextIcon stroke={'#1c1c1c'}/>} onClick={() => handleSubmit()}/>
                 </div>
             </div>

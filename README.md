@@ -41,7 +41,7 @@ To run this application on your local machine using Docker, follow the below ste
 
 The application will be running at `localhost:3000`.
 
-## Possible Endpoints
+## User Endpoints
 
 | Endpoint               | Description                                    | Finished |
 |------------------------|------------------------------------------------|:--------:|

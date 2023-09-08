@@ -16,6 +16,7 @@ export default function AdminPage() {
     const [statistics, setStatistics] = useState({ // Statistics state
         loaded: false,
         users: 0,
+        waitingUsers: 0,
         artists: 0,
         albums: 0,
         tracks: 0,
@@ -31,6 +32,10 @@ export default function AdminPage() {
         {
             title: 'Manage Genres',
             href: '/admin/genres',
+        },
+        {
+            title: 'Manage Acceptance',
+            href: '/admin/acceptance',
         },
         {
             type: 'separator',
@@ -69,6 +74,17 @@ export default function AdminPage() {
         {
             title: 'View Tracks',
             href: '/admin/track/all',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            title: 'User Management',
+            type: 'title',
+        },
+        {
+            title: 'Manage Users',
+            href: '/admin/user/all',
         },
     ])
 
@@ -124,6 +140,12 @@ export default function AdminPage() {
                         <span>Users</span>
                         <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
                             {statistics.loaded ? statistics.users : <Skeleton height={22}/>}
+                        </span>
+                    </div>
+                    <div className={styles.stat}>
+                        <span>Waiting Users</span>
+                        <span className={`${styles.data} ${statistics.loaded ? styles.loaded : ''}`}>
+                            {statistics.loaded ? statistics.waitingUsers : <Skeleton height={22}/>}
                         </span>
                     </div>
                     <div className={styles.stat}>

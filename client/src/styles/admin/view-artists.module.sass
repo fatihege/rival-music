@@ -105,23 +105,41 @@
             color: #bfbfbf
 
         .operation
-          .deleteButton
-            width: 36px
-            height: 36px
+          display: flex
+          column-gap: 4px
+
+          button
+            width: 32px
+            height: 32px
             border-radius: 8px
-            border: 2px solid $dangerColor
             background-color: transparent
-            padding: 6px
+            padding: 4px
             cursor: pointer
 
-            &:hover
-              background: $dangerColor
+            &.deleteButton,
+            &.rejectButton
+              border: 2px solid $dangerColor
+
+              &:hover
+                background: $dangerColor
+
+                svg *
+                  stroke: #efefef !important
 
               svg *
-                stroke: #efefef !important
+                stroke: $dangerColor !important
 
-            svg *
-              stroke: $dangerColor !important
+            &.acceptButton
+              border: 2px solid #00ff48
+
+              &:hover
+                background: #00ff48
+
+                svg *
+                  stroke: #1c1c1c !important
+
+              svg *
+                stroke: #00ff48 !important
 
   .loadingContainer
     width: 100%

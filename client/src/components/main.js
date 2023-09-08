@@ -10,7 +10,6 @@ import NowPlayingBar from '@/components/now-playing-bar'
 import styles from '@/styles/general.module.sass'
 
 export default function Main({children}) {
-    const [contextMenu] = useContext(ContextMenuContext) // Get context menu from ContextMenuContext
     const {showQueuePanel} = useContext(QueueContext) // Get showQueuePanel function from QueueContext
     const [, , menuRef, showMenu, setShowMenu] = useContext(NavigationBarContext) // Get account menu references from the navigation bar context
     const [, setTooltip] = useContext(TooltipContext) // Use tooltip context for resetting its value

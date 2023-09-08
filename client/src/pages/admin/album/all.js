@@ -134,10 +134,6 @@ export default function ViewAlbumsPage() {
                     <button onClick={() => setSorting('first-created')} className={sorting === 'first-created' ? styles.active : ''}>First created</button>
                     <button onClick={() => setSorting('last-released')} className={sorting === 'last-released' ? styles.active : ''}>Last released</button>
                     <button onClick={() => setSorting('first-released')} className={sorting === 'first-released' ? styles.active : ''}>First released</button>
-                    <button onClick={() => setSorting('most-popular')} className={sorting === 'most-popular' ? styles.active : ''}>Most popular</button>
-                    <button onClick={() => setSorting('least-popular')} className={sorting === 'least-popular' ? styles.active : ''}>Least popular</button>
-                    <button onClick={() => setSorting('most-songs')} className={sorting === 'most-songs' ? styles.active : ''}>Most songs</button>
-                    <button onClick={() => setSorting('least-songs')} className={sorting === 'least-songs' ? styles.active : ''}>Least songs</button>
                 </div>
                 <div className={styles.searchContainer}>
                     <Input placeholder="Search album by title or artist" className={styles.search} onChange={value => {
