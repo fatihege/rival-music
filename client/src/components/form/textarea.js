@@ -1,20 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import styles from '@/styles/inputs.module.sass'
 
-/**
- * @param {string} type
- * @param {string} name
- * @param {string} placeholder
- * @param {string} value
- * @param {string} className
- * @param {React.MutableRefObject<string>} set
- * @param {string | null} alert
- * @param {Function: any} onChange
- * @param {Function: any} onBlur
- * @param {Function: any} validator
- * @returns {JSX.Element}
- * @constructor
- */
 export default function Textarea({
     name = '',
     placeholder = '',

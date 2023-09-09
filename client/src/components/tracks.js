@@ -162,7 +162,13 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
             if (response.data?.liked && !updatedList?.likes?.includes(trackId)) updatedList?.likes?.push(trackId) // If track is liked, push track ID to the likes array
             else if (updatedList?.likes) updatedList.likes = updatedList?.likes?.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
             if (!items?.length) list[1](updatedList) // Set list data to the updated list data
-            else items[3](prev => !Array.isArray(prev) ? ({
+            else items[3](prev => prev?.lastListenedTracks ? ({
+                ...prev,
+                lastListenedTracks: prev.lastListenedTracks.map(t => ({
+                    ...t,
+                    liked: t._id === trackId ? response.data?.liked : t.liked,
+                }))
+            }) : !Array.isArray(prev) ? ({
                 ...prev,
                 tracks: response.data?.liked ? [...prev?.tracks, items[0].find(t => t._id === trackId)] : prev?.tracks?.filter(t => t._id !== trackId)
             }) : ([

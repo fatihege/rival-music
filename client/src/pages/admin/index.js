@@ -34,8 +34,8 @@ export default function AdminPage() {
             href: '/admin/genres',
         },
         {
-            title: 'Manage Acceptance',
-            href: '/admin/acceptance',
+            title: 'Settings',
+            href: '/admin/settings',
         },
         {
             type: 'separator',
@@ -85,6 +85,10 @@ export default function AdminPage() {
         {
             title: 'Manage Users',
             href: '/admin/user/all',
+        },
+        {
+            title: 'Manage Requests',
+            href: '/admin/request/all',
         },
     ])
 

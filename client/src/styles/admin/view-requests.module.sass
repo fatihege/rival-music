@@ -1,0 +1,147 @@
+@import "../variables"
+@import "admin.module"
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+.mainContainer
+  height: 100%
+  overflow-y: auto
+
+  .actions
+    margin-top: 1rem
+    display: flex
+    column-gap: .5rem
+    flex-wrap: wrap
+
+    a,
+    button
+      cursor: pointer
+      border: none
+      display: inline-block
+      padding: .5rem 1rem
+      border-radius: .5rem
+      background-color: #252525
+      color: #efefef
+      font-size: .9rem
+      font-weight: 500
+      transition: .15s ease-out
+      transition-property: background-color, color
+
+      &:hover,
+      &.active
+        background-color: #efefef
+        color: #252525
+
+    a
+      border: 1px solid #efefef
+      margin-right: .5rem
+
+  .searchContainer
+    margin-top: 1rem
+
+    .search
+      width: 100%
+
+  .requestsContainer
+    margin-top: 2rem
+    position: relative
+    min-height: 101%
+
+    .requests
+      display: flex
+      flex-direction: column
+      align-items: flex-start
+      row-gap: .5rem
+
+      .request
+        width: 100%
+        max-width: 500px
+        min-width: 300px
+        display: flex
+        align-items: flex-start
+        column-gap: .5rem
+        padding: .5rem
+        border-radius: .5rem
+        border: 1px solid #252525
+
+        &:hover
+          background-color: rgba(59, 59, 59, .2)
+
+        .info
+          width: 100%
+
+          .content
+            font-size: .9rem
+            font-weight: 500
+            color: #fff
+
+          .name
+            font-size: .9rem
+            font-weight: 500
+            color: #efefef
+            opacity: .7
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+            flex: 100%
+
+          .email
+            font-size: .8rem
+            font-weight: 500
+            color: #bfbfbf
+
+        .operation
+          display: flex
+          column-gap: 4px
+
+          button
+            width: 32px
+            height: 32px
+            border-radius: 8px
+            background-color: transparent
+            padding: 4px
+            cursor: pointer
+
+            &.deleteButton,
+            &.rejectButton
+              border: 2px solid $dangerColor
+
+              &:hover
+                background: $dangerColor
+
+                svg *
+                  stroke: #efefef !important
+
+              svg *
+                stroke: $dangerColor !important
+
+            &.acceptButton
+              border: 2px solid #00ff48
+
+              &:hover
+                background: #00ff48
+
+                svg *
+                  stroke: #1c1c1c !important
+
+              svg *
+                stroke: #00ff48 !important
+
+  .loadingContainer
+    width: 100%
+    padding: 2rem 0
+    display: flex
+    align-items: center
+    justify-content: center
+
+    .loading
+      width: 2rem
+      height: 2rem
+      border-radius: 50%
+      border: 2px solid #efefef
+      border-top-color: transparent
+      animation: spin .5s linear infinite

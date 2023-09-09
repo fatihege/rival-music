@@ -5,10 +5,10 @@ import {AlertContext} from '@/contexts/alert'
 import {ModalContext} from '@/contexts/modal'
 import Input from '@/components/form/input'
 import Button from '@/components/form/button'
-import {AddIcon} from '@/icons'
-import styles from '@/styles/modals.module.sass'
 import {RGBtoString} from '@/utils/color-converter'
 import getUserData from '@/utils/get-user-data'
+import {AddIcon} from '@/icons'
+import styles from '@/styles/modals.module.sass'
 
 export default function ChangeProfileModal({user: [activeUser, setActiveUser]}) {
     const [user, setUser] = useContext(AuthContext) // Use auth context for getting/setting user

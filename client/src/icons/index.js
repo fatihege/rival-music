@@ -39,6 +39,7 @@ import DiscIcon from '@/icons/disc'
 import PersonIcon from '@/icons/person'
 import PlaylistIcon from '@/icons/playlist'
 import ShareIcon from '@/icons/share'
+import RequestIcon from '@/icons/request'
 
 export {
     Logo,
@@ -82,4 +83,5 @@ export {
     PersonIcon,
     PlaylistIcon,
     ShareIcon,
+    RequestIcon,
 }

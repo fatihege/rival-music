@@ -6,15 +6,17 @@ import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {AuthContext} from '@/contexts/auth'
 import {AlertContext} from '@/contexts/alert'
+import {ModalContext} from '@/contexts/modal'
 import {NavigationBarContext} from '@/contexts/navigation-bar'
 import {LibraryContext} from '@/contexts/library'
 import {ContextMenuContext} from '@/contexts/context-menu'
+import RequestTrack from '@/components/modals/request-track'
 import CustomScrollbar from '@/components/custom-scrollbar'
 import PlaylistImage from '@/components/playlist-image'
 import PlaylistContextMenu from '@/components/context-menus/playlist'
 import AlbumContextMenu from '@/components/context-menus/album'
 import {TooltipHandler} from '@/components/tooltip'
-import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, SearchIcon} from '@/icons'
+import {AddIcon, AlbumDefault, HomeIcon, LibraryIcon, Logo, LogoIcon, PrevIcon, RequestIcon, SearchIcon} from '@/icons'
 import styles from '@/styles/side-panel.module.sass'
 
 const MIN_WIDTH = 268, // Minimum width of the side panel
@@ -26,6 +28,7 @@ export default function SidePanel() {
     const router = useRouter() // Router instance
     const [user] = useContext(AuthContext) // Get user from AuthContext
     const [, setAlert] = useContext(AlertContext) // Use alert context for displaying alerts
+    const [, setModal] = useContext(ModalContext) // Use modal context for displaying modals
     const [, setNavBarWidth] = useContext(NavigationBarContext) // Navigation bar width
     const [library, , getUserLibrary] = useContext(LibraryContext) // Get user library
     const [, setContextMenu] = useContext(ContextMenuContext) // Context menu
@@ -34,6 +37,7 @@ export default function SidePanel() {
     const [offset, setOffset] = useState(0) // Offset of mouse from layout resizer
     const [width, _setWidth] = useState(DEFAULT_WIDTH) // Width of the side panel
     const [isMinimized, setIsMinimized] = useState(false) // Is side panel minimized
+    const [canRequest, setCanRequest] = useState(null) // Can request tracks
     const widthRef = useRef(width) // Reference to the width of the side panel
     const links = [ // Links
         {
@@ -63,6 +67,14 @@ export default function SidePanel() {
     }
 
     useEffect(() => {
+        if (canRequest === null) axios.get(`${process.env.API_URL}/request/can-request`, { // Check if user can request tracks
+            headers: {
+                Authorization: `Bearer ${user?.token}`,
+            },
+        }).then(res => {
+            if (res.data?.status === 'OK') setCanRequest(res.data?.canRequest) // Set can request
+        }).catch(e => console.error(e))
+
         const width = localStorage.getItem('sidePanelWidth') // Get width from local storage
         if (width && !isNaN(parseInt(width))) // If width is valid
             if (parseInt(width) === -1) {
@@ -205,7 +217,7 @@ export default function SidePanel() {
                  style={!isMinimized ? {width: `${Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH)}px`} : {}}>
                 <div className={`${styles.section} ${styles.linksSection}`}>
                     <div className={styles.logo}>
-                        <Link href="/" className={styles.logoLink}>
+                        <Link href={'/'} className={styles.logoLink}>
                             {isMinimized ? <LogoIcon/> : <Logo/>}
                         </Link>
                     </div>
@@ -222,6 +234,21 @@ export default function SidePanel() {
                             )}
                         </Link>
                     ) : '')}
+                    {user?.loaded && user?.id && user?.token && canRequest ? (
+                        <button className={styles.link} onClick={() => setModal({
+                            canClose: true,
+                            active: <RequestTrack/>,
+                        })}>
+                            <div className={styles.icon}>
+                                <RequestIcon/>
+                            </div>
+                            {!isMinimized && (
+                                <div className={styles.label}>
+                                    Request Tracks
+                                </div>
+                            )}
+                        </button>
+                    ) : ''}
                 </div>
                 {user?.loaded && user?.id && user?.token ? (
                     <div className={`${styles.section} ${styles.librarySection}`}>

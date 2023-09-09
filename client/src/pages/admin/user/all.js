@@ -6,9 +6,9 @@ import {useContext, useEffect, useRef, useState} from 'react'
 import {AuthContext} from '@/contexts/auth'
 import {AlertContext} from '@/contexts/alert'
 import {DialogueContext} from '@/contexts/dialogue'
-import {AddIcon, CloseIcon, DeleteIcon} from '@/icons'
-import styles from '@/styles/admin/view-artists.module.sass'
 import Input from '@/components/form/input'
+import {AddIcon, CloseIcon, DeleteIcon} from '@/icons'
+import styles from '@/styles/admin/view-artists-and-users.module.sass'
 
 export default function ViewUsersPage() {
     const LIMIT = 66 // Limit of users per request
@@ -40,7 +40,7 @@ export default function ViewUsersPage() {
         if (fromZero) cursorRef.current = 0 // If fromZero is true, set cursor to 0
 
         try {
-            const response = await axios.get(`${process.env.API_URL}/user/all${search?.trim()?.length ? `?query=${search.trim()}` : `?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}`}`) // Get artists from API
+            const response = await axios.get(`${process.env.API_URL}/user/all${search?.trim()?.length ? `?query=${search.trim()}` : `?cursor=${cursorRef.current}&limit=${LIMIT}&sorting=${sortingRef.current}`}`) // Get users from API
 
             if (response.data?.status === 'OK' && response.data?.users) { // If response is OK
                 setUsers(fromZero ? response.data?.users : [...usersRef.current, ...response.data?.users]) // Set users state
@@ -174,10 +174,10 @@ export default function ViewUsersPage() {
                 <div className={styles.searchContainer}>
                     <Input placeholder="Search user by name or email" className={styles.search} onChange={value => setSearch(value)}/>
                 </div>
-                <div className={styles.artistsContainer}>
-                    <div className={styles.artists}>
+                <div className={styles.usersContainer}>
+                    <div className={styles.users}>
                         {users?.map(user => (
-                            <Link key={user?._id} className={styles.artist} href={`/profile/[id]`} as={`/profile/${user?._id}`}>
+                            <Link key={user?._id} className={styles.user} href={`/profile/[id]`} as={`/profile/${user?._id}`}>
                                 <div className={styles.profile}>
                                     {user?.image ? <img src={`${process.env.IMAGE_CDN}/${user?.image}`} alt={user?.name}/> : user?.name?.slice(0, 1)?.toUpperCase()}
                                 </div>

@@ -147,7 +147,7 @@ export default function UserProfilePage({id}) {
                                         {library?.playlists?.length > 0 ? (
                                             <Slider type={'playlist'} title="Playlists" items={library ? library.playlists : null} />
                                         ) : ''}
-                                        <ExtensibleTracks title="Last listened tracks" items={library?.lastListenedTracks} likedTracks={library?.tracks} set={setLibrary}/>
+                                        <ExtensibleTracks title="Last listened tracks" items={library?.lastListenedTracks} likedTracks={library?.lastListenedTracks?.filter(t => !!t.liked)} set={setLibrary}/>
                                         <ExtensibleTracks title="Liked tracks" items={library?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
                                         <Slider type={'album'} title="Liked albums" items={library ? library.albums : null} />
                                     </>
@@ -156,7 +156,7 @@ export default function UserProfilePage({id}) {
                                         {activeUser?.playlists?.length > 0 ? (
                                             <Slider type={'playlist'} title="Playlists" items={activeUser?.playlists} />
                                         ) : ''}
-                                        <ExtensibleTracks title="Last listened tracks" items={activeUser?.lastListenedTracks} likedTracks={library?.tracks} set={setLibrary}/>
+                                        <ExtensibleTracks title="Last listened tracks" items={activeUser?.lastListenedTracks} likedTracks={library?.lastListenedTracks?.filter(t => !!t.liked)} set={setLibrary}/>
                                         <ExtensibleTracks title="Liked tracks" items={activeUser?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
                                         <Slider type={'album'} title="Liked albums" items={activeUser?.albums} />
                                     </>
