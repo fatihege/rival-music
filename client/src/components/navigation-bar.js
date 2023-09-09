@@ -81,9 +81,9 @@ export default function NavigationBar() {
                                 <li>
                                     <Link href={'/account'} onClick={() => setShowMenu(false)}>Account</Link>
                                 </li>
-                                <li>
+                                {/*<li>
                                     <Link href={'/'} onClick={() => setShowMenu(false)}>Settings</Link>
-                                </li>
+                                </li>*/}
                                 <li className={styles.separator}></li>
                                 <li>
                                     <span onClick={handleLogout}>Log out</span>

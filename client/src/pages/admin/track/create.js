@@ -159,9 +159,10 @@ export default function CreateTrackPage() {
             formData.append('genres', track.genres.toString()) // Append the genres to the form data
             formData.append('lyrics', JSON.stringify(track.lyrics)) // Append the lyrics to the form data
 
-            const response = await axios.post(`${process.env.API_URL}/admin/${user.token}/track/create`, formData, { // Send a POST request to the API
+            const response = await axios.post(`${process.env.API_URL}/admin/track/create`, formData, { // Send a POST request to the API
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
+                    Authorization: `Bearer ${user?.token}`, // Set the authorization header to the user token
                 }
             })
 

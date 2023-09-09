@@ -59,8 +59,16 @@ export default function ArtistContextMenu({artist}) {
     }
 
     const handleCopyLink = () => {
-        if (!navigator.clipboard || (!artist?.id && !artist?._id)) return // If navigator clipboard is not exist or artist is not exist, return
-        navigator.clipboard.writeText(`${process.env.APP_URL}/artist/${artist?.id || artist?._id}`) // Copy link to clipboard
+        if (!artist?.id && !artist?._id) return // If navigator clipboard is not exist or artist is not exist, return
+        if (navigator?.clipboard) navigator.clipboard.writeText(`${process.env.APP_URL}/artist/${artist?.id || artist?._id}`) // Copy link to clipboard
+        else if (document) {
+            const el = document.createElement('textarea') // Create textarea
+            el.value = `${process.env.APP_URL}/artist/${artist?.id || artist?._id}` // Set textarea value
+            document.body.appendChild(el) // Append textarea to body
+            el.select() // Select textarea
+            document.execCommand('copy') // Copy link to clipboard
+            document.body.removeChild(el) // Remove textarea from body
+        }
     }
 
     const handleFollow = () => {

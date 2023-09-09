@@ -65,8 +65,16 @@ export default function AlbumContextMenu({album}) {
     }
 
     const handleCopyLink = () => {
-        if (!navigator.clipboard || (!album?.id && !album?._id)) return // If navigator clipboard is not exist or album is not exist, return
-        navigator.clipboard.writeText(`${process.env.APP_URL}/album/${album?.id || album?._id}`) // Copy link to clipboard
+        if (!album?.id && !album?._id) return // If navigator clipboard is not exist or album is not exist, return
+        if (navigator?.clipboard) navigator.clipboard.writeText(`${process.env.APP_URL}/album/${album?.id || album?._id}`) // Copy link to clipboard
+        else if (document) {
+            const el = document.createElement('textarea') // Create textarea
+            el.value = `${process.env.APP_URL}/album/${album?.id || album?._id}` // Set textarea value
+            document.body.appendChild(el) // Append textarea to body
+            el.select() // Select textarea
+            document.execCommand('copy') // Copy link to clipboard
+            document.body.removeChild(el) // Remove textarea from body
+        }
     }
 
     const handleLike = () => {

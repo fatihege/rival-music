@@ -20,7 +20,7 @@ import AskLoginModal from '@/components/modals/ask-login'
 import Skeleton from 'react-loading-skeleton'
 
 /**
- * @param {'artist' | 'album' | 'playlist' | 'track'} type
+ * @param {'artist' | 'album' | 'playlist' | 'track' | 'user'} type
  * @param {string} title
  * @param {Array} items
  * @param {boolean} scrollable
@@ -450,7 +450,7 @@ export default function Slider({type, title, items = [], scrollable = true, noNa
                             ) : ''
                         ) : (
                             <div className={styles.noItems}>
-                                There is no {type === 'artist' ? 'artists' : type === 'album' ? 'albums' : type === 'playlist' ? 'playlists' : 'tracks'} to show.
+                                There is no {type === 'artist' ? 'artists' : type === 'album' ? 'albums' : type === 'playlist' ? 'playlists' : type === 'track' ? 'tracks' : type === 'user' ? 'users' : ''} to show.
                             </div>
                         )) : (() => {
                             const skeletons = []

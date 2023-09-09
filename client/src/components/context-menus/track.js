@@ -127,8 +127,16 @@ export default function TrackContextMenu({tracks, playlist: [playlist, setPlayli
         if (tracks.length > 1) return // If tracks length is more than 1, return
         const track = tracks[0]
         const albumId = playlist ? track?.album?._id : album ? album?._id : track?.album?._id // Get album id
-        if (!navigator.clipboard || !track?._id || !albumId) return // If navigator clipboard is not exist or track is not exist, return
-        navigator.clipboard.writeText(`${process.env.APP_URL}/album/${albumId}#${track?._id}`) // Copy link to clipboard
+        if (!track?._id || !albumId) return // If navigator clipboard is not exist or track is not exist, return
+        if (navigator?.clipboard) navigator.clipboard.writeText(`${process.env.APP_URL}/album/${albumId}#${track?._id}`) // Copy link to clipboard
+        else if (document) {
+            const el = document.createElement('textarea') // Create textarea
+            el.value = `${process.env.APP_URL}/album/${albumId}#${track?._id}` // Set value
+            document.body.appendChild(el) // Append textarea to body
+            el.select() // Select textarea
+            document.execCommand('copy') // Copy link to clipboard
+            document.body.removeChild(el) // Remove textarea from body
+        }
     }
 
     return user?.loaded && user?.id && user?.token ? (

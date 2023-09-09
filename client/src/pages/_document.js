@@ -16,8 +16,8 @@ export default function Document() {
                 <meta name="og:type" content="website"/>
                 <meta name="og:url" content={process.env.APP_URL}/>
                 <meta name="og:site_name" content="Rival Music"/>
-                <meta name="og:image" content={`${process.env.APP_URL}/banner.png`}/>
-                <meta name="og:image:secure_url" content={`${process.env.APP_URL}/banner.png`}/>
+                <meta name="og:image" content={`/banner.png`}/>
+                <meta name="og:image:secure_url" content={`/banner.png`}/>
                 <meta name="og:image:alt" content="Rival Music"/>
                 <meta name="og:image:type" content="image/png"/>
                 <meta name="og:image:width" content="1920"/>
@@ -25,12 +25,12 @@ export default function Document() {
                 <meta name="twitter:card" content="summary_large_image"/>
                 <meta name="twitter:title" content="Rival Music — Listen what you want"/>
                 <meta name="twitter:description" content="Rival is a modern and up-to-date music streaming platform."/>
-                <meta name="twitter:image" content={`${process.env.APP_URL}/banner.png`}/>
+                <meta name="twitter:image" content={`/banner.png`}/>
                 <meta name="twitter:image:alt" content="Rival Music"/>
                 <meta name="twitter:image:width" content="1920"/>
                 <meta name="twitter:image:height" content="1080"/>
                 <meta name="twitter:domain" content={process.env.APP_URL.split('://')[1]}/>
-                <link rel="icon" href={`${process.env.APP_URL}/favicon.ico`}/>
+                <link rel="icon" href={`/favicon.ico`}/>
             </Head>
             <body suppressHydrationWarning={true}>
             <Main/>
