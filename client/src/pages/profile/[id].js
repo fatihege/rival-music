@@ -34,6 +34,8 @@ export default function UserProfilePage({id}) {
     const [, setModal] = useContext(ModalContext) // Use modal context
     const [activeUser, setActiveUser] = useState({})
     const [load, setLoad] = useState(false) // Is profile loaded
+    const [likedTracks, setLikedTracks] = useState([]) // Liked tracks
+    const [lastListenedTracks, setLastListenedTracks] = useState([]) // Last listened tracks
 
     const getUserInfo = async () => {
         if (!id) return // If ID property is not defined, return
@@ -49,12 +51,19 @@ export default function UserProfilePage({id}) {
         getUserInfo() // Otherwise, get user info from API
 
         if (user?.loaded && user?.id === id) {
-            getUserLibrary().then(() => setLoad(true)) // Get user library
+            getUserLibrary()
+            getLibraryById(id).then(library => { // If the current user's id is equal to active user's id, get user library
+                setLikedTracks(library?.tracks) // Set liked tracks
+                setLastListenedTracks(library?.lastListenedTracks) // Set last listened tracks
+                setLoad(true) // Set load state to true
+            }) // Get user library
             setActiveUser({...activeUser, ...user}) // If the current user's id is equal to active user's id, merge them
         } else if (user?.loaded && user?.id !== id) {
-            getLibraryById(id).then((library) => {
-                setLoad(true)
+            getLibraryById(id).then(library => {
+                setLikedTracks(library?.tracks) // If not, get user library by ID
+                setLastListenedTracks(library?.lastListenedTracks) // If not, get user library by ID
                 setActiveUser(prev => ({...prev, ...library})) // Otherwise, get user library by ID
+                setLoad(true) // Set load state to true
             }).catch(e => console.error(e))
         }
     }, [id, user])
@@ -147,8 +156,8 @@ export default function UserProfilePage({id}) {
                                         {library?.playlists?.length > 0 ? (
                                             <Slider type={'playlist'} title="Playlists" items={library ? library.playlists : null} />
                                         ) : ''}
-                                        <ExtensibleTracks title="Last listened tracks" items={library?.lastListenedTracks} likedTracks={library?.lastListenedTracks?.filter(t => !!t.liked)} set={setLibrary}/>
-                                        <ExtensibleTracks title="Liked tracks" items={library?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
+                                        <ExtensibleTracks title="Last listened tracks" items={lastListenedTracks} likedTracks={library?.tracks} set={setLastListenedTracks}/>
+                                        <ExtensibleTracks title="Liked tracks" items={likedTracks} likedTracks={library?.tracks} set={setLikedTracks}/>
                                         <Slider type={'album'} title="Liked albums" items={library ? library.albums : null} />
                                     </>
                                 ) : (
@@ -156,8 +165,8 @@ export default function UserProfilePage({id}) {
                                         {activeUser?.playlists?.length > 0 ? (
                                             <Slider type={'playlist'} title="Playlists" items={activeUser?.playlists} />
                                         ) : ''}
-                                        <ExtensibleTracks title="Last listened tracks" items={activeUser?.lastListenedTracks} likedTracks={library?.lastListenedTracks?.filter(t => !!t.liked)} set={setLibrary}/>
-                                        <ExtensibleTracks title="Liked tracks" items={activeUser?.tracks} likedTracks={library?.tracks} set={setLibrary}/>
+                                        <ExtensibleTracks title="Last listened tracks" items={lastListenedTracks} likedTracks={library?.tracks} set={setLastListenedTracks}/>
+                                        <ExtensibleTracks title="Liked tracks" items={likedTracks} likedTracks={library?.tracks} set={setLikedTracks}/>
                                         <Slider type={'album'} title="Liked albums" items={activeUser?.albums} />
                                     </>
                                 )}

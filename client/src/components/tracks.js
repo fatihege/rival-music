@@ -148,7 +148,7 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
             canClose: true,
         })
 
-        const liked = !items?.length ? list[0]?.likes?.includes(trackId) : !!items[2]?.find(t => t._id === trackId) // Check if track is liked
+        const liked = !items?.length ? list[0]?.likes?.includes(trackId) : !!items[0]?.find(t => t?._id === trackId)?.liked // Check if track is liked
         const response = await axios.post(`${process.env.API_URL}/track/like/${trackId}`, { // Send POST request to the API
             like: liked ? -1 : 1,
         }, {
@@ -162,21 +162,17 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
             if (response.data?.liked && !updatedList?.likes?.includes(trackId)) updatedList?.likes?.push(trackId) // If track is liked, push track ID to the likes array
             else if (updatedList?.likes) updatedList.likes = updatedList?.likes?.filter(t => t !== trackId) // Otherwise, remove track ID from the likes array
             if (!items?.length) list[1](updatedList) // Set list data to the updated list data
-            else items[3](prev => prev?.lastListenedTracks ? ({
-                ...prev,
-                lastListenedTracks: prev.lastListenedTracks.map(t => ({
-                    ...t,
-                    liked: t._id === trackId ? response.data?.liked : t.liked,
-                }))
-            }) : !Array.isArray(prev) ? ({
-                ...prev,
-                tracks: response.data?.liked ? [...prev?.tracks, items[0].find(t => t._id === trackId)] : prev?.tracks?.filter(t => t._id !== trackId)
-            }) : ([
-                ...prev.map(p => ({
-                    ...p,
-                    liked: p._id === trackId ? response.data?.liked : p.liked,
-                }))
-            ])) // Set list data to the updated list data
+            else items[3](prev => {
+                return !Array.isArray(prev) ? ({
+                    ...prev,
+                    tracks: response.data?.liked ? [...prev?.tracks, items[0].find(t => t._id === trackId)] : prev?.tracks?.filter(t => t._id !== trackId)
+                }) : ([
+                    ...prev.map(p => ({
+                        ...p,
+                        liked: p._id === trackId ? response.data?.liked : p.liked,
+                    }))
+                ])
+            }) // Set list data to the updated list data
 
             if (contextTrack && contextTrack._id === trackId) setIsLiked(response.data?.liked) // If track is defined and track ID is equal to the liked track ID, set isLiked state to the response data
         }
@@ -467,8 +463,8 @@ export default function Tracks({playlist, album, items, noPadding = false}) {
                                 toggleLikeTrack(track?._id)
                             }}>
                                 <LikeIcon
-                                    fill={items[2]?.length && items[2].find(t => t._id === track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
-                                    stroke={items[2]?.length && items[2].find(t => t._id === track?._id) ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
+                                    fill={track?.liked ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : 'none'}
+                                    stroke={track?.liked ? (selectedTracks?.includes(track?._id) ? '#1c1c1c' : process.env.ACCENT_COLOR) : selectedTracks?.includes(track?._id) ? '#1c1c1c' : '#eee'}/>
                             </button>
                             <div
                                 className={styles.duration}>{track?.audio && track?.duration ? formatTime(track?.duration) : '--:--'}</div>
