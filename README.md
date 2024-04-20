@@ -2,7 +2,7 @@
 
 This application is a web application that allows users to search, play, and share music of different genres. This application is currently under development.
 
-**Note:** The application's API (`server` folder) and client-side contexts (`client/src/contexts` folder) are no longer open source.
+**Note:** The development process of this project was stopped because it took too much time. I cannot yet give any information about whether it is temporary or permanent.
 
 ## Technologies
 
