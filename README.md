@@ -2,7 +2,9 @@
 
 This application is a web application that allows users to search, play, and share music of different genres. This application is currently under development.
 
-**Note:** The development process of this project was stopped because it took too much time. I cannot yet give any information about whether it is temporary or permanent.
+**Note:** The development process of this project was stopped because it took too much time.
+
+[Watch the video](https://youtu.be/JWNyQj1WJEA)
 
 ## Technologies
 
@@ -56,13 +58,6 @@ The application will be running at `localhost:3000`.
 | GET /artist/:id        | An artist with the given ID                    |    ✅    |
 | GET /album/:id         | Album page with the given ID                   |    ✅    |
 | GET /profile           | Users profile                                  |    ✅    |
-
-## Support
-You can support this project by starring ⭐, sharing 📲, and contributing 👩‍💻
-
-And also you can support me by buying me a coffee ☕️
-
-[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/fatihege)
 
 ## License
 
